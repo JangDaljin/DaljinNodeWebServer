@@ -1,0 +1,9 @@
+{
+  "name": "daljin-node-web-server",
+  "version": "0.0.0",
+  "description": "DaljinNodeWebServer",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  }
+}
