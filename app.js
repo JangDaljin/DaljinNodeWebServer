@@ -1,22 +1,23 @@
 var http = require('http')
-    , path = require('path');
+    
+
+var express = require('express')
+    , bodyparser = require('body-parser');
+
+var D_config = require('./D_config')
+    , D_mongoose = require('./database/D_mongoose').D_Mongoose
+    , D_routerloader = require('./D_routeloader');
 
 
-var app = require('express')
-    ,router = app.Router()
-    , serveStatic = require('serve-static');
-    , 
+//express 설정
+var app = express();
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 
+//라우트 설정
+D_routerloader.init(app);
 
-var D_globalconfig = require('./D_globalconfig')
-    , D_mongoose = require('./database/D_mongoose').D_Mongoose;
-
-
-
-
-
-
-http.createServer(app).listen(D_globalconfig.SERVER_PORT, D_globalconfig.SERVER_HOSTNAME, function () {
+http.createServer(app).listen(D_config.SERVER_PORT, D_config.SERVER_HOSTNAME, function () {
     D_mongoose.connect();
 });
 

@@ -9,7 +9,7 @@
         {
             //USER DATABASE
             file: './schemas/D_user',
-            collection: 'User',
+            collection: 'D_users',
             schemaName: 'UserSchema',
             modelName: 'UserModel'
         }

@@ -38,16 +38,38 @@
     <Compile Include="database\schemas\D_user.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="D_globalconfig.js">
+    <Compile Include="D_config.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="process\addUser.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="process\login.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="D_routeloader.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="process\menu.js">
       <SubType>Code</SubType>
     </Compile>
     <Content Include="package.json" />
+    <Content Include="page\index.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="page\makeID.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="page\menu.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="database\" />
     <Folder Include="database\schemas\" />
-    <Folder Include="public\" />
+    <Folder Include="process\" />
+    <Folder Include="page\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
