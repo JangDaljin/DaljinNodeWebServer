@@ -5,11 +5,13 @@ var express = require('express')
     , bodyparser = require('body-parser')
     , expressSession = require('express-session')
 
-var D_config = require('./D_config')
-    , D_route = require('./D_route')
+var D_route = require('./D_route')
+    ,D_mongoose = require('./D_database').D_Mongoose
     , D_passport = require('./D_passport');
+    
 
-
+var SERVER_HOSTNAME = 'localhost';
+var SERVER_PORT = '3000';
 
 //express ¼³Á¤
 var app = express();
@@ -31,17 +33,11 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
 
-
-
 D_route(app);
 
 
-
-
-
-
-http.createServer(app).listen(D_config.SERVER_PORT, D_config.SERVER_HOSTNAME, function () {
-    
+http.createServer(app).listen(SERVER_PORT, SERVER_HOSTNAME, function () {
+    D_mongoose.connect(app);
 });
 
 

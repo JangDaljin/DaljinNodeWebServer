@@ -8,25 +8,42 @@ passport.use('login' , new LocalStrategy({
     passReqToCallback : true
 } , 
 function(req , id , pw , done) {
-    if(id == 'master' && pw == 'daljin') {
-        var user = { 
-                        'ID' : id ,
-                        'PW' : pw
-                    };
+    console.dir(D_UserModel);
+
+    var D_UserModel = req.app.get('D_UserModel');
+
+    D_UserModel.findOne({'id':id} , (err,user) => {
+        if(err) {
+            console.log('로그인 에러 ');
+            return done(err , null);
+        }
+        
+        if(!user) {
+            console.log('아이디 없음')
+            return done(null , false);
+        }
+
+        var authenticated = user.authenticate(pw , user._doc.salt, user._doc.hashed_password);
+
+        if(!authenticated) {
+            console.log('비밀번호 불일치')
+            return done(null , false);
+        }
+
+        console.log('login success');
         return done(null , user);
-    }        
-    else {
-        return done(null , false);
-    }
+        
+    });
+    
 }))
 
 passport.serializeUser(function(user, done) {
-    done(null , user.ID);
+    done(null , user);
 }); 
 
-passport.deserializeUser((id , done) => {
-    console.dir(id);
-    done(null , id);
+passport.deserializeUser((user , done) => {
+    console.dir(user);
+    done(null , user);
 });
 
 module.exports = passport;
