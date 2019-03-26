@@ -14,19 +14,19 @@ function(req , id , pw , done) {
 
     D_UserModel.findOne({'id':id} , (err,user) => {
         if(err) {
-            console.log('로그인 에러 ');
+            console.log('login error');
             return done(err , null);
         }
         
         if(!user) {
-            console.log('아이디 없음')
+            console.log('not found ID')
             return done(null , false);
         }
 
         var authenticated = user.authenticate(pw , user._doc.salt, user._doc.hashed_password);
 
         if(!authenticated) {
-            console.log('비밀번호 불일치')
+            console.log('input wrong password')
             return done(null , false);
         }
 

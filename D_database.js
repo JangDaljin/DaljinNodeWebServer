@@ -20,7 +20,7 @@ D_Mongoose.connect = (expressApp) => {
     });
 
     mongoose.connection.on('open', function () {
-        console.log('DB 立加 吝');
+        console.log('trying to connect DB');
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         D_UserSchema = mongoose.Schema({
             id: { type: String, required: true, unique: true, 'default': ' ' },
@@ -73,7 +73,7 @@ D_Mongoose.connect = (expressApp) => {
         expressApp.set('D_UserSchema' , D_UserSchema);
         expressApp.set('D_UserModel' , D_UserModel);
 
-        console.log('DB 立加 肯丰');
+        console.log('connect DB Complete');
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     });
 
