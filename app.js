@@ -16,6 +16,8 @@ var SERVER_PORT = '3000';
 //express ¼³Á¤
 var app = express();
 
+app.set('USER_AUTH_CODE' , '0105');
+
 app.set('views' , __dirname + '/views');
 app.set('view engine' , 'ejs');
 
