@@ -21,14 +21,23 @@ module.exports = function(app) {
 
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
-            //res.render('file.ejs');
-            res.writeHead('200' , {'Content-Type':'text/html;charset=utf8'});
+            D_file.getList('./files/'+ req.user.id
+            ,(obj) =>{
+                res.render('file.ejs' , {data : obj});
+            });
+        }
+        else {
+            res.redirect('/');
+        }
+    });
 
-            D_file.getList('./files/'+ req.user.id , (obj) =>{
-                for(var i = 0; i < obj.length; i++) {
-                    res.write('<p>' + obj[i]["name"] + '</p>')
-                }
-                res.end();
+    app.get('/file/:dir'  ,  (req , res)=> {
+        if(req.isAuthenticated()) {
+            var dir = req.params.dir;
+            console.dir(dir);
+            D_file.getList('./files/'+ req.user.id + '/' + dir
+            ,(obj) =>{
+                res.render('file.ejs' , {data : obj});
             });
         }
         else {

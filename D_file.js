@@ -10,7 +10,7 @@ D_file.getList = (dirname , callback) => {
         if(err) {
             makeDirectory(dirname);
         }
-        FILE_INFO = [];
+        FILE_INFO = {};
         
         for(var i = 0 ; i < files.length; i++) {
 
@@ -30,9 +30,9 @@ D_file.getList = (dirname , callback) => {
             jsonstr += files[i];
             jsonstr += '"}';
             
-            console.dir(jsonstr);
+            //console.dir(jsonstr);
             var obj = JSON.parse(jsonstr)
-            FILE_INFO.push(obj);
+            FILE_INFO[i] = obj;
         }
         callback(FILE_INFO);
     })
