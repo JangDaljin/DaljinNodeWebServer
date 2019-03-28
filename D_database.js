@@ -11,9 +11,9 @@ var D_Mongoose = {};
 var D_UserSchema = null;
 var D_UserModel = null;
 
-
-D_Mongoose.connect = (expressApp) => {
+var _connect = (expressApp) => {
     mongoose.Promise = global.Promise;
+    mongoose.set('useCreateIndex' , true);
     mongoose.connect(DB_URL, { useNewUrlParser: true });
     mongoose.connection.on('error', ()=> {
 
@@ -75,12 +75,16 @@ D_Mongoose.connect = (expressApp) => {
         expressApp.set('D_UserModel' , D_UserModel);
 
         console.log('connect DB Complete');
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     });
 
     mongoose.connection.on('disconnected', function () {
-        setInterval(D_Mongoose.connect(), 5000);
+        setInterval(_connect(expressApp), 5000);
     });
+}
+
+
+D_Mongoose.connect = (expressApp) => {
+    _connect(expressApp);
 };
 
 

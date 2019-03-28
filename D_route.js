@@ -21,22 +21,29 @@ module.exports = function(app) {
 
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
-            D_file.getList('./files/'+ req.user.id
-            ,(obj) =>{
-                res.render('file.ejs' , {data : obj});
-            });
+            res.redirect('/file/'+req.user.id);
         }
         else {
             res.redirect('/');
         }
     });
 
-    app.get('/file/:dir'  ,  (req , res)=> {
+    app.get('/file/:id'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
-            var dir = req.params.dir;
-            console.dir(dir);
-            D_file.getList('./files/'+ req.user.id + '/' + dir
-            ,(obj) =>{
+            var id = req.params.id;
+            var path = req.query.path || '';
+            console.log('id : %s , path : %s', id , path);
+            console.log('./files/'+ id + path);
+            D_file.getList('./files/'+ id + path
+            ,(err , FILE_INFO) =>{
+                obj = {};
+                if(err) {
+                    obj['query'] = '';
+                }
+                else {
+                    obj['query'] = id + '?path='+ path;
+                }
+                obj['file'] = FILE_INFO;
                 res.render('file.ejs' , {data : obj});
             });
         }
@@ -59,8 +66,10 @@ module.exports = function(app) {
 
     });
 
-    app.post('/logout' , (req , res) => {
-        res.logout();
+    app.get('/logout' , (req , res) => {
+        if(req.isAuthenticated()) {
+            req.logout();
+        }
         res.redirect('/');
     });
 

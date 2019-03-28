@@ -1,12 +1,17 @@
-<% var data_length = Object.keys(data).length %>
+<% file = data['file']; %>
+<% var query = data['query']; %>
+
+<% var file_length = Object.keys(file).length %>
 <% var col = 3 %>
-<% var row = parseInt(data_length / col) %>
+<% var row = Math.ceil(file_length / col) %>
+
 <% var addItem = function(curPos) { %>
-<%      if(curPos < data_length) { %>
-<%              var item = data[curPos]['name'].trim() + ((data[curPos]['extension'] == '') ?  '' : '.'+data[curPos]['extension']) %>
+<%      if(curPos < file_length) { %>
+        <% console.log(curPos); %>
+<%              var item = file[curPos]['name'].trim() + ((file[curPos]['extension'] == '') ?  '' : '.'+file[curPos]['extension']) %>
              
-<%              if(data[curPos]['type'] == 'directory') { %>
-                        <a href="#" class="btn btn-info btn-lg">
+<%              if(file[curPos]['type'] == 'directory') { %>
+                        <a href="<%= query %>/<%= item %>" class="btn btn-info btn-lg">
                                 <span class="glyphicon glyphicon-folder-open"></span> <%= item %>
                         </a>
 <%              } else { %>
@@ -34,16 +39,14 @@
 
 
 <body>
-
-
         <div class="container" style="padding:5%">
-                <form method="GET" , action="/file/">
+                <form method="GET" , action="/file">
                         <% for(var i = 0; i < row; i++) { %>
                         <div class="row align-items-start">
                                 <% for(var j = 0 ; j < col; j++) { %>
                                 <span class="col-sm-2 offset-sm-2" style="padding:10px;">
                                        
-                                        <% addItem(i*row+j) %>
+                                        <% addItem(i*col+j) %>
                                         
               
                                 </span>
