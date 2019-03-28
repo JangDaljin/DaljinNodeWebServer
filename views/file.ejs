@@ -1,131 +1,58 @@
+<% var data_length = Object.keys(data).length %>
+<% var col = 3 %>
+<% var row = parseInt(data_length / col) %>
+<% var addItem = function(curPos) { %>
+<%      if(curPos < data_length) { %>
+<%              var item = data[curPos]['name'].trim() + ((data[curPos]['extension'] == '') ?  '' : '.'+data[curPos]['extension']) %>
+             
+<%              if(data[curPos]['type'] == 'directory') { %>
+                        <a href="#" class="btn btn-info btn-lg">
+                                <span class="glyphicon glyphicon-folder-open"></span> <%= item %>
+                        </a>
+<%              } else { %>
+                        <a href="#" class="btn btn-info btn-lg">
+                                <span class="glyphicon glyphicon-file"></span> <%= item %> 
+                        </a>
+<%              } %>
+<%      } %>
+<% } %>
+
 <!DOCTYPE html>
 
 <html>
+
 <head>
-        <meta charset="utf-8"/>
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <style>
-                *, *:before, *:after {
-                -webkit-box-sizing: border-box;
-                -moz-box-sizing: border-box;
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                }
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
-
-
-                .new {
-                padding: 50px;
-                }
-
-                .form-group {
-                display: block;
-                margin-bottom: 15px;
-                }
-
-                .form-group input {
-                padding: 0;
-                height: initial;
-                width: initial;
-                margin-bottom: 0;
-                display: none;
-                cursor: pointer;
-                }
-
-                .form-group label {
-                position: relative;
-                cursor: pointer;
-                }
-
-                .form-group label:before {
-                content:'';
-                -webkit-appearance: none;
-                background-color: transparent;
-                border: 2px solid #0079bf;
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
-                padding: 10px;
-                display: inline-block;
-                position: relative;
-                vertical-align: middle;
-                cursor: pointer;
-                margin-right: 5px;
-                }
-
-                .form-group input:checked + label:after {
-                content: '';
-                display: block;
-                position: absolute;
-                top: 2px;
-                left: 9px;
-                width: 6px;
-                height: 14px;
-                border: solid #0079bf;
-                border-width: 0 2px 2px 0;
-                transform: rotate(45deg);
-                }
-
-         </style>
 </head>
 
 
 
 <body>
-        <div class="container">
-                <div class="row">
-                                <div class="new">
-                                        <form>
-                                                <div class="form-group">
-                                                        <input type="checkbox" id="html">
-                                                        <label for="html">HTML</label>
-                                                </div>
-                                                <div class="form-group">
-                                                        <input type="checkbox" id="css">
-                                                        <label for="css">CSS</label>
-                                                </div>
-                                                <div class="form-group">
-                                                        <input type="checkbox" id="javascript">
-                                                        <label for="javascript">Javascript</label>
-                                                </div>
-
-                                                <% for(var i = 0 ; i < Object.keys(data).length; i++) { %>
-                                                <div class="form-group">
-                                                        <input type="checkbox" id="<%= data[i]["name"] %>>
-                                                        <label for="<%= data[i]["name"] %>">
-                                                                <%= data[i]["name"].trim() %>
-                                                        </label>
-                                                </div>
-                                                <% } %>
-                                        </form>
-                                </div>
-                </div>
-        </div>
 
 
-        <div class="container">
-                <div class="row">
-                        <div class="new">
-                                <form>
-                                        <div class="form-group">
-                                                <input type="checkbox" id="html">
-                                                <label for="html">HTML</label>
-                                        </div>
-                                        <div class="form-group">
-                                                <input type="checkbox" id="css">
-                                                <label for="css">CSS</label>
-                                        </div>
-                                        <div class="form-group">
-                                                <input type="checkbox" id="javascript">
-                                                <label for="javascript">Javascript</label>
-                                        </div>
-                                </form>
+        <div class="container" style="padding:5%">
+                <form method="GET" , action="/file/">
+                        <% for(var i = 0; i < row; i++) { %>
+                        <div class="row align-items-start">
+                                <% for(var j = 0 ; j < col; j++) { %>
+                                <span class="col-sm-2 offset-sm-2" style="padding:10px;">
+                                       
+                                        <% addItem(i*row+j) %>
+                                        
+              
+                                </span>
+                                <% } %>
                         </div>
-                </div>
+                        <% } %>
+                </form>
         </div>
+
 </body>
 
 </html>

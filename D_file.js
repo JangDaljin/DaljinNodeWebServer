@@ -10,28 +10,21 @@ D_file.getList = (dirname , callback) => {
         if(err) {
             makeDirectory(dirname);
         }
+
         FILE_INFO = {};
-        
         for(var i = 0 ; i < files.length; i++) {
 
             var stats = fs.lstatSync(dirname + '/' + files[i]) 
             
-            var jsonstr = "{";
-            jsonstr += '"type" :';
-
-            if(stats.isFile()) {
-                jsonstr += '"file"';
-            } 
-            if(stats.isDirectory()) {
-                jsonstr += '"directory"';
-            }
-
-            jsonstr += ', "name": "';
-            jsonstr += files[i];
-            jsonstr += '"}';
             
-            //console.dir(jsonstr);
-            var obj = JSON.parse(jsonstr)
+            
+            
+            var dot_index = files[i].lastIndexOf('.');
+            var obj = {};
+            obj['type']        = (stats.isFile()) ? 'file' : 'directory';
+            obj['name']        = (dot_index != -1) ? files[i].substring(0 , files[i].lastIndexOf('.')) : files[i];
+            obj['extension']   = (dot_index != -1) ? files[i].substring(files[i].lastIndexOf('.')+1 , files[i].length) : '';
+
             FILE_INFO[i] = obj;
         }
         callback(FILE_INFO);
