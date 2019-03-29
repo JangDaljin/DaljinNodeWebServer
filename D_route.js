@@ -33,7 +33,6 @@ module.exports = function(app) {
             var id = req.params.id;
             var path = req.query.path || '';
             console.log('id : %s , path : %s', id , path);
-            console.log('./files/'+ id + path);
             D_file.getList('./files/'+ id + path
             ,(err , FILE_INFO) =>{
                 obj = {};
@@ -44,6 +43,8 @@ module.exports = function(app) {
                     obj['query'] = id + '?path='+ path;
                 }
                 obj['file'] = FILE_INFO;
+
+                console.dir(obj);
                 res.render('file.ejs' , {data : obj});
             });
         }
