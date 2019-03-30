@@ -8,7 +8,7 @@ passport.use('login' , new LocalStrategy({
     passReqToCallback : true
 } , 
 function(req , id , pw , done) {
-    console.dir(D_UserModel);
+    
 
     var D_UserModel = req.app.get('D_UserModel');
 
