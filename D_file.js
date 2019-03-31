@@ -31,9 +31,21 @@ D_file.getList = (dirname , callback) => {
     })
 }
 
+D_file.moveTo = (source , destination) => {
+
+    fs.rename(source , destination , (err) => {
+        if(err) {
+            console.log('ERROR : move ' + source + ' To ' + destination);
+        }
+        else {
+            console.log("MOVE COMPLETE");
+        }
+    })
+} 
+
 //폴더 만들기
 var makeDirectory = (dirname) => {
-    fs.mkdirSync(dirname);
+    fs.mkdir(dirname);
     console.log('Making file complete');
 }
 
@@ -44,7 +56,7 @@ var makeDate = (date) => {
 
     var year = date.getFullYear().toString();
     var month = ch(date.getMonth()+1);
-    var day = ch(date.getDay());
+    var day = ch(date.getDate());
     var hour = ch(date.getHours());
     var min = ch(date.getMinutes());
     var sec = ch(date.getSeconds());

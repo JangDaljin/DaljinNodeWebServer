@@ -1,9 +1,11 @@
-var http = require('http')
+var http = require('http');
     
 
 var express = require('express')
     , bodyparser = require('body-parser')
     , expressSession = require('express-session')
+    , cookieParser = require('cookie-parser')
+    , cors = require('cors');
 
 var D_route = require('./D_route')
     ,D_mongoose = require('./D_database').D_Mongoose
@@ -16,11 +18,13 @@ var SERVER_PORT = '3000';
 //express ¼³Á¤
 var app = express();
 
+
 app.set('USER_AUTH_CODE' , '0105');
 
 app.set('views' , __dirname + '/views');
 app.set('view engine' , 'ejs');
 
+app.use(cookieParser());
 app.use(expressSession(
     {
         secret : 'daljin',
@@ -28,12 +32,15 @@ app.use(expressSession(
         saveUninitialized : true
     }
 ));
+
+
 app.use(D_passport.initialize());
 app.use(D_passport.session());
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 
+app.use(cors());
 
 D_route(app);
 
