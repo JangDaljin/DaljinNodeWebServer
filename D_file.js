@@ -14,8 +14,6 @@ D_file.getList = (dirname , callback) => {
             FILE_INFO = {};
             for(var i = 0 ; i < files.length; i++) {
                 var stats = fs.lstatSync(dirname + '/' + files[i]) 
-
-                
                 var dot_index = files[i].lastIndexOf('.');
                 var obj = {};
                 obj['size']        = stats.size.toString();
@@ -44,9 +42,13 @@ D_file.moveTo = (source , destination) => {
 } 
 
 //폴더 만들기
-var makeDirectory = (dirname) => {
-    fs.mkdir(dirname);
-    console.log('Making file complete');
+D_file.makeDirectory = (dirname , callback) => {
+    fs.mkdir(dirname , (err) => {
+        if(err) { callback(err) }
+        else {
+            callback(null);
+        }
+    });
 }
 
 //YYYY-MM-DD HHMMSS

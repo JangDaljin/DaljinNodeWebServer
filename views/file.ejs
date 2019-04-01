@@ -4,19 +4,19 @@
 <% var addItem = function(curPos) { %>
 <%      var item = file[curPos]['name'].trim() + ((file[curPos]['extension'] == '') ?  '' : '.'+file[curPos]['extension']) %>
 <%      if(file[curPos]['type'] == 'directory') { %>
-                <td class=""></td>
-                <td class="text-left">
+                <td class="align-middle"></td>
+                <td class="text-left align-middle">
                 <a href="?path=<%= query %>/<%= item %>" class="">
                         <i class="fas fa-folder text-truncate">
                                 <%= item %>
                         </i>
                 </a>
                 </td>
-                <td class=""></td>
-                <td class=""></td>
+                <td class="align-middle"></td>
+                <td class="align-middle"></td>
 <%      } else { %>
 
-                <td class="">
+                <td class="align-middle">
                         <div class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" id="d_checkbox<%= curPos %>" name="d_checkbox" onchange="addList('d_checkbox<%= curPos %>')">
                                 <label class="custom-control-label" for="d_checkbox<%= curPos %>"></label>
@@ -24,62 +24,68 @@
                         </div>
                 </td>   
                 
-                <td class="text-left">
+                <td class="text-left align-middle">
                         <i class="fas fa-file text-truncate">
                                 <%= item %>
                         </i>
                 </td>
-                <td class=""><%= file[curPos]['size'] %></td>
-                <td class=""><%= file[curPos]['ctime'] %></td>
+                <td class="align-middle"><%= file[curPos]['size'] %></td>
+                <td class="align-middle"><%= file[curPos]['ctime'] %></td>
 <%      } %>
 <% } %>
 
 <!DOCTYPE html>
 
-<html>
+<html lang="ko">
 
 <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- BOOTSTRAP -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
+        <!-- JQuery.fileDownload.js -->
         <script src="http://jqueryfiledownload.apphb.com/Scripts/jquery.fileDownload.js"></script>
+
+        <!-- ICON -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
         <script type="text/javascript">
-                var downloadList = [];
+                
+                var checkedList = [];
 
                 var addList = function(id){
                         var curItem = document.getElementById(id);
                         var curItem_hidden = document.getElementById(id+'_hidden');
 
                         if(curItem.checked) {
-                                downloadList.push(curItem_hidden.value);
+                                checkedList.push(curItem_hidden.value);
                         }
                         else {
-                                var index = downloadList.indexOf(curItem_hidden.value);
+                                var index = checkedList.indexOf(curItem_hidden.value);
                                 console.log(index);
                                 if(index != -1) {
-                                        downloadList.splice(index , 1);
+                                        checkedList.splice(index , 1);
                                 }
                         }
                 }
 
-                var download = (pos) => {                        
-                        if(downloadList.length == 0 || pos >= downloadList.length) {
+                //다운로드 js
+                var downloadFile = (pos) => {                        
+                        if(checkedList.length == 0 || pos >= checkedList.length) {
                                 return null;
                         }
-                        document.getElementById('downloadFile').value = downloadList[pos];
+                        document.getElementById('downloadFile').value = checkedList[pos];
 
                         //jQuery.fileDownload.js plugin 사용
-                        $.fileDownload($('#frm').prop('action'), { 
+                        $.fileDownload($('#downloadForm').prop('action'), { 
     
                                 httpMethod: "POST", 
-                                data: $('#frm').serialize(), 
+                                data: $('#downloadForm').serialize(), 
 
                                 successCallback: function (url) { 
                                         download(pos+1);
@@ -87,34 +93,60 @@
                                 failCallback: function (responseHtml, url, error) { 
                                 
                                         alert("fail Download"); 
-                                } 
+                                }
                         });
-                        
-                        
                 }
 
+                //파일 삭제
+                var deleteFile = () => {
+                        if(checkedList.length == 0) {
+                                return null;
+                        }
+
+                        var JSON_obj = {};
+                        for(var i = 0 ; i < checkedList.length; i++) {
+                                JSON_obj[i] = checkedList[i];
+                        }
+                        document.getElementById('deleteFileList').value = JSON.stringify(JSON_obj);
+                        document.getElementById('deleteForm').submit();
+                }
+
+                //업로드 js
                 var UploadList_View = () => {
                         var upload_files = document.getElementById('files');
                         var list_files = upload_files.files;
-                        var ul = document.getElementById('filelist');
 
+                        //업로드 리스트 초기화
+                        var ul = document.getElementById('filelist');
+                        while ( ul.hasChildNodes() ) 
+                        { 
+                                ul.removeChild( ul.firstChild ); 
+                        }
+
+                        //업로드 리스트 추가
                         for(var i = 0 ; i < list_files.length; i++) {
                                 var item = document.createElement('li');
                                 var content = document.createTextNode(list_files[i].name);
                                 
                                 item.appendChild(content);
                                 item.id='filelist_i';
-                                item.className = 'list-group-item w-100';
-                                item.style = "width: 100%; height:100%";
+                                item.className = 'list-group-item d-flex justify-content-between align-items-center';
 
                                 ul.appendChild(item);
+
                         }
                 };
 
+                var dirNameCheck = () => {
+                       var dirName = document.getElementById('dirName').value;
+
+                       if(dirName == '' || dirName==null) {
+                               return false;
+                       }
+                       return true;
+                }
+
         </script>
-
-
-
 </head>
 
 <body>
@@ -123,57 +155,86 @@
                 <div class="row">
                         <div class="col">
                                 <div class="container-fluid">
+                                                <!-- 리스트 -->
                                                 <div class="row">
-                                                                <div class="table-responsive table-bordered">                        
-                                                                        <table class="table table-dark table-striped table-hover align-middle text-center">
-                                                                        <thead>
-                                                                                <tr>
-                                                                                        <th class="w-5">CHECK</th>
-                                                                                        <th class="w-50">NAME</th>
-                                                                                        <th class="w-25">SIZE</th>
-                                                                                        <th class="w-20">TIME</th>
-                                                                                </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                                <% for(var i = 0; i < file_length; i++) { %>
-                                                                                <tr>
-                                                                                        <% addItem(i) %>
-                                                                                </tr>
-                                                                                <% } %>
-                                                                        </tbody>
-                                                                        </table>
-                                                                </div>
-                                
+                                                        <div class="table-responsive table-bordered">                        
+                                                                <table class="table table-striped table-hover align-middle text-center">
+                                                                <thead>
+                                                                        <tr>
+                                                                                <th class="w-5">CHECK</th>
+                                                                                <th class="w-50">NAME</th>
+                                                                                <th class="w-25">SIZE</th>
+                                                                                <th class="w-20">TIME</th>
+                                                                        </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                        <% for(var i = 0; i < file_length; i++) { %>
+                                                                        <tr>
+                                                                                <% addItem(i) %>
+                                                                        </tr>
+                                                                        <% } %>
+                                                                </tbody>
+                                                                </table>
                                                         </div>
-                                
-                                                        <div class="row text-center align-middle">
+                                                </div>
 
-                                                                        <div class="container-fluid p-0 mt-3">
-                                                                                <form id="frm" method="POST" action="/fileDownload">
-                                                                                        <input type="hidden" id="downloadFile" name="downloadFile" value="">
-                                                                                        <input type="button" class="btn btn-outline-dark" value="DOWNLOAD" style="width: 100%; height:100%" onclick="download(0);">
-                                                                                </form>
+                                                <!-- 폴더만들기 폼 -->
+                                                <div class="row text-center align-middle">
+                                                        <form class="m-0 p-0 w-100" id="makeDirectoryForm" method="POST" action="/makeDirectory">
+                                                                <div class="container-fluid p-0 mt-3 mb-3">
+                                                                        <div class="row">
+                                                                                
+                                                                                <div class="col-sm-8 m-0 pr-0">
+                                                                                        <div class="form-group">
+                                                                                                <input type="text" class="form-control" id="dirName" name="dirName" value="">
+                                                                                        </div>
+                                                                                </div>
+
+                                                                                <input type="hidden" name="dirPath" value="<%= query %>">
+
+                                                                                <div class="col-sm-4">
+                                                                                        <input type="button" class="btn btn-outline-dark" value="MAKE DIRECTORY" onclick="(dirNameCheck())? submit() : alert('error')">        
+                                                                                </div>
+
                                                                         </div>
+                                                                </div>
+                                                        </form>
+                                                </div>
+
+                                                <!-- 다운로드 폼 -->
+                                                <div class="row text-center align-middle">
+
+                                                                <div class="container-fluid p-0 mt-3 mb-3">
+                                                                        <form id="downloadForm" method="POST" action="/fileDownload">
+                                                                                <input type="hidden" id="downloadFile" name="downloadFile" value="">
+                                                                                <input type="button" class="btn btn-outline-dark" value="DOWNLOAD" style="width: 100%; height:100%" onclick="downloadFile(0);">
+                                                                        </form>
+                                                                </div>
+                                                </div>
+
+                                                <!-- 삭제 폼 -->
+                                                <div class="row">
+                                                        <div class="container-fluid p-0 mb-3">
+                                                                <form id="deleteForm" method="POST" action="/fileDelete">
+                                                                        <input type="hidden" id="deleteFileList" name="deleteFileList" value="">
+                                                                        <input type="hidden" name="deletePath" value="<%= query %>">
+                                                                        <input type="button" class="btn btn-outline-dark" value="DELETE" style="width: 100%; height:100%" onclick="deleteFile();">
+                                                                </form>
                                                         </div>
+                                                </div>
                                         </div>
                         </div>
                         
                         <div class="col">
+                                <!-- 업로드 폼 -->
                                 <div class="container-fluid">
-
-                                        
-
                                         <form method="POST" action="/fileUpload" enctype="multipart/form-data">
                                                 <div class="row">
-                                                        
                                                         <div class="custom-file mb-3">
                                                                 <input type="file" class="custom-file-input" id="files" name="files" multiple onchange="UploadList_View()">
-                                                                <label class="custom-file-label" for="customFile">Choose file</label>
-                                                                <input type="hidden" name="path" value="<%= query %>">
+                                                                <label class="custom-file-label" for="customFile">SELECT YOUR FILES</label>
+                                                                <input type="hidden" name="uploadPath" value="<%= query %>">
                                                         </div>
-                                                        
-                                                        
-                                                        
                                                 </div>
 
                                                 <div class="row">
@@ -183,10 +244,7 @@
                                                 </div>
 
                                                 <div class="row">
-                                                        
-                                                                
-                                                                <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="UPLOAD"  type="submit">
-                                                        
+                                                        <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="UPLOAD"  type="submit">
                                                 </div>
                                         </form>
                                 </div>

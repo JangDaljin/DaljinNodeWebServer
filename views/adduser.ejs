@@ -1,22 +1,52 @@
-﻿<!DOCTYPE html>
+﻿
+
+
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- BOOTSTRAP -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
+        <% var data = param %>
+        <% if(data =='CODE') { %>
+                <script>alert('코드가 잘못되었습니다');</script>
+        <% } else if(data =='IDPW') { %>
+                <script>alert('아이디 또는 비밀번호가 잘못되었습니다.');</script>
+        <% } else if(data =='SUCCESS') { %>
+                <script>alert('등록되었습니다.'); window.location='/';</script>
+        <% } else { %>
+            <script>alert(data);</script>
+        <% } %>
+    
+    <div class="container">
+        <form method="post" action="/adduser">
+            <div class="form-group">
+                <label for="ID">ID:</label>
+                <input type="text" class="form-control" id="ID" name="ID">
+            </div>
 
-    <form method="post" action="/adduser">
+            <div class="form-group">
+                <label for="PW">PASSWORD:</label>
+                <input type="password" class="form-control" id="PW" name="PW">
+            </div>
 
-        ID:<input type="text" name="ID" />
-        PW:<input type="password" name="PW" />
-        CODE:<input type="password" name="CODE" />
+            <div class="form-group">
+                    <label for="CODE">CODE:</label>
+                    <input type="text" class="form-control" id="CODE" name="CODE">
+            </div>
 
-        <input type="submit" name="submit" value="만들기"/>
-
-    </form>
-
+            <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="만들기"  type="submit">
+        </form>
+    </div>
 
 </body>
 </html>

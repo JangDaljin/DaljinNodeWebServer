@@ -1,7 +1,6 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 
-
 passport.use('login' , new LocalStrategy({
     usernameField : 'ID',
     passwordField : 'PW',
