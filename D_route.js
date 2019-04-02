@@ -1,12 +1,13 @@
 ﻿var passport = require('./D_passport');
 var D_file = require('./D_file');
 var path = require('path');
-
 var multer = require('multer');
-
+var archiver = require('archiver');
 
 module.exports = function(app) {
 
+
+    //메인 페이지
     app.get('/' , (req , res) => {
         if(req.isAuthenticated()) {
             res.redirect('/file');
@@ -16,6 +17,7 @@ module.exports = function(app) {
         }
     });
 
+    //로그인 처리
     app.post('/login' , passport.authenticate('login' , {
         successRedirect : '/file',
         failureRedirect : '/'
@@ -67,6 +69,8 @@ module.exports = function(app) {
         }
     });
 
+
+    //업로드 미들웨어 설정
     var upload = multer({
         storage : multer.diskStorage({
             destination : (req , file , callback) => {
@@ -99,15 +103,36 @@ module.exports = function(app) {
     });
 
     //파일다운로드 처리
-    app.post('/fileDownload/' , (req , res) => {
+    app.post('/Download/' , (req , res) => {
         if(req.isAuthenticated()) {
+
+
+
+            var downloadItem = req.body.downloadItem || '';
+            var type = req.body.itemType || ''; 
+
 
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
+            if(type == 'dir') {
+                res.setHeader('Content-Type' , "application/zip");
+                res.setHeader('Content-Disposition', 'attachment; filename=' + downloadItem.substring(1,downloadItem.length) + '.zip');
+                var archive = archiver('zip');
+                new Promise(
+                    () => {
+                    archive
+                    .directory(path.join(__dirname, 'files' , req.user.id, downloadItem), false)
+                    .on('error', (err) => {archive.close()})
+                    .pipe(res);
+                
+                    res.on('finish', () => {console.log("ZIP SEND COMPLETE")});
+                    archive.finalize();
+                });
 
-            var downloadFile = req.body.downloadFile || '';
-            console.dir(downloadFile);
-                res.download(path.join(__dirname, 'files' , req.user.id, downloadFile) , downloadFile , (err) => {
+            }
+            else {
+                
+                res.download(path.join(__dirname, 'files' , req.user.id, downloadItem) , downloadItem , (err) => {
                     if(err) {
                         console.dir(err);
                     }
@@ -115,7 +140,7 @@ module.exports = function(app) {
                         console.log('file send complete');
                     }
                 });
-            
+            }
         }
         else {
             console.log('Download authenticate error');
@@ -148,8 +173,8 @@ module.exports = function(app) {
         }
     });
 
-    //파일 지우기 처리
-    app.post('/fileDelete' , (req ,res) => {
+    //파일,폴더 지우기 처리
+    app.post('/Delete' , (req ,res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
             var deletePath = req.body.deletePath || '';
@@ -157,7 +182,12 @@ module.exports = function(app) {
             var deleteFileList_length = Object.keys(deleteFileList).length;
 
             for(var i = 0 ; i < deleteFileList_length; i++) {
-                D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i] , './files/trash_bin/'+deleteFileList[i] + '_' + id);
+                if(deleteFileList[i]['type'] == 'dir') {
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                }
+                else if(deleteFileList[i]['type'] == 'file') {
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                }
             }
             res.redirect('/file' + '?path=' + deletePath);
         }

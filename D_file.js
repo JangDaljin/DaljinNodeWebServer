@@ -1,8 +1,6 @@
 var fs = require('fs');
 
-
 var D_file = {};
-
 
 //리스트 가져오기
 D_file.getList = (dirname , callback) => {
@@ -65,5 +63,6 @@ var makeDate = (date) => {
 
     return year + '-' + month +'-' + day + ' ' + hour + ':' + min + ':' + sec;
 }
+
 
 module.exports = D_file;

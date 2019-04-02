@@ -46,6 +46,7 @@ D_route(app);
 
 
 http.createServer(app).listen(SERVER_PORT, SERVER_HOSTNAME, function () {
+
     D_mongoose.connect(app);
 });
 
