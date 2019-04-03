@@ -44,7 +44,7 @@ module.exports = function(app) {
         }
     });
 
-    //파일리스트 요청
+    //파일 페이지
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
@@ -60,7 +60,6 @@ module.exports = function(app) {
                 }
                 obj['file'] = FILE_INFO;
 
-                //console.dir(obj);
                 res.render('file.ejs' , {data : obj});
             });
         }
@@ -90,10 +89,17 @@ module.exports = function(app) {
             var files = req.files;
     
             for(var i = 0 ; i < req.files.length; i++) {
-                console.log('source : ' + '/files/uploads/' + files[i].originalname+'_'+id);
-                console.log('destination : ' + '/files/'+id+path);
     
-                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname);
+                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname , (err) => {
+                    if(err) {
+                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD ERROR');
+                        console.log('[' + id + '] UPLOAD ERROR');
+                    }
+                    else{
+                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD COMPLETE');
+                        console.log('[' + id + '] UPLOAD COMPLETE');
+                    }
+                });
             }
             res.redirect('/file' + '?path=' + path);
         }
@@ -106,14 +112,14 @@ module.exports = function(app) {
     app.post('/Download/' , (req , res) => {
         if(req.isAuthenticated()) {
 
-
-
-            var downloadItem = req.body.downloadItem || '';
-            var type = req.body.itemType || ''; 
-
+            var id =  req.user.id;
+            var downloadItem    = req.body.downloadItem     || '';
+            var type            = req.body.itemType         || ''; 
 
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
+
+            //폴더일 경우
             if(type == 'dir') {
                 res.setHeader('Content-Type' , "application/zip");
                 res.setHeader('Content-Disposition', 'attachment; filename=' + downloadItem.substring(1,downloadItem.length) + '.zip');
@@ -121,29 +127,38 @@ module.exports = function(app) {
                 new Promise(
                     () => {
                     archive
-                    .directory(path.join(__dirname, 'files' , req.user.id, downloadItem), false)
-                    .on('error', (err) => {archive.close()})
+                    .directory(path.join(__dirname, 'files' , id, downloadItem), false)
+                    .on('error', (err) => {
+                        archive.close()
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FOLDER(ZIP) SEND ERROR');
+                    })
                     .pipe(res);
                 
-                    res.on('finish', () => {console.log("ZIP SEND COMPLETE")});
+                    res.on('finish', 
+                    () => {
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FOLDER(ZIP) SEND COMPLETE');
+                    });
                     archive.finalize();
                 });
-
             }
-            else {
+            else if(type == 'file'){
                 
-                res.download(path.join(__dirname, 'files' , req.user.id, downloadItem) , downloadItem , (err) => {
+                res.download(path.join(__dirname, 'files' , id, downloadItem) , downloadItem , (err) => {
                     if(err) {
-                        console.dir(err);
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FILE SEND ERROR');
                     }
                     else {
-                        console.log('file send complete');
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FILE SEND COMPLETE');
                     }
                 });
+            }
+            else {
+                //인가되지않은 타입의 경우
+                res.end();
             }
         }
         else {
-            console.log('Download authenticate error');
+            res.end();
         }
     });
 
@@ -157,9 +172,10 @@ module.exports = function(app) {
             if(name != '')  {
                 D_file.makeDirectory('./files/'+ id + path + '/' + name , (err)=>{
                     if(err) {
-                        console.log('folder make error');
+                        console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE ERROR');
                     }
                     else {
+                        console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
                         res.redirect('/file' + '?path=' + path);
                     }
                 });
@@ -183,10 +199,24 @@ module.exports = function(app) {
 
             for(var i = 0 ; i < deleteFileList_length; i++) {
                 if(deleteFileList[i]['type'] == 'dir') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id, (err)=> {
+                        if(err) {
+                            console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE ERROR')
+                        }
+                        else {
+                            console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE COMPLETE')
+                        }
+                    });
                 }
                 else if(deleteFileList[i]['type'] == 'file') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id , (err)=> {
+                        if(err) {
+                            console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE ERROR')
+                        }
+                        else {
+                            console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE COMPLETE')
+                        }
+                    });
                 }
             }
             res.redirect('/file' + '?path=' + deletePath);
@@ -199,6 +229,7 @@ module.exports = function(app) {
     //로그아웃 처리
     app.get('/logout' , (req , res) => {
         if(req.isAuthenticated()) {
+            console.log('[' + req.user.id + '] LOGOUT COMPLETE')
             req.logout();
         }
         res.redirect('/');
@@ -222,22 +253,26 @@ module.exports = function(app) {
         }
         else {
             var D_UserModel = req.app.get('D_UserModel');
-    
             var UserModel = new D_UserModel(
                 {
                     id : ID,
                     password : PW
                 }
             );
-        
             UserModel.save((err)=> {
-                console.log('USER_ID : ' + ID + ' ' + 'USER_PW : ' + PW);
                 if(err) {
+                    console.log('[' + ID + '] ADD USER ERROR');
                     res.redirect('/adduser?param=IDPW');
                 }
                 else {
-                    D_file.makeDirectory('./files/'+ ID);
-
+                    D_file.makeDirectory('./files/'+ ID , (err) => {
+                        if(err) {
+                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY ERROR');
+                        }
+                        else {
+                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                        }
+                    });
                     res.redirect('/adduser?param=SUCCESS');
                 }
             });

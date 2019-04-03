@@ -29,7 +29,6 @@
                                 <input type="hidden" id="d_checkbox<%= curPos %>_hidden" value="<%= query %>/<%= item %>">
                         </div>
                 </td>   
-                
                 <td class="text-left align-middle">
                         <i class="fas fa-file text-truncate">
                                 <%= item %>
@@ -62,6 +61,7 @@
 
         <script type="text/javascript">
                 
+                //파일 체크시 리스트 추가
                 var fileCheckList = [];
                 var addFileCheckList = (id) => {
                         var curItem = document.getElementById(id);
@@ -79,6 +79,7 @@
                         }
                 };
 
+                //폴더 체크시 리스트 추가
                 var dirCheckList = [];
                 var addDirCheckList = (id) => {
                         var curItem = document.getElementById(id);
@@ -122,7 +123,7 @@
                         });
                 }
 
-                //파일다운로드 -> 폴더다운로드(ZIP)
+                //폴더 다운로드(순서 : 파일다운로드 -> 폴더다운로드(ZIP))
                 var downloadDir = (pos) => {
                         if(dirCheckList.length == 0 || pos >= dirCheckList.length) {
                                 return null;
@@ -197,6 +198,7 @@
                         }
                 };
 
+                //폴더 만들때 이름 체크
                 var dirNameCheck = () => {
                        var dirName = document.getElementById('dirName').value;
 
@@ -204,6 +206,17 @@
                                return false;
                        }
                        return true;
+                }
+
+                //전체 클릭
+                var allCheck = (source) => {
+                        var checkboxes = document.getElementsByName('d_checkbox');
+                        for(var i = 0 ; i < checkboxes.length; i ++) {
+                                for(var i = 0 ; i < checkboxes.length; i++) {
+                                        checkboxes[i].checked = source.checked;
+                                        checkboxes[i].onchange();
+                                }
+                        }
                 }
 
         </script>
@@ -221,7 +234,12 @@
                                                                 <table class="table table-striped table-hover align-middle text-center">
                                                                 <thead>
                                                                         <tr>
-                                                                                <th class="w-5">CHECK</th>
+                                                                                <th class="w-5">
+                                                                                        <span class="custom-control custom-checkbox">
+                                                                                                <input type="checkbox" class="custom-control-input" id="allCheckCheckbox" name="allCheckCheckbox" onchange="allCheck(this);">
+                                                                                                <label class="custom-control-label" for="allCheckCheckbox"></label>
+                                                                                        </span>
+                                                                                </th>
                                                                                 <th class="w-50">NAME</th>
                                                                                 <th class="w-25">SIZE</th>
                                                                                 <th class="w-20">TIME</th>
@@ -249,7 +267,7 @@
                                                                         <input type="hidden" name="dirPath" value="<%= query %>">
 
                                                                         <div class="col-sm-4 p-0">
-                                                                                <input type="button" class="btn btn-outline-dark w-100" value="MAKE DIRECTORY" onclick="(dirNameCheck())? submit() : alert('error')">        
+                                                                                <input type="button" class="btn btn-outline-dark w-100" value="MAKE DIRECTORY" onclick="(dirNameCheck())? submit() : alert('풀더명이 잘못되었습니다.')">        
                                                                         </div>
                                                                 </form> 
                                                 </div>

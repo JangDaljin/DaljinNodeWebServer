@@ -18,7 +18,7 @@ D_file.getList = (dirname , callback) => {
                 obj['ctime']       = makeDate(stats.ctime);
                 obj['type']        = (stats.isFile()) ? 'file' : 'directory';
                 obj['name']        = (dot_index != -1) ? files[i].substring(0 , files[i].lastIndexOf('.')) : files[i];
-                obj['extension']   = (dot_index != -1) ? files[i].substring(files[i].lastIndexOf('.')+1 , files[i].length) : '';
+                obj['extension']   = (dot_index != -1) ? files[i].substring(files[i].lastIndexOf('.') +1 , files[i].length) : '';
 
                 FILE_INFO[i] = obj;
             }
@@ -27,14 +27,14 @@ D_file.getList = (dirname , callback) => {
     })
 }
 
-D_file.moveTo = (source , destination) => {
+D_file.moveTo = (source , destination, callback) => {
 
     fs.rename(source , destination , (err) => {
         if(err) {
-            console.log('ERROR : move ' + source + ' To ' + destination);
+            callback(err);
         }
         else {
-            console.log("MOVE COMPLETE");
+            callback(null);
         }
     })
 } 
@@ -42,7 +42,9 @@ D_file.moveTo = (source , destination) => {
 //폴더 만들기
 D_file.makeDirectory = (dirname , callback) => {
     fs.mkdir(dirname , (err) => {
-        if(err) { callback(err) }
+        if(err) { 
+            callback(err);
+        }
         else {
             callback(null);
         }
