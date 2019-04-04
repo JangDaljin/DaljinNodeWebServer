@@ -1,11 +1,15 @@
 var fs = require('fs');
-
+var path = require('path');
 var D_file = {};
 
 //리스트 가져오기
 D_file.getList = (dirname , callback) => {
+
+    dirname = path.join(__dirname , dirname);
+
     fs.readdir(dirname , (err , files) => {
         if(err) {
+            console.log('errrr');
             callback(err , null);
         }
         else {

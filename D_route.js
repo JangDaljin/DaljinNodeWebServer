@@ -59,7 +59,6 @@ module.exports = function(app) {
                     obj['query'] = path;
                 }
                 obj['file'] = FILE_INFO;
-
                 res.render('file.ejs' , {data : obj});
             });
         }
