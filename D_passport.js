@@ -13,23 +13,23 @@ function(req , id , pw , done) {
 
     D_UserModel.findOne({'id':id} , (err,user) => {
         if(err) {
-            console.log('login error');
+            console.log('[' + id + '] LOGIN ERROR');
             return done(err , null);
         }
         
         if(!user) {
-            console.log('not found ID')
+            console.log('[' + id + '] NOT FOUND ID')
             return done(null , false);
         }
 
         var authenticated = user.authenticate(pw , user._doc.salt, user._doc.hashed_password);
 
         if(!authenticated) {
-            console.log('input wrong password')
+            console.log('[' + id + '] WRONG PASSWORD')
             return done(null , false);
         }
 
-        console.log('login success');
+        console.log('[' + id + '] LOGIN SUCCESS');
         return done(null , user);
         
     });
@@ -41,7 +41,6 @@ passport.serializeUser(function(user, done) {
 }); 
 
 passport.deserializeUser((user , done) => {
-    //console.dir(user);
     done(null , user);
 });
 

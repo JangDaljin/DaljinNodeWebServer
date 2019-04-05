@@ -23,7 +23,7 @@ module.exports = function(app) {
         failureRedirect : '/'
     }));
 
-    //파일 페이지 요청
+    //파일 페이지
     app.post('/fileList'  ,(req , res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
@@ -44,7 +44,7 @@ module.exports = function(app) {
         }
     });
 
-    //파일리스트 요청
+    //파일 페이지
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
@@ -53,15 +53,13 @@ module.exports = function(app) {
             ,(err , FILE_INFO) =>{
                 obj = {};
                 if(err) {
-                    obj['query'] = '';
+                    obj['path'] = '';
                 }
                 else {
-                    obj['query'] = path;
+                    obj['path'] = path;
                 }
-                obj['file'] = FILE_INFO;
-
-                //console.dir(obj);
-                res.render('file.ejs' , {data : obj});
+                obj['files'] = FILE_INFO;
+                res.render('file.ejs' , {data : JSON.stringify(obj)});
             });
         }
         else {
@@ -83,17 +81,24 @@ module.exports = function(app) {
     });
 
     //파일 업로드 요청
-    app.post('/fileUpload' , upload.array('files'), (req , res)=> {
+    app.post('/fileUpload' , upload.array('n_upload_files'), (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var path = req.body.uploadPath || '';
+            var path = req.body.n_upload_path || '';
             var files = req.files;
     
             for(var i = 0 ; i < req.files.length; i++) {
-                console.log('source : ' + '/files/uploads/' + files[i].originalname+'_'+id);
-                console.log('destination : ' + '/files/'+id+path);
     
-                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname);
+                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname , (err) => {
+                    if(err) {
+                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD ERROR');
+                        console.log('[' + id + '] UPLOAD ERROR');
+                    }
+                    else{
+                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD COMPLETE');
+                        console.log('[' + id + '] UPLOAD COMPLETE');
+                    }
+                });
             }
             res.redirect('/file' + '?path=' + path);
         }
@@ -106,44 +111,53 @@ module.exports = function(app) {
     app.post('/Download/' , (req , res) => {
         if(req.isAuthenticated()) {
 
-
-
-            var downloadItem = req.body.downloadItem || '';
-            var type = req.body.itemType || ''; 
-
+            var id =  req.user.id;
+            var downloadItem    = req.body.n_downloadItem     || '';
+            var type            = req.body.n_itemType         || ''; 
 
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
-            if(type == 'dir') {
+
+            //폴더일 경우
+            if(type == 'directory') {
                 res.setHeader('Content-Type' , "application/zip");
                 res.setHeader('Content-Disposition', 'attachment; filename=' + downloadItem.substring(1,downloadItem.length) + '.zip');
                 var archive = archiver('zip');
                 new Promise(
                     () => {
                     archive
-                    .directory(path.join(__dirname, 'files' , req.user.id, downloadItem), false)
-                    .on('error', (err) => {archive.close()})
+                    .directory(path.join(__dirname, 'files' , id, downloadItem), false)
+                    .on('error', (err) => {
+                        archive.close()
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FOLDER(ZIP) SEND ERROR');
+                    })
                     .pipe(res);
                 
-                    res.on('finish', () => {console.log("ZIP SEND COMPLETE")});
+                    res.on('finish', 
+                    () => {
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FOLDER(ZIP) SEND COMPLETE');
+                    });
                     archive.finalize();
                 });
-
             }
-            else {
+            else if(type == 'file'){
                 
-                res.download(path.join(__dirname, 'files' , req.user.id, downloadItem) , downloadItem , (err) => {
+                res.download(path.join(__dirname, 'files' , id, downloadItem) , downloadItem , (err) => {
                     if(err) {
-                        console.dir(err);
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FILE SEND ERROR');
                     }
                     else {
-                        console.log('file send complete');
+                        console.log('[' + id + ']files/' + id + '/' + downloadItem + ' FILE SEND COMPLETE');
                     }
                 });
+            }
+            else {
+                //인가되지않은 타입의 경우
+                res.end();
             }
         }
         else {
-            console.log('Download authenticate error');
+            res.end();
         }
     });
 
@@ -151,17 +165,18 @@ module.exports = function(app) {
     app.post('/makeDirectory' , (req, res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var path = req.body.dirPath || '';
-            var name = req.body.dirName || '';
+            var path = req.body.n_makeDirectory_path || '';
+            var name = req.body.n_makeDirectory_Name || '';
             
             if(name != '')  {
                 D_file.makeDirectory('./files/'+ id + path + '/' + name , (err)=>{
                     if(err) {
-                        console.log('folder make error');
+                        console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE ERROR');
                     }
                     else {
-                        res.redirect('/file' + '?path=' + path);
+                        console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
                     }
+                    res.redirect('/file' + '?path=' + path);
                 });
             }
             else {
@@ -177,16 +192,35 @@ module.exports = function(app) {
     app.post('/Delete' , (req ,res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var deletePath = req.body.deletePath || '';
-            var deleteFileList = JSON.parse(req.body.deleteFileList || '');
+            var deletePath = req.body.n_deletePath;
+            
+            var deleteFileList = JSON.parse(req.body.n_deleteList);
             var deleteFileList_length = Object.keys(deleteFileList).length;
 
             for(var i = 0 ; i < deleteFileList_length; i++) {
-                if(deleteFileList[i]['type'] == 'dir') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                if(deleteFileList[i]['type'] == 'directory') {
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id, (err)=> {
+                        if(err) {
+                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE ERROR')
+                            console.log('[' + id + '] DIRECTORY DELETE ERROR');
+                        }
+                        else {
+                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE COMPLETE')
+                            console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
+                        }
+                    });
                 }
                 else if(deleteFileList[i]['type'] == 'file') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id);
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id , (err)=> {
+                        if(err) {
+                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE ERROR')
+                            console.log('[' + id + '] FILE DELETE ERROR');
+                        }
+                        else {
+                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE COMPLETE');
+                            console.log('[' + id + '] FILE DELETE COMPLETE');
+                        }
+                    });
                 }
             }
             res.redirect('/file' + '?path=' + deletePath);
@@ -199,6 +233,7 @@ module.exports = function(app) {
     //로그아웃 처리
     app.get('/logout' , (req , res) => {
         if(req.isAuthenticated()) {
+            console.log('[' + req.user.id + '] LOGOUT COMPLETE')
             req.logout();
         }
         res.redirect('/');
@@ -222,22 +257,26 @@ module.exports = function(app) {
         }
         else {
             var D_UserModel = req.app.get('D_UserModel');
-    
             var UserModel = new D_UserModel(
                 {
                     id : ID,
                     password : PW
                 }
             );
-        
             UserModel.save((err)=> {
-                console.log('USER_ID : ' + ID + ' ' + 'USER_PW : ' + PW);
                 if(err) {
+                    console.log('[' + ID + '] ADD USER ERROR');
                     res.redirect('/adduser?param=IDPW');
                 }
                 else {
-                    D_file.makeDirectory('./files/'+ ID);
-
+                    D_file.makeDirectory('./files/'+ ID , (err) => {
+                        if(err) {
+                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY ERROR');
+                        }
+                        else {
+                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                        }
+                    });
                     res.redirect('/adduser?param=SUCCESS');
                 }
             });
