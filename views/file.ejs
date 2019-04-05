@@ -40,6 +40,7 @@
                 var path         = null;
                 var files_checked = {};
 
+                //초기화
                 var init = 
                 () => {
                         files        = JSON.parse('<%- files_JSON_String %>')
@@ -51,6 +52,7 @@
                         }
                 };
 
+                //체크박스 선택
                 var Check = (item , pos) => {
                         if(item.checked) {
                                 files_checked[pos] = true;
