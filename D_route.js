@@ -53,13 +53,13 @@ module.exports = function(app) {
             ,(err , FILE_INFO) =>{
                 obj = {};
                 if(err) {
-                    obj['query'] = '';
+                    obj['path'] = '';
                 }
                 else {
-                    obj['query'] = path;
+                    obj['path'] = path;
                 }
-                obj['file'] = FILE_INFO;
-                res.render('file.ejs' , {data : obj});
+                obj['files'] = FILE_INFO;
+                res.render('file.ejs' , {data : JSON.stringify(obj)});
             });
         }
         else {

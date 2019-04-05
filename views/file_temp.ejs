@@ -1,15 +1,42 @@
-<% var INPUT_JSON = JSON.parse(data) %>
-
-<% var files_JSON        = INPUT_JSON['files'];
-<% var files_JSON_String = JSON.stringify(files_JSON) %>
-<% var file_length      = Object.keys(INPUT_JSON['files']).length %>
-
-<% var path          = INPUT_JSON['path']%>
-
-
-
+<% var file = data['file']; %>
+<% var query = data['query']; %>
+<% var file_length = Object.keys(file).length; %>
 <% var addItem = function(curPos) { %>
+<%      var item = file[curPos]['name'].trim() + ((file[curPos]['extension'] == '') ?  '' : '.'+file[curPos]['extension']) %>
+<%      if(file[curPos]['type'] == 'directory') { %>
+                <td class="align-middle">
+                        <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="d_checkbox<%= curPos %>" name="d_checkbox" onchange="addDirCheckList('d_checkbox<%= curPos %>')">
+                                <label class="custom-control-label" for="d_checkbox<%= curPos %>"></label>
+                                <input type="hidden" id="d_checkbox<%= curPos %>_hidden" value="<%= query %>/<%= item %>">
+                        </div>
+                </td>   
+                <td class="text-left align-middle">
+                <a href="?path=<%= query %>/<%= item %>" class="">
+                        <i class="fas fa-folder text-truncate">
+                                <%= item %>
+                        </i>
+                </a>
+                </td>
+                <td class="align-middle"></td>
+                <td class="align-middle"></td>
+<%      } else { %>
 
+                <td class="align-middle">
+                        <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="d_checkbox<%= curPos %>" name="d_checkbox" onchange="addFileCheckList('d_checkbox<%= curPos %>')">
+                                <label class="custom-control-label" for="d_checkbox<%= curPos %>"></label>
+                                <input type="hidden" id="d_checkbox<%= curPos %>_hidden" value="<%= query %>/<%= item %>">
+                        </div>
+                </td>   
+                <td class="text-left align-middle">
+                        <i class="fas fa-file text-truncate">
+                                <%= item %>
+                        </i>
+                </td>
+                <td class="align-middle"><%= file[curPos]['size'] %></td>
+                <td class="align-middle"><%= file[curPos]['ctime'] %></td>
+<%      } %>
 <% } %>
 
 <!DOCTYPE html>
@@ -34,31 +61,6 @@
 
         <script type="text/javascript">
                 
-                
-                var files        = null;
-                var files_length = null;
-                var path         = null;
-
-                var downloadList_Checked = {};
-
-
-                var init = 
-                () => {
-                        files        = JSON.parse('<%= files_JSON_String %>');
-                        files_length = Object.keys(files).length;
-                        path         = '<%= path %>';
-                };
-
-                var Check = (item , pos) => {
-                        if(item.checked) {
-                                downloadList_Checked[pos] = true;
-                        }
-                        else {
-                                downloadList_Checked[pos] = false;
-                        }
-                }       
-
-
                 //파일 체크시 리스트 추가
                 var fileCheckList = [];
                 var addFileCheckList = (id) => {
@@ -220,7 +222,7 @@
         </script>
 </head>
 
-<body onload="init()">
+<body>
 
         <div class="container-fluid" style="padding-top: 3%; text-overflow:ellipsis;">
                 <div class="row">
@@ -246,41 +248,7 @@
                                                                 <tbody>
                                                                         <% for(var i = 0; i < file_length; i++) { %>
                                                                         <tr>
-                                                                                <%      var item = file[curPos]['name'].trim() + ((file[curPos]['extension'] == '') ?  '' : '.'+file[curPos]['extension']) %>
-<%      if(file[curPos]['type'] == 'directory') { %>
-                <td class="align-middle">
-                        <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="d_checkbox<%= curPos %>" name="d_checkbox" onchange="addDirCheckList('d_checkbox<%= curPos %>')">
-                                <label class="custom-control-label" for="d_checkbox<%= curPos %>"></label>
-                                <input type="hidden" id="d_checkbox<%= curPos %>_hidden" value="{ 'item' : curPos }">
-                        </div>
-                </td>   
-                <td class="text-left align-middle">
-                <a href="?path=<%= path %>/<%= item %>" class="">
-                        <i class="fas fa-folder text-truncate">
-                                <%= item %>
-                        </i>
-                </a>
-                </td>
-                <td class="align-middle"></td>
-                <td class="align-middle"></td>
-<%      } else { %>
-
-                <td class="align-middle">
-                        <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="d_checkbox<%= curPos %>" name="d_checkbox" onchange="addFileCheckList('d_checkbox<%= curPos %>')">
-                                <label class="custom-control-label" for="d_checkbox<%= curPos %>"></label>
-                                <input type="hidden" id="d_checkbox<%= curPos %>_hidden" value="<%= path %>/<%= item %>">
-                        </div>
-                </td>   
-                <td class="text-left align-middle">
-                        <i class="fas fa-file text-truncate">
-                                <%= item %>
-                        </i>
-                </td>
-                <td class="align-middle"><%= file[curPos]['size'] %></td>
-                <td class="align-middle"><%= file[curPos]['ctime'] %></td>
-<%      } %>
+                                                                                <% addItem(i) %>
                                                                         </tr>
                                                                         <% } %>
                                                                 </tbody>
@@ -296,7 +264,7 @@
                                                                                         <input type="text" class="form-control" id="dirName" name="dirName" value="">
                                                                                 </div>
                                                                         </div>
-                                                                        <input type="hidden" name="dirPath" value="<%= path %>">
+                                                                        <input type="hidden" name="dirPath" value="<%= query %>">
 
                                                                         <div class="col-sm-4 p-0">
                                                                                 <input type="button" class="btn btn-outline-dark w-100" value="MAKE DIRECTORY" onclick="(dirNameCheck())? submit() : alert('풀더명이 잘못되었습니다.')">        
@@ -321,7 +289,7 @@
                                                         <div class="container-fluid p-0">
                                                                 <form id="deleteForm" method="POST" action="/Delete">
                                                                         <input type="hidden" id="deleteFileList" name="deleteFileList" value="">
-                                                                        <input type="hidden" name="deletePath" value="<%= path %>">
+                                                                        <input type="hidden" name="deletePath" value="<%= query %>">
                                                                         <input type="button" class="btn btn-outline-dark" value="DELETE" style="width: 100%; height:100%" onclick="Delete();">
                                                                 </form>
                                                         </div>
@@ -337,7 +305,7 @@
                                                         <div class="custom-file">
                                                                 <input type="file" class="custom-file-input" id="files" name="files" multiple onchange="UploadList_View()">
                                                                 <label class="custom-file-label" for="customFile">SELECT YOUR FILES</label>
-                                                                <input type="hidden" name="uploadPath" value="<%= path %>">
+                                                                <input type="hidden" name="uploadPath" value="<%= query %>">
                                                         </div>
                                                 </div>
 
