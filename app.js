@@ -15,7 +15,6 @@ var D_route = require('./D_route')
 var SERVER_HOSTNAME = 'localhost';
 var SERVER_PORT = '3000';
 
-//express ¼³Á¤
 var app = express();
 
 

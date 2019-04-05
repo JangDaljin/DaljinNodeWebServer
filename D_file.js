@@ -2,14 +2,13 @@ var fs = require('fs');
 var path = require('path');
 var D_file = {};
 
-//¸®½ºÆ® °¡Á®¿À±â
+//ë¦¬ìŠ¤íŠ¸
 D_file.getList = (dirname , callback) => {
 
     dirname = path.join(__dirname , dirname);
 
     fs.readdir(dirname , (err , files) => {
         if(err) {
-            console.log('errrr');
             callback(err , null);
         }
         else {
@@ -18,7 +17,7 @@ D_file.getList = (dirname , callback) => {
                 var stats = fs.lstatSync(dirname + '/' + files[i]) 
                 var dot_index = files[i].lastIndexOf('.');
                 var obj = {};
-                obj['size']        = getSize(stats.size , 0).toString();
+                obj['size']        = (stats.isFile()) ? stats.size : getFolderSize(dirname + '/' + files[i]);
                 obj['ctime']       = makeDate(stats.ctime);
                 obj['type']        = (stats.isFile()) ? 'file' : 'directory';
                 obj['name']        = (dot_index != -1) ? files[i].substring(0 , files[i].lastIndexOf('.')) : files[i];
@@ -32,6 +31,7 @@ D_file.getList = (dirname , callback) => {
     })
 }
 
+//íŒŒì¼ ì´ë™
 D_file.moveTo = (source , destination, callback) => {
 
     fs.rename(source , destination , (err) => {
@@ -44,7 +44,7 @@ D_file.moveTo = (source , destination, callback) => {
     })
 } 
 
-//Æú´õ ¸¸µé±â
+//í´ë”ë§Œë“¤ê¸°
 D_file.makeDirectory = (dirname , callback) => {
     fs.mkdir(dirname , (err) => {
         if(err) { 
@@ -56,35 +56,26 @@ D_file.makeDirectory = (dirname , callback) => {
     });
 }
 
-var getSize = (size , deter) => {
-    if(size / 1024 > 1) {
-        return getSize(size / 1024 , deter+1);
-    }
-    else {
-        var res = '';
-        switch(deter) {
-            case 0 :
-                res = 'B';
-                break;
-            case 1 :
-                res = 'KB';
-                break;
-            case 2 :
-                res = 'MB';
-                break;
-            case 3 : 
-                res = 'GB';
-                break;
-            case 4:
-                res = 'TB';
-                break;
-            default :
-                res = "NaN";
-                break;
-        }
-        return size.toFixed(2) + res;
-    }
+D_file.getTotalSizeOnRoot = (rootpath) => {
+    return getFolderSize(rootpath)
 }
+
+var getFolderSize = (path) => {
+    var size = 0; 
+    var strArr_filelist = fs.readdirSync(path);
+    for(var i = 0; i < strArr_filelist.length; i++) {
+        var stats = fs.lstatSync(path + '/' + strArr_filelist[i]);
+        if(stats.isFile()) {
+            size += stats.size
+        }
+        else {
+            size += getFolderSize(path + '/' + strArr_filelist[i]);
+        }
+    }
+    return size;
+}
+
+
 
 //YYYY-MM-DD HHMMSS
 var makeDate = (date) => {

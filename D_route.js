@@ -48,7 +48,9 @@ module.exports = function(app) {
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
+            var max_storage = req.user.max_storage;
             var path = req.query.path || '';
+
             D_file.getList('./files/'+ id + path
             ,(err , FILE_INFO) =>{
                 obj = {};
@@ -59,6 +61,8 @@ module.exports = function(app) {
                     obj['path'] = path;
                 }
                 obj['files'] = FILE_INFO;
+                obj['max_storage'] = max_storage;
+                obj['used_storage'] = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)))
                 res.render('file.ejs' , {data : JSON.stringify(obj)});
             });
         }
@@ -84,6 +88,7 @@ module.exports = function(app) {
     app.post('/fileUpload' , upload.array('n_upload_files'), (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
+            
             var path = req.body.n_upload_path || '';
             var files = req.files;
     

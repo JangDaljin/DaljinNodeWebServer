@@ -28,7 +28,8 @@ var _connect = (expressApp) => {
             hashed_password: { type: String, required: true, 'default': ' ' },
             salt: { type: String, required: true },
             created_at: { type: Date, index: { unique: false }, 'default': Date.now },
-            updated_at: { type: Date, index: { unique: false }, 'default': Date.now }
+            updated_at: { type: Date, index: { unique: false }, 'default': Date.now },
+            max_storage : {type:Number , require:true ,'default' : 1024*1024*1024*10}
         });
 
         D_UserSchema
@@ -40,7 +41,7 @@ var _connect = (expressApp) => {
         })
         .get(function () { return this._password });
 
-        //∫Òπ–π¯»£ æœ»£»≠
+        //Ìå®Ïä§ÏõåÎìú ÏïîÌò∏Ìôî
         D_UserSchema
         .method('encryptPassword', function (plainText, inSalt) {
             if (inSalt) {
@@ -51,13 +52,13 @@ var _connect = (expressApp) => {
             }
         });
 
-        //º÷∆Æ ∞™ ª˝º∫
+        //ÏÜîÌä∏ Í∞í ÏÑ§Ï†ï
         D_UserSchema
         .method('makeSalt', function () {
             return Math.round((new Date().valueOf() * Math.random())) + '';
         });
 
-        //∫Òπ–π¯»£ ∞À¡ı
+        //Ìå®Ïä§ÏõåÎìú Í≤ÄÏ¶ù
         D_UserSchema
         .method('authenticate', function (plainText, inSalt, hashed_password) {
             if (inSalt) {
@@ -70,7 +71,7 @@ var _connect = (expressApp) => {
 
         D_UserModel = mongoose.model('d_users' , D_UserSchema)
         
-        //æ€ º≥¡§ø° µÓ∑œ
+        //Ïï±Ïóê Îì±Î°ù
         expressApp.set('D_UserSchema' , D_UserSchema);
         expressApp.set('D_UserModel' , D_UserModel);
 
