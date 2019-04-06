@@ -10,40 +10,184 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript">
+            var init = () => {
+                var param = '<%= param %>';
+                var redirect = '<%= redirect %>';
+                
+                if(param) {
+                    alert('<%= param %>');
+                }
+                if(redirect == '1') {
+                    window.location.href = '/';
+                }
+            }
+
+            var ID_checked = false;
+            var PW_checked = false;
+            var confirmPW_checked = false;
+
+
+            //아이디입력검사
+            var check_ID = (element_id , element_validated_id) => {
+
+                var ID = document.getElementById(element_id).value;
+                
+                outputdata = {};
+                outputdata['ID'] = ID;
+
+                $.ajax({
+                    url : "/checkid",
+                    type : "POST",
+                    data : JSON.stringify(outputdata),
+                    contentType : "application/json",
+                    success : (inputdata_jsonstr) => {
+                        var inputdata = JSON.parse(inputdata_jsonstr);
+                        if(inputdata['result'] == true) {
+                            alert('사용가능합니다.');
+                            ID_checked = true;
+                            document.getElementById(element_validated_id).value = ID;
+                        }
+                        else {
+                            alert('아이디가 중복됩니다.');
+                            ID_checked = false;
+                        }
+                    },
+                    error : () => {
+                        alert('에러발생');
+                        ID_checked = false;
+                    }
+                })
+            }
+
+            //비밀번호 입력 검사
+            var check_PW = (element_id , show_element_id) => {
+                var regex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
+                var pw = document.getElementById(element_id).value;
+
+                if(regex.test(pw)) {
+                    document.getElementById(show_element_id).style.display = 'none';
+                    PW_checked = true;
+                }
+                else {
+                    document.getElementById(show_element_id).style.display = 'block';
+                    PW_checked = false;
+                }
+            }
+
+            //비밀번호 확인 검사
+            var check_confirmPW = (PW_element_id , confirmPW_element_id , show_element_id) => {
+                var PW = document.getElementById(PW_element_id).value;
+                var confirmPW = document.getElementById(confirmPW_element_id).value;
+
+                if(PW == confirmPW) {
+                    document.getElementById(show_element_id).style.display = 'none';
+                    confirmPW_checked = true;
+                }
+                else {
+                    document.getElementById(show_element_id).style.display = 'block';
+                    confirmPW_checked = false;
+                }
+            }
+            
+
+            //보내기전 체크
+            var check_submit = (ID_element_id , ID_hidden_element_id) => {
+                var msg = "";
+
+                if(ID_checked == false || (document.getElementById(ID_element_id).value != document.getElementById(ID_hidden_element_id).value)) {
+                    ID_checked = false;
+                    msg += '- 아이디 중복체크를 하세요\n';
+                }
+                
+                if(PW_checked == false) {
+                    msg += '- 비밀번호를 알맞게 입력하세요\n';
+                }
+
+                if(confirmPW_checked == false) {
+                    msg += '- 비밀번호 확인이 완료되지 않습니다.\n';
+                }
+
+                if(ID_checked && PW_checked && confirmPW_checked) {
+                    return true;
+                }
+                else {
+                    alert(msg);
+                    return false;
+                }
+            }
+
+        </script>
 </head>
 
-<body>
-        <% var data = param %>
-        <% if(data =='CODE') { %>
-                <script>alert('코드가 잘못되었습니다');</script>
-        <% } else if(data =='IDPW') { %>
-                <script>alert('아이디 또는 비밀번호가 잘못되었습니다.');</script>
-        <% } else if(data =='SUCCESS') { %>
-                <script>alert('등록되었습니다.'); window.location='/';</script>
-        <% } else { %>
-            <script>alert(data);</script>
-        <% } %>
-    
-    <div class="container">
-        <form method="post" action="/adduser">
-            <div class="form-group">
-                <label for="ID">ID:</label>
-                <input type="text" class="form-control" id="ID" name="ID">
-            </div>
+<body onload="init();">
+    <form id="adduser_form" method="post" action="/adduser" onsubmit="return check_submit('ID' ,'validated_ID')">
+        <div class="container">
+                <div class="row">
+                    <div class="col-sm-2 p-1">
+                            <label class="form-control text-center">아이디</label>
+                    </div>
+                    
+                    <div class="col-sm-8 p-1">
+                            <input type="text" class="form-control" id="ID" name="ID">
+                            <input type="hidden" id="validated_ID" value="">
+                    </div>
 
-            <div class="form-group">
-                <label for="PW">PASSWORD:</label>
-                <input type="password" class="form-control" id="PW" name="PW">
-            </div>
+                    <div class="col-sm-2 p-1">
+                            <input type="button" class="btn btn-secondary w-100" value="중복확인" onclick="check_ID('ID' , 'validated_ID')">  
+                    </div>
+                </div>
 
-            <div class="form-group">
-                    <label for="CODE">CODE:</label>
-                    <input type="text" class="form-control" id="CODE" name="CODE">
-            </div>
+                <div class="row">
+                        <div class="col-sm-2 p-1">
+                                <label class="form-control text-center">비밀번호</label>
+                        </div>
 
-            <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="만들기"  type="submit">
-        </form>
-    </div>
+                        <div class="col-sm-10 p-1">
+                                <input type="password" class="form-control" id="PW" name="PW" onblur="check_PW('PW' , 'password_check_row');check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
+                        </div>
+                </div>
+
+                <div class="row" id="password_check_row" style="display: none">
+                        <div class="col-sm-10 offset-sm-2 p-1">
+                                <label class="form-control text-center">영문,숫자,특수문자 조합 8~15글자</label>
+                        </div>
+                </div>
+
+                <div class="row">
+                        <div class="col-sm-2 p-1">
+                                <label class="form-control text-center">비밀번호 확인</label>
+                        </div>
+                        
+                        <div class="col-sm-10 p-1">
+                                <input type="password" class="form-control" id="PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
+                        </div>
+                </div>
+
+                <div class="row" id="confirm_password_row" style="display: none">
+                        <div class="col-sm-10 offset-sm-2 p-1">
+                                <label class="form-control text-center">비밀번호가 같지않습니다.</label>
+                        </div>
+                </div>
+
+                <div class="row">
+                        <div class="col-sm-2 p-1">
+                                <label class="form-control text-center">승인번호</label>
+                        </div>
+                        
+                        <div class="col-sm-10 p-1">
+                                <input type="text" class="form-control" id="CODE" name="CODE">
+                        </div>
+                </div>
+
+                <div class="row">
+                        <div class="col-sm-12 p-1">
+                                <input type="submit" class="btn btn-outline-dark w-100">
+                        </div>
+                </div>
+            </div>
+    </form>
 
 </body>
 </html>

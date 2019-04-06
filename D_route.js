@@ -1,5 +1,6 @@
 ﻿var passport = require('./D_passport');
 var D_file = require('./D_file');
+var D_Mongoose = require('./D_database').D_Mongoose;
 var path = require('path');
 var multer = require('multer');
 var archiver = require('archiver');
@@ -45,6 +46,7 @@ module.exports = function(app) {
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
+            var grade = req.user.grade;
             var max_storage = req.user.max_storage;
             var path = req.query.path || '';
 
@@ -60,6 +62,7 @@ module.exports = function(app) {
                         obj['files'] = returnValue;
                         obj['max_storage'] = max_storage;
                         obj['used_storage'] = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)))
+                        obj['grade'] = grade;
                         res.render('file.ejs' , {data : JSON.stringify(obj)});
                     }
                 }
@@ -68,6 +71,72 @@ module.exports = function(app) {
         else {
             res.redirect('/');
         }
+    });
+
+
+    //유저관리 페이지
+    app.get('/master' , (req , res) => {
+        if(req.isAuthenticated() && req.user.grade == 'master') {
+            D_Mongoose.getAllUserData().then(
+                (returnValue) => {
+                    res.render('master.ejs' , {data : JSON.stringify(returnValue) , usersetting : req.app.get('USER_SETTING')});
+                }
+            )
+        }
+        else {
+            res.redirect('/');
+        }
+    })
+
+    //유저관리 페이지 (AJAX 유저 삭제))
+    app.post('/userUpdate' , (req , res) => {
+        if(req.isAuthenticated() && req.user.grade == 'master') {
+            var INPUT_DATA = req.body;
+            var id = INPUT_DATA['id'];
+            var grade = INPUT_DATA['grade'];
+            var storage = INPUT_DATA['storage'];
+            var OUTPUT_DATA = {};
+            D_Mongoose.userUpdate(id , grade , storage).then(
+                (returnValue) => 
+                {
+                    if(returnValue == true) {
+                        OUTPUT_DATA['result'] = true;
+                    }
+                    else {
+                        OUTPUT_DATA['result'] = false;
+                    }
+                    res.send(JSON.stringify(OUTPUT_DATA));
+                }
+            );
+        }
+        else {
+            res.send({});
+        }
+    });
+
+    //유저관리 페이지 (AJAX 유저 정보 변경)
+    app.post('/userDelete' , (req ,res) => {
+        if(req.isAuthenticated() && req.user.grade == 'master') {
+            var INPUT_DATA = req.body;
+            var id = INPUT_DATA['id'];
+            var OUTPUT_DATA = {};
+            D_Mongoose.userDelete(id).then(
+                (returnValue) => 
+                {
+                    if(returnValue == true) {
+                        OUTPUT_DATA['result'] = true;
+                    }
+                    else {
+                        OUTPUT_DATA['result'] = false;
+                    }
+                    res.send(JSON.stringify(OUTPUT_DATA));
+                }
+            )
+        }
+        else {
+            res.send({})
+        }
+
     });
 
 
@@ -231,7 +300,40 @@ module.exports = function(app) {
     //유저추가 페이지
     app.get('/adduser' , (req , res) => {
         var param = req.query.param || '';
-        res.render('adduser.ejs' , {'param' : param});
+        var redirect = req.query.redirect || '';
+        res.render('adduser.ejs' , {'param' : param , 'redirect' : redirect});
+    });
+
+    //아이디 중복체크(AJAX 전용)
+    app.post('/checkid' , (req , res) => {
+        if(req.isAuthenticated()) {
+            var input_json = req.body;
+            var ID = input_json['ID'];
+
+            var output_json = {};
+            output_json['result'] = false;
+
+            if(ID == '') {
+                res.send(JSON.stringify(output_json));
+            }
+            else {
+                D_Mongoose.user_ID_Check(ID).then(
+                    (returnValue) => 
+                    {
+                        if(returnValue == true) {
+                            output_json['result'] = true;
+                        }
+                        else {
+                            output_json['result'] = false;
+                        }
+                        res.send(JSON.stringify(output_json));
+                    }
+                )
+            }
+        }
+        else {
+            res.send({});
+        }
     });
 
     //유저추가 처리
@@ -239,35 +341,65 @@ module.exports = function(app) {
         var ID = req.body.ID || req.query.ID;
         var PW = req.body.PW || req.query.PW;
         var CODE = req.body.CODE || req.query.CODE;
-    
-    
-        if(CODE != req.app.get('USER_AUTH_CODE')) {
-            res.redirect('/adduser?param=CODE');
+        
+        if(ID.trim() == '' && PW.trim() == '' && CODE.trim() == '') {
+            res.redirect('/adduser?redirect=0&param=' + '형식이 잘못됐습니다.');
+            return;
+        }
+
+
+        var USER_SETTING = req.app.get('USER_SETTING');
+        var cur_USER_SETTING = null;
+        for(var i = 0 ; i < Object.keys(USER_SETTING).length; i++) {
+            if(USER_SETTING[i]['code'] == CODE) {
+                cur_USER_SETTING = USER_SETTING[i];
+                break;
+            }
+        }
+        if(cur_USER_SETTING == null) {
+            res.redirect('/adduser?redirect=0&param=' + '승인코드가 틀렸습니다');
         }
         else {
-            var D_UserModel = req.app.get('D_UserModel');
-            var UserModel = new D_UserModel(
-                {
-                    id : ID,
-                    password : PW
+            D_Mongoose.user_ID_Check(ID).then(
+                (returnValue) => {
+                    if(!returnValue) {
+                        res.redirect('/adduser?redirect=0&param=' + '이미 해당 아이디가 존재합니다.');
+                    }
+                    else if(D_Mongoose.user_PW_Check(PW)) {
+                        res.redirect('/adduser?redirect=0&param=' + '비밀번호가 형식에 맞지 않습니다');
+                    }
+                    else {
+                        var D_UserModel = req.app.get('D_UserModel');
+                        var UserModel = new D_UserModel(
+                            {
+                                id : ID,
+                                password : PW,
+                                grade : cur_USER_SETTING['grade'],
+                                max_storage : cur_USER_SETTING['max_storage']
+                            }
+                        );
+
+                        UserModel.save((err)=> {
+                            if(err) {
+                                console.log('[' + ID + '] ADD USER ERROR');
+                                res.redirect('/adduser?redirect=0&param=' + '등록에 실패했습니다.');
+                            }
+                            else {
+                                D_file.makeDirectory('./files/'+ ID).then(
+                                    (returnValue) => 
+                                    {
+                                        console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                                        res.redirect('/adduser?redirect=1&param=' + '정상적으로 등록되었습니다.');
+                                    }
+                                )
+                            }
+                        });
+                    }
                 }
             );
-            UserModel.save((err)=> {
-                if(err) {
-                    console.log('[' + ID + '] ADD USER ERROR');
-                    res.redirect('/adduser?param=IDPW');
-                }
-                else {
-                    D_file.makeDirectory('./files/'+ ID).then(
-                        (returnValue) => 
-                        {
-                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
-                            res.redirect('/adduser?param=SUCCESS');
-                        }
-                    )
-                }
-            });
         }
     });
+
+
 
 }

@@ -11,6 +11,10 @@ var D_Mongoose = {};
 var D_UserSchema = null;
 var D_UserModel = null;
 
+D_Mongoose.connect = (expressApp) => {
+    _connect(expressApp);
+};
+
 var _connect = (expressApp) => {
     mongoose.Promise = global.Promise;
     mongoose.set('useCreateIndex' , true);
@@ -29,7 +33,8 @@ var _connect = (expressApp) => {
             salt: { type: String, required: true },
             created_at: { type: Date, index: { unique: false }, 'default': Date.now },
             updated_at: { type: Date, index: { unique: false }, 'default': Date.now },
-            max_storage : {type:Number , require:true ,'default' : 1024*1024*1024*10}
+            max_storage : {type:Number , require:true ,'default' : 1024*1024*100},
+            grade : { type : String , require:true ,'default' : 'normal'}
         });
 
         D_UserSchema
@@ -75,18 +80,92 @@ var _connect = (expressApp) => {
         expressApp.set('D_UserSchema' , D_UserSchema);
         expressApp.set('D_UserModel' , D_UserModel);
 
-        console.log('connect DB Complete');
+        console.log('DB CONNECT COMPLETE');
     });
 
     mongoose.connection.on('disconnected', function () {
+        console.log('DB DISCONNECTED');
         setInterval(_connect(expressApp), 5000);
     });
 }
 
+D_Mongoose.getAllUserData = async () => {
+    var results = await D_UserModel.find({});
+    var output = {};
+    for(var i = 0 ; i < results.length; i++) {
+        var userData = {};
+        userData['id'] = results[i]._doc.id;
+        userData['max_storage'] = results[i]._doc.max_storage;
+        userData['grade'] = results[i]._doc.grade;
+        output[i] = userData;
+    }
+    return output;
+}
 
-D_Mongoose.connect = (expressApp) => {
-    _connect(expressApp);
-};
+//유저 등록시 아이디 중복체크
+D_Mongoose.user_ID_Check = async (id) => {
+    var results = await D_UserModel.find({'id' : id});
+    if(results.length == 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+//유저 등록시 비밀번호 정규식 체크(8자리부터 15자리 )
+D_Mongoose.user_PW_Check = (pw) => {
+    var regex = new RegExp('^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$');
+    return regex.test(pw);
+}
+
+D_Mongoose.userDelete = async (id) => {
+    var res = false;
+    var user = null;
+    try {
+        user = await D_UserModel.findOne({'id' : id});
+    }
+    catch(e) {
+        console.log("USER DELETE REMOVE ERROR");
+    }
+
+    if(user != null) {
+        try {
+            user.remove();
+            res = true;
+        }
+        catch(e) {
+
+        }
+    }
+    return res;
+}
+
+D_Mongoose.userUpdate = async(id , grade , storage) => {
+    var res = false;
+
+    var user = null;
+    try {
+        user = await D_UserModel.findOne({'id' : id});
+    }
+    catch(e) {
+        console.log("USER UPDATE FINDONE ERROR");
+    }
+    
+    if(user != null) {
+        user.grade = grade;
+        user.max_storage = storage;
+        try {
+            await user.save();
+            res = true;
+        }
+        catch(e) {
+            console.log("USER UPDATE SAVE ERROR");
+        }
+    }
+
+    return res;
+}
 
 
 module.exports.D_Mongoose = D_Mongoose;

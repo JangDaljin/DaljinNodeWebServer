@@ -9,6 +9,8 @@
 <% var used_storage      = INPUT_JSON['used_storage'];  %>
 <% var max_storage       = INPUT_JSON['max_storage']; %>  
 
+<% var grade = INPUT_JSON['grade']; %>
+
 <% var getVolumeSize = (size , deter = 0) => {
         if(size / 1024 > 1) {                           
                 return getVolumeSize(size / 1024 , deter+1);  
@@ -254,6 +256,15 @@
 <body onload="init();storage_init('i_used_storage' , 'i_used_percent');">
 
         <div class="container-fluid" style="padding-top: 3%; text-overflow:ellipsis;">
+                <% if(grade == 'master') { %>
+                        <div class="row mb-3">
+                                <div class="col-sm-12">
+                                        <input type="button" class="btn btn-info w-100" value="관리자 페이지" onclick="window.location.href='/master';">
+                                </div>
+                        </div>
+                <% } %>
+
+
                 <div class="row mb-4">
                         <div class="col-sm-10">
                                         <div class="progress position-relative" style="height:100%">

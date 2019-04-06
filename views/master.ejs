@@ -1,0 +1,225 @@
+<% input_data = JSON.parse(data); %>
+<% input_data_length = Object.keys(input_data).length; %>
+
+<% var USER_SETTING = usersetting %>
+<% var USER_SETTING_LENGTH = Object.keys(USER_SETTING).length %>
+
+<% var getVolumeSize = (size , deter = 0) => {
+    if(size / 1024 > 1) {                           
+            return getVolumeSize(size / 1024 , deter+1);  
+    } else {                                        
+    var res = '';                                   
+    switch(deter) {                                 
+            case 0 :                                
+                    res = 'Byte';                              
+                    break;                                  
+            case 1 :                                        
+                    res = 'KB';                             
+                    break;                                  
+            case 2 :                                        
+                    res = 'MB';                             
+                    break;                                  
+            case 3 :                                        
+                    res = 'GB';                             
+                    break;                                  
+            case 4 :                                        
+                    res = 'TB';                             
+                    break;                                 
+            default :                                       
+                    res = "NaN";                            
+                    break;                                  
+    }
+            if(res=='Byte') {
+                    return size.toFixed(0) + res;
+            }
+            else {
+                    return size.toFixed(2) + res;   
+            }            
+    }                                               
+} %>
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- JQuery.fileDownload.js -->
+    <script src="http://jqueryfiledownload.apphb.com/Scripts/jquery.fileDownload.js"></script>
+
+    <!-- ICON -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+
+    <script type="text/javascript">
+
+        var input_data = null;
+        var input_data_length = null;
+
+        var init = ()=> {
+            input_data = JSON.parse('<%- data %>');
+            input_data_length = Object.keys(input_data).length;
+        }
+
+        var Update = (pos) => {
+            var outputdata = {};
+            outputdata['id'] = input_data[pos]['id'];
+            
+            var select_grade = document.getElementById('i_grade_setting_' + pos);
+            var option = select_grade.options[select_grade.selectedIndex].value;
+            outputdata['grade'] = option;
+
+            var byte_size_str = document.getElementById('i_storage_size_setting_'+pos).value;
+            var byte_size = 0;
+            if(byte_size_str) {
+                byte_size = parseInt(byte_size_str);
+            }
+            else {
+                byte_size = input_data[pos]['max_storage'];
+            }
+            var select_byte = document.getElementById('i_storage_byte_setting_' + pos);
+            var byte_option = select_byte.options[select_byte.selectedIndex].value;
+            var convert_byte = 1;
+            switch(byte_option) {
+                case 'TB' :
+                    convert_byte *= 1024;
+                case 'GB' :
+                    convert_byte *= 1024;
+                case 'MB' :
+                    convert_byte *= 1024;
+                case 'KB' :
+                    convert_byte *= 1024;
+                default :
+                    break;
+            }
+            outputdata['storage'] = convert_byte * byte_size;
+
+            $.ajax({
+                url : "/userUpdate",
+                type : "POST",
+                data : JSON.stringify(outputdata),
+                contentType : "application/json",
+                success : (inputdata_jsonstr) => {
+                    var inputdata = JSON.parse(inputdata_jsonstr);
+                    if(inputdata['result'] == true) {
+                        location.reload();
+                    }
+                    else {
+                        alert('업데이트가 되지 않았습니다.');
+                    }
+                },
+                error : () => {
+                    alert('에러발생');
+                }
+            })
+        }
+
+        var Delete = (pos) => {
+            var outputdata = {};
+            outputdata['id'] = input_data[pos]['id'];
+            $.ajax({
+                url : "/userDelete",
+                type : "POST",
+                data : JSON.stringify(outputdata),
+                contentType : "application/json",
+                success : (inputdata_jsonstr) => {
+                    var inputdata = JSON.parse(inputdata_jsonstr);
+                    if(inputdata['result'] == true) {
+                        location.reload();
+                    }
+                    else {
+                        alert('삭제가 되지 않았습니다.');
+                    }
+                },
+                error : () => {
+                    alert('에러발생');
+                }
+            })
+        }
+
+    
+    </script>
+</head>
+
+
+<body onload="init();">
+    <div class="container-fluid" style="padding-top: 3%; text-overflow:ellipsis;">
+        <div class="row">
+            <div class="col">
+                <!-- 리스트 -->
+                <div class="table-responsive table-bordered">                        
+                        <table class="table table-striped table-hover align-middle text-center">
+                        <thead>
+                            <tr>
+                                <th class="w-5">#</th>
+                                <th class="w-20">이름</th>
+                                <th class="w-10">등급</th>
+                                <th class="w-20">등급변경</th>
+                                <th class="w-10">허용용량</th>
+                                <th class="w-15">용량변경</th>
+                                <th class="w-10">변경</th>
+                                <th class="w-10">삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for(var i = 0 ; i < input_data_length; i++) { %>
+                                <tr>
+                                    <td class="align-middle"><%= i %></td>
+                                    <td class="align-middle"><%= input_data[i]['id'] %></td>
+                                    <td class="align-middle"><%= input_data[i]['grade'] %></td>
+                                    <td class="align-middle">
+                                            <select class="form-control" id="i_grade_setting_<%= i %>" name="n_grade_setting_<%= i %>">
+                                                <% for(var pos = 0; pos < USER_SETTING_LENGTH; pos++) { %>
+                                                    <option value="<%= USER_SETTING[pos]['grade'] %>"><%= USER_SETTING[pos]['grade'] %></option>
+                                                <% } %>
+                                            </select>
+                                    </td>
+                                    <td class="align-middle"><%= getVolumeSize(input_data[i]['max_storage']) %></td>
+                                    <td class="align-middle form-inline">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-sm-8 p-0">
+                                                        <input type="text" class="form-control w-100" id="i_storage_size_setting_<%= i %>" name="n_storage_size_setting_<%= i %>" value="">
+                                                </div>
+                                                <div class="col-sm-4 p-0">
+                                                        <select class="form-control w-100" id="i_storage_byte_setting_<%= i %>" name="i_storage_byte_setting_<%= i %>">
+                                                                <option value="B">B</option>
+                                                                <option value="KB">KB</option>
+                                                                <option value="MB">MB</option>
+                                                                <option value="GB">GB</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            
+                                            
+                                    </td>
+                                    <td class="align-middle">
+                                        <input type="button" class="btn btn-outline-dark w-100" value="변경" onclick="Update('<%= i %>')">
+                                    </td>
+
+                                    <td class="align-middle">
+                                        <input type="button" class="btn btn-outline-dark w-100" value="삭제" onclick="Delete('<%= i %>')">
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                        </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+</body>
+
+
+</html>
