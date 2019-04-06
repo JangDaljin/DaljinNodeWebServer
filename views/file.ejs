@@ -6,8 +6,6 @@
 
 <% var path              = INPUT_JSON['path']%>
 
-
-
 <% var used_storage      = INPUT_JSON['used_storage'];  %>
 <% var max_storage       = INPUT_JSON['max_storage']; %>  
 
@@ -67,12 +65,12 @@
 
         <script type="text/javascript">
                 
-                var files        = null;
-                var files_length = null;
-                var path         = null;
-                var files_checked = {};
-                var used_storage = null;
-                var max_storage = null;
+                var files               = null;
+                var files_length        = null;
+                var path                = null;
+                var files_checked       = {};
+                var used_storage        = null;
+                var max_storage         = null;
 
                 //초기화
                 var init = 
@@ -95,11 +93,11 @@
 
                         var used_percent = ((used_storage / max_storage) * 100).toFixed(2);
                         
-                        
                         var arr_max_volume = getVolumeSize(max_storage);
                         var arr_used_volue = getVolumeSize(used_storage);
 
-                        progress_element.style.width = used_percent;
+
+                        progress_element.style.width = used_percent+'%';
                         percent_element.innerHTML = used_percent + '% (' + arr_max_volume + '중 ' + arr_used_volue +'사용)';
                 }
                 
@@ -250,7 +248,6 @@
                        return true;
                 }
 
-
         </script>
 </head>
 
@@ -295,6 +292,22 @@
                                                                         </tr>
                                                                 </thead>
                                                                 <tbody>
+
+                                                                        <!-- 이전폴더 -->
+                                                                        <% if(path) { %>
+                                                                        <tr>
+                                                                                <td></td>
+                                                                                <td class="text-left">
+                                                                                        <a href="?path=<%= path.substring(0,path.lastIndexOf('/')) %>">
+                                                                                                <i class="fas fa-reply">
+                                                                                                        ...
+                                                                                                </i>
+                                                                                        </a>       
+                                                                                </td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                        </tr>
+                                                                        <% } %>
                                                                         <% for(var i = 0; i < files_length; i++) { %>
                                                                         <tr>
                                                                                 <% var item = files_JSON[i]['fullname'] %>

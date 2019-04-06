@@ -46,9 +46,29 @@ D_route(app);
 
 http.createServer(app).listen(SERVER_PORT, SERVER_HOSTNAME, function () {
 
+
+    //console.log(test1());
     D_mongoose.connect(app);
 });
 
 
 
+var test1 = async () => {
 
+    var res = 0 ;
+    for(var i = 0 ; i < 1000; i++) {
+        res += await test2(i);
+    }
+    return res;
+
+}
+
+var test2 = (num) => {
+    var res = 0;
+
+    for(var i = 0 ; i < 100; i++) {
+        res += i;
+    }
+    console.log(num , res);
+    return res;
+}

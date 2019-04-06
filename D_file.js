@@ -3,61 +3,72 @@ var path = require('path');
 var D_file = {};
 
 //리스트
-D_file.getList = (dirname , callback) => {
+D_file.getList = async (dirname) => {
 
     dirname = path.join(__dirname , dirname);
+    var arr_Filelist = [];
+    var FILE_INFO = {};
+    try {
+        arr_Filelist = await fs.readdirSync(dirname);
+    }
+    catch (e) {
+        console.log(dirname , 'WRONG NAME');
+        return null;
+    }
+    for(var i = 0 ; i < arr_Filelist.length; i++) {
+        FILE_INFO[i] = await getStats_Async(dirname , arr_Filelist[i]);
+    }
+    return FILE_INFO;
+}
 
-    fs.readdir(dirname , (err , files) => {
-        if(err) {
-            callback(err , null);
-        }
-        else {
-            FILE_INFO = {};
-            for(var i = 0 ; i < files.length; i++) {
-                var stats = fs.lstatSync(dirname + '/' + files[i]) 
-                var dot_index = files[i].lastIndexOf('.');
-                var obj = {};
-                obj['size']        = (stats.isFile()) ? stats.size : getFolderSize(dirname + '/' + files[i]);
-                obj['ctime']       = makeDate(stats.ctime);
-                obj['type']        = (stats.isFile()) ? 'file' : 'directory';
-                obj['name']        = (dot_index != -1) ? files[i].substring(0 , files[i].lastIndexOf('.')) : files[i];
-                obj['extension']   = (dot_index != -1) ? files[i].substring(files[i].lastIndexOf('.') +1 , files[i].length) : '';
-                obj['fullname']    = obj['name'] + ((obj['extension'] =='')? '' : '.' + obj['extension']);
+//파일정보 얻기
+var getStats_Async = async (folderpath , filename) => {
 
-                FILE_INFO[i] = obj;
-            }
-            callback(null ,FILE_INFO);
-        }
-    })
+    var filepath = folderpath + '/' + filename;
+
+    var stats = await fs.lstatSync(filepath);
+
+    var obj = {};
+    var dot_index = filename.lastIndexOf('.');
+
+    obj['size']        = (stats.isFile()) ? stats.size : getFolderSize(filepath);
+    obj['ctime']       = makeDate(stats.ctime);
+    obj['type']        = (stats.isFile()) ? 'file' : 'directory';
+    obj['name']        = (dot_index != -1) ? filename.substring(0 , filename.lastIndexOf('.')) : filename;
+    obj['extension']   = (dot_index != -1) ? filename.substring(filename.lastIndexOf('.') +1 , filename.length) : '';
+    obj['fullname']    = obj['name'] + ((obj['extension'] =='')? '' : '.' + obj['extension']);
+    return obj;
 }
 
 //파일 이동
-D_file.moveTo = (source , destination, callback) => {
-
-    fs.rename(source , destination , (err) => {
-        if(err) {
-            callback(err);
-        }
-        else {
-            callback(null);
-        }
-    })
+D_file.moveTo = async (source , destination) => {
+    var res = false;
+    try {
+        await await fs.renameSync(source , destination);
+        res = true;
+    }
+    catch(e) {
+        res = false;
+    }
+    return res;
+    
 } 
 
 //폴더만들기
-D_file.makeDirectory = (dirname , callback) => {
-    fs.mkdir(dirname , (err) => {
-        if(err) { 
-            callback(err);
-        }
-        else {
-            callback(null);
-        }
-    });
+D_file.makeDirectory = async (dirname) => {
+    var res = false;
+    try {
+        await fs.mkdirSync(dirname);
+        res = true;
+    }
+    catch(e) {
+        res = false;
+    }
+    return res;
 }
 
 D_file.getTotalSizeOnRoot = (rootpath) => {
-    return getFolderSize(rootpath)
+    return getFolderSize(rootpath);
 }
 
 var getFolderSize = (path) => {

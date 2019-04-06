@@ -28,16 +28,13 @@ module.exports = function(app) {
         if(req.isAuthenticated()) {
             var id = req.user.id;
             var path = req.body.require_path || '';
-            D_file.getList('./files/'+ id + path
-            ,(err , FILE_INFO) =>{
-                obj = {};
-                if(err) {
-                    res.send(null);
+            D_file.getList('./files/'+ id + path).then(
+                (reutrnValue) => 
+                {
+                    obj = {};
+                    res.send(JSON.stringify(returnValue));
                 }
-                else {
-                    res.send(JSON.stringify(FILE_INFO));
-                }
-            });
+            );
         }
         else {
             res.redirect('/');
@@ -51,20 +48,22 @@ module.exports = function(app) {
             var max_storage = req.user.max_storage;
             var path = req.query.path || '';
 
-            D_file.getList('./files/'+ id + path
-            ,(err , FILE_INFO) =>{
-                obj = {};
-                if(err) {
-                    obj['path'] = '';
+            D_file.getList('./files/' + id + path).then(
+                (returnValue) => 
+                {   
+                    if(returnValue == null) {
+                        res.redirect('/');
+                    }
+                    else {
+                        obj = {};
+                        obj['path'] = path;
+                        obj['files'] = returnValue;
+                        obj['max_storage'] = max_storage;
+                        obj['used_storage'] = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)))
+                        res.render('file.ejs' , {data : JSON.stringify(obj)});
+                    }
                 }
-                else {
-                    obj['path'] = path;
-                }
-                obj['files'] = FILE_INFO;
-                obj['max_storage'] = max_storage;
-                obj['used_storage'] = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)))
-                res.render('file.ejs' , {data : JSON.stringify(obj)});
-            });
+            );
         }
         else {
             res.redirect('/');
@@ -93,17 +92,12 @@ module.exports = function(app) {
             var files = req.files;
     
             for(var i = 0 ; i < req.files.length; i++) {
-    
-                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname , (err) => {
-                    if(err) {
-                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD ERROR');
-                        console.log('[' + id + '] UPLOAD ERROR');
-                    }
-                    else{
-                        //console.log('[' + id + '] /files/uploads/' + files[i].originalname + '_' + id + ' -> /files/' + id + path + ' UPLOAD COMPLETE');
+                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname).then(
+                    (returnValue) => 
+                    {
                         console.log('[' + id + '] UPLOAD COMPLETE');
                     }
-                });
+                );
             }
             res.redirect('/file' + '?path=' + path);
         }
@@ -123,7 +117,7 @@ module.exports = function(app) {
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
 
-            //폴더일 경우
+            //폴더일 경우 ZIP 변경
             if(type == 'directory') {
                 res.setHeader('Content-Type' , "application/zip");
                 res.setHeader('Content-Disposition', 'attachment; filename=' + downloadItem.substring(1,downloadItem.length) + '.zip');
@@ -174,15 +168,13 @@ module.exports = function(app) {
             var name = req.body.n_makeDirectory_Name || '';
             
             if(name != '')  {
-                D_file.makeDirectory('./files/'+ id + path + '/' + name , (err)=>{
-                    if(err) {
-                        console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE ERROR');
-                    }
-                    else {
+                D_file.makeDirectory('./files/'+ id + path + '/' + name).then(
+                    (returnValue) =>
+                    {
                         console.log('[' + id + '] ./files/' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
+                        res.redirect('/file' + '?path=' + path);
                     }
-                    res.redirect('/file' + '?path=' + path);
-                });
+                );
             }
             else {
                 res.end();
@@ -204,28 +196,20 @@ module.exports = function(app) {
 
             for(var i = 0 ; i < deleteFileList_length; i++) {
                 if(deleteFileList[i]['type'] == 'directory') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id, (err)=> {
-                        if(err) {
-                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE ERROR')
-                            console.log('[' + id + '] DIRECTORY DELETE ERROR');
-                        }
-                        else {
-                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + 'DIRECTORY DELETE COMPLETE')
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id).then(
+                        (returnValue) => 
+                        {
                             console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
                         }
-                    });
+                    );
                 }
                 else if(deleteFileList[i]['type'] == 'file') {
-                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id , (err)=> {
-                        if(err) {
-                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE ERROR')
-                            console.log('[' + id + '] FILE DELETE ERROR');
-                        }
-                        else {
-                            //console.log('[' + id + ']' + deleteFileList[i]['name'] + ' FILE DELETE COMPLETE');
+                    D_file.moveTo('./files/' + id + deletePath + '/' + deleteFileList[i]['name'] , './files/trash_bin/'+deleteFileList[i]['name'] + '_' + id).then(
+                        (returnValue) => 
+                        {
                             console.log('[' + id + '] FILE DELETE COMPLETE');
                         }
-                    });
+                    );
                 }
             }
             res.redirect('/file' + '?path=' + deletePath);
@@ -236,7 +220,7 @@ module.exports = function(app) {
     });
 
     //로그아웃 처리
-    app.get('/logout' , (req , res) => {
+    app.post('/logout' , (req , res) => {
         if(req.isAuthenticated()) {
             console.log('[' + req.user.id + '] LOGOUT COMPLETE')
             req.logout();
@@ -274,15 +258,13 @@ module.exports = function(app) {
                     res.redirect('/adduser?param=IDPW');
                 }
                 else {
-                    D_file.makeDirectory('./files/'+ ID , (err) => {
-                        if(err) {
-                            console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY ERROR');
-                        }
-                        else {
+                    D_file.makeDirectory('./files/'+ ID).then(
+                        (returnValue) => 
+                        {
                             console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                            res.redirect('/adduser?param=SUCCESS');
                         }
-                    });
-                    res.redirect('/adduser?param=SUCCESS');
+                    )
                 }
             });
         }
