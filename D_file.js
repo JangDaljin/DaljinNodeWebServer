@@ -67,10 +67,12 @@ D_file.makeDirectory = async (dirname) => {
     return res;
 }
 
+//현재 위치 기준으로 파일 사이즈 측정(재귀 함수 실행)
 D_file.getTotalSizeOnRoot = (rootpath) => {
     return getFolderSize(rootpath);
 }
 
+//현재 위치 기준으로 파일 사이즈 측정(재귀 함수))
 var getFolderSize = (path) => {
     var size = 0; 
     var strArr_filelist = fs.readdirSync(path);
@@ -84,6 +86,11 @@ var getFolderSize = (path) => {
         }
     }
     return size;
+}
+
+//파일 삭제
+var removeFile = (path) => {
+    fs.unlinkSync(path);
 }
 
 

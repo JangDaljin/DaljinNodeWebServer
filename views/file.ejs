@@ -87,6 +87,12 @@
                         
                         used_storage = parseInt('<%- used_storage %>');
                         max_storage = parseInt('<%- max_storage %>');
+
+                        //메세지표시
+                        var msg = '<%= msg %>'
+                        if(msg) {
+                                alert(msg);
+                        }
                 };
 
                 var storage_init = (progress_id , percent_id) => {

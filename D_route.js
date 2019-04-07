@@ -49,6 +49,7 @@ module.exports = function(app) {
             var grade = req.user.grade;
             var max_storage = req.user.max_storage;
             var path = req.query.path || '';
+            var msg = req.query.msg || '';
 
             D_file.getList('./files/' + id + path).then(
                 (returnValue) => 
@@ -63,7 +64,7 @@ module.exports = function(app) {
                         obj['max_storage'] = max_storage;
                         obj['used_storage'] = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)))
                         obj['grade'] = grade;
-                        res.render('file.ejs' , {data : JSON.stringify(obj)});
+                        res.render('file.ejs' , {data : JSON.stringify(obj) , 'msg' : msg});
                     }
                 }
             );
@@ -156,19 +157,26 @@ module.exports = function(app) {
     app.post('/fileUpload' , upload.array('n_upload_files'), (req , res)=> {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            
+            var max_storage = req.user.max_storage;
+            var used_storage = D_file.getTotalSizeOnRoot((require('path').join(__dirname , 'files' , id)));
             var path = req.body.n_upload_path || '';
             var files = req.files;
-    
+
             for(var i = 0 ; i < req.files.length; i++) {
-                D_file.moveTo('./files/uploads/'+files[i].filename  , './files/'+id+path+'/'+files[i].originalname).then(
-                    (returnValue) => 
-                    {
-                        console.log('[' + id + '] UPLOAD COMPLETE');
-                    }
-                );
+                if(used_storage + files[i].size < max_storage) {
+                    D_file.moveTo('./files/uploads/'+files[i].filename  , './files/' + id + path + '/' + files[i].originalname).then(
+                        (returnValue) => 
+                        {
+                            console.log('[' + id + '] UPLOAD COMPLETE');
+                        }
+                    );
+                }
+                else {
+                    D_file.removeFile('./files/uploads/' + files[i].filename);
+                    console.log('[' + id + '] UPLOAD FAIL(FULL OVER STORAGE');
+                }
             }
-            res.redirect('/file' + '?path=' + path);
+            res.redirect('/file' + '?path=' + path + '&msg=최대용량을 초과하였습니다');
         }
         else {
             res.redirect('/');

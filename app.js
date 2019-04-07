@@ -10,16 +10,16 @@ var express = require('express')
 var D_route = require('./D_route')
     , D_mongoose = require('./D_database').D_Mongoose
     , D_passport = require('./D_passport')
-    , D_usersetting = require('./D_usersetting');
+    , D_setting = require('./D_setting');
     
 
-var SERVER_HOSTNAME = 'localhost';
-var SERVER_PORT = '3000';
+var SERVER_HOSTNAME = D_setting.SOCKET_SETTING['HOSTNAME'];
+var SERVER_PORT     = D_setting.SOCKET_SETTING['PORT'];
 
 var app = express();
 
 
-app.set('USER_SETTING' , D_usersetting);
+app.set('USER_SETTING' , D_setting.USER_SETTING);
 
 app.set('views' , __dirname + '/views');
 app.set('view engine' , 'ejs');

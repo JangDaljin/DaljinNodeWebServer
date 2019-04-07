@@ -1,10 +1,6 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-//var DB_HOSTNAME     = 'localhost';
-//var DB_PORT         =  27017;
-//var DB              = 'local'
-//var DB_URL =  'mongodb://' + DB_HOSTNAME + ':' + DB_PORT + '/' + DB
-var DB_URL= 'mongodb+srv://rw:ufwlds@daljin-mcs3v.gcp.mongodb.net/test?retryWrites=true'
+var DB_URL= require('./D_setting').DB_SETTING['DB_URL'];
 
 
 var D_Mongoose = {};
