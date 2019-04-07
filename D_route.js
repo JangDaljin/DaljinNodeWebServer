@@ -10,18 +10,20 @@ module.exports = function(app) {
 
     //메인 페이지
     app.get('/' , (req , res) => {
+        var msg = req.query.msg || '';
+        
         if(req.isAuthenticated()) {
             res.redirect('/file');
         }
         else {
-            res.render('login.ejs');
+            res.render('login.ejs' , {'msg' : msg});
         }
     });
 
     //로그인 처리
     app.post('/login' , passport.authenticate('login' , {
         successRedirect : '/file',
-        failureRedirect : '/'
+        failureRedirect : '/?msg=로그인실패'
     }));
 
     //파일 페이지
