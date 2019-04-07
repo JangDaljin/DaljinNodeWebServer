@@ -42,6 +42,9 @@
                     type : "POST",
                     data : JSON.stringify(outputdata),
                     contentType : "application/json",
+                    cache : false,
+                    async : true,
+                    headers : {"cache-control" : "no-cache"},
                     success : (inputdata_jsonstr) => {
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         if(inputdata['result'] == true) {
