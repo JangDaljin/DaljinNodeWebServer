@@ -36,7 +36,6 @@
                 
                 outputdata = {};
                 outputdata['ID'] = ID;
-                            
                 $.ajax({
                     url : "/checkid",
                     type : "POST",
@@ -46,6 +45,7 @@
                     async : true,
                     headers : {"cache-control" : "no-cache"},
                     success : (inputdata_jsonstr) => {
+                        console.dir(inputdata_jsonstr);
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         if(inputdata['result'] == true) {
                             alert('사용가능합니다.');
@@ -57,6 +57,7 @@
                             ID_checked = false;
                         }
                     },
+
                     error : () => {
                         alert('에러발생');
                         ID_checked = false;

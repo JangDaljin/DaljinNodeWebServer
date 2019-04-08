@@ -316,34 +316,23 @@ module.exports = function(app) {
 
     //아이디 중복체크(AJAX 전용)
     app.post('/checkid' , (req , res) => {
-        if(req.isAuthenticated()) {
-            var input_json = req.body;
-            var ID = input_json['ID'];
+        var ID = req.body.ID;
 
-            var output_json = {};
-            output_json['result'] = false;
+        var output_json = {};
+        output_json['result'] = false;
 
-            if(ID == '') {
+        D_Mongoose.user_ID_Check(ID).then(
+            (returnValue) => 
+            {
+                if(returnValue == true) {
+                    output_json['result'] = true;
+                }
+                else {
+                    output_json['result'] = false;
+                }
                 res.send(JSON.stringify(output_json));
             }
-            else {
-                D_Mongoose.user_ID_Check(ID).then(
-                    (returnValue) => 
-                    {
-                        if(returnValue == true) {
-                            output_json['result'] = true;
-                        }
-                        else {
-                            output_json['result'] = false;
-                        }
-                        res.send(JSON.stringify(output_json));
-                    }
-                )
-            }
-        }
-        else {
-            res.send({});
-        }
+        );
     });
 
     //유저추가 처리
