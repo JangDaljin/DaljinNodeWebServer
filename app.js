@@ -51,6 +51,15 @@ D_route(app);
 
 
 http.createServer(app).listen(SERVER_PORT, SERVER_HOSTNAME, function () {
+   
+    if(D_setting.PATH.INIT()) {
+        console.log('[SERVR]INIT DRIECTORY MAKE');
+    }
+    else {
+        console.log('[SERVR]INIT DRIECTORY ALREADY EXIST');
+    }
+
     D_mongoose.connect(app);
-    console.log('SERVER_READY');
+
+    console.log('[SERVER]READY');
 });

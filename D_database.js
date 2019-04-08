@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
 var DB_URL= require('./D_setting').DB_SETTING['DB_URL'];
+var fs = require('fs');
+var D_PATH = require('./D_setting').PATH;
 
 
 var D_Mongoose = {};
@@ -20,7 +22,7 @@ var _connect = (expressApp) => {
     });
 
     mongoose.connection.on('open', function () {
-        console.log('trying to connect DB');
+        console.log('[DB]Connecting DB');
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //USER_SCHEMA / MODEL
         D_UserSchema = mongoose.Schema({
@@ -76,14 +78,25 @@ var _connect = (expressApp) => {
         expressApp.set('D_UserSchema' , D_UserSchema);
         expressApp.set('D_UserModel' , D_UserModel);
 
-        console.log('DB CONNECT COMPLETE');
+        var results = D_UserModel.find({});
+        for(var i = 0 ; i < results.length; i++) {
+            try {
+                fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.id);
+            }
+            catch (e) {
+                console.log("USERS FOLDER INIT ERROR");
+            }
+        }
+
+        console.log("[DB]CONNECT COMPLETE")
     });
 
     mongoose.connection.on('disconnected', function () {
-        console.log('DB DISCONNECTED');
+        console.log('[DB]DISCONNECTED');
         setInterval(_connect(expressApp), 5000);
     });
 }
+
 
 D_Mongoose.getAllUserData = async () => {
     var results = await D_UserModel.find({});
@@ -97,6 +110,7 @@ D_Mongoose.getAllUserData = async () => {
     }
     return output;
 }
+
 
 //유저 등록시 아이디 중복체크
 D_Mongoose.user_ID_Check = async (id) => {
@@ -115,6 +129,7 @@ D_Mongoose.user_PW_Check = (pw) => {
     return regex.test(pw);
 }
 
+//유저삭제
 D_Mongoose.userDelete = async (id) => {
     var res = false;
     var user = null;
@@ -129,6 +144,8 @@ D_Mongoose.userDelete = async (id) => {
         try {
             user.remove();
             res = true;
+            require('./D_file').moveTo(D_PATH["DOWNLOAD"] + '/' + user._doc.id 
+                                     , D_PATH["TRASH_BIN"] + '/' + user._doc.id + '_' + user._doc.id);
         }
         catch(e) {
 
@@ -137,6 +154,7 @@ D_Mongoose.userDelete = async (id) => {
     return res;
 }
 
+//유저업데이트
 D_Mongoose.userUpdate = async(id , grade , storage) => {
     var res = false;
 

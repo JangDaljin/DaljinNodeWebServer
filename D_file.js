@@ -1,11 +1,8 @@
 var fs = require('fs');
-var path = require('path');
 var D_file = {};
 
 //리스트
 D_file.getList = async (dirname) => {
-
-    dirname = path.join(__dirname , dirname);
     var arr_Filelist = [];
     var FILE_INFO = {};
     try {
@@ -51,7 +48,6 @@ D_file.moveTo = async (source , destination) => {
         res = false;
     }
     return res;
-    
 } 
 
 //폴더만들기
@@ -89,8 +85,16 @@ var getFolderSize = (path) => {
 }
 
 //파일 삭제
-var removeFile = (path) => {
-    fs.unlinkSync(path);
+D_file.removeFile = (path) => {
+    var res = false;
+    try {
+        fs.unlinkSync(path);
+        res = true;
+    }
+    catch(e) {
+        res = false;
+    }
+    return res;
 }
 
 

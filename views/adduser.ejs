@@ -129,11 +129,11 @@
     <form id="adduser_form" method="post" action="/adduser" onsubmit="return check_submit('ID' ,'validated_ID')">
         <div class="container">
                 <div class="row">
-                    <div class="col-sm-2 p-1">
+                    <div class="col-2 p-1">
                             <label class="form-control text-center">아이디</label>
                     </div>
                     
-                    <div class="col-sm-8 p-1">
+                    <div class="col-8 p-1">
                             <input type="text" class="form-control" id="ID" name="ID">
                             <input type="hidden" id="validated_ID" value="">
                     </div>
@@ -144,11 +144,11 @@
                 </div>
 
                 <div class="row">
-                        <div class="col-sm-2 p-1">
+                        <div class="col-2 p-1">
                                 <label class="form-control text-center">비밀번호</label>
                         </div>
 
-                        <div class="col-sm-10 p-1">
+                        <div class="col-10 p-1">
                                 <input type="password" class="form-control" id="PW" name="PW" onblur="check_PW('PW' , 'password_check_row');check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
                         </div>
                 </div>
@@ -160,33 +160,33 @@
                 </div>
 
                 <div class="row">
-                        <div class="col-sm-2 p-1">
+                        <div class="col-2 p-1">
                                 <label class="form-control text-center">비밀번호 확인</label>
                         </div>
                         
-                        <div class="col-sm-10 p-1">
+                        <div class="col-10 p-1">
                                 <input type="password" class="form-control" id="PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
                         </div>
                 </div>
 
                 <div class="row" id="confirm_password_row" style="display: none">
-                        <div class="col-sm-10 offset-sm-2 p-1">
+                        <div class="col-10 offset-sm-2 p-1">
                                 <label class="form-control text-center">비밀번호가 같지않습니다.</label>
                         </div>
                 </div>
 
                 <div class="row">
-                        <div class="col-sm-2 p-1">
+                        <div class="col-2 p-1">
                                 <label class="form-control text-center">승인번호</label>
                         </div>
                         
-                        <div class="col-sm-10 p-1">
+                        <div class="col-10 p-1">
                                 <input type="text" class="form-control" id="CODE" name="CODE">
                         </div>
                 </div>
 
                 <div class="row">
-                        <div class="col-sm-12 p-1">
+                        <div class="col-12 p-1">
                                 <input type="submit" class="btn btn-outline-dark w-100">
                         </div>
                 </div>

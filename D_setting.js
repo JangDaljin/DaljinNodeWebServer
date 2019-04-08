@@ -1,9 +1,34 @@
 var SOCKET_SETTING = 
 {
-    'HOSTNAME' : '192.168.1.200'
+    'HOSTNAME' : 'localhost'
     ,
-    'PORT' : '80' 
+    'PORT' : '3000' 
 };
+
+var PATH = 
+{
+    'DOWNLOAD'  : '../users'
+    ,
+    'UPLOAD'    : '../uploads'
+    ,
+    'TRASH_BIN' : '../trash_bin'
+};
+
+PATH.INIT = function()  {
+    var fs = require('fs');
+    var res = false;
+    try {
+        fs.mkdirSync(PATH["DOWNLOAD"]);
+        fs.mkdirSync(PATH["UPLOAD"]);
+        fs.mkdirSync(PATH["TRASH_BIN"]);
+        res = true;
+    }
+    catch (e) {
+        res = false;
+    }
+    return res;
+};
+
 
 var DB_SETTING = 
 {
@@ -17,6 +42,8 @@ var USER_SETTING =
      1 : { 'grade' : 'normal' , 'code' : '1994' , 'max_storage' : 1024*1024*100}
 };
 
+
 module.exports.SOCKET_SETTING   = SOCKET_SETTING;
+module.exports.PATH             = PATH;
 module.exports.USER_SETTING     = USER_SETTING;
 module.exports.DB_SETTING       = DB_SETTING;
