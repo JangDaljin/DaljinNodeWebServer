@@ -78,17 +78,18 @@ var _connect = (expressApp) => {
         expressApp.set('D_UserSchema' , D_UserSchema);
         expressApp.set('D_UserModel' , D_UserModel);
 
-        var results = D_UserModel.find({});
-        for(var i = 0 ; i < results.length; i++) {
-            try {
-                fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.id);
-            }
-            catch (e) {
-                console.log("USERS FOLDER INIT ERROR");
-            }
-        }
 
-        console.log("[DB]CONNECT COMPLETE")
+        D_UserModel.find({}  , (err , results) => {
+            for(var i = 0 ; i < results.length; i++) {
+                try {
+                    fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.id);
+                }
+                catch (e) {
+                    console.log("USERS FOLDER INIT ERROR");
+                }
+            }
+            console.log("[DB]CONNECT COMPLETE")
+        });
     });
 
     mongoose.connection.on('disconnected', function () {
