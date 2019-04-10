@@ -193,23 +193,52 @@ module.exports = function(app) {
         })
     });
 
+    
     //파일 업로드 요청
-    app.post('/fileUpload' , upload.array('n_upload_files'), (req , res)=> {
+    app.post('/fileUpload' , (req , res)=> {
         if(req.isAuthenticated()) {
+
+            var path = '';
+            var form = new(require('formidable')).IncomingForm();
+            form.parse(req , (err , fields , files) => {
+                path = fields['n_upload_path'];
+            });
+
             var id = req.user.id;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
-            var path = req.body.n_upload_path || '';
-            var files = req.files;
-
+            
+            
             var msg = "";
+            var files = null;
 
-            for(var i = 0 ; i < req.files.length; i++) {
+            //progress stream을 거쳐 현재 퍼센트 제공
+            var input_file = upload.array('n_upload_files');
+            var progress = require('progress-stream')({
+                length:'0'
+            });
+            progress.user = req.user;
+
+            req.pipe(progress);
+            progress.headers = req.headers;
+            progress.on('progress' , (obj) => { 
+                if(obj.remaining == 0) {
+                    //res.end();
+                }
+            });
+
+            //재귀함수로 파일 업로드
+            var loopFunciton = (i) => {
+                if(files.length <= i) return true; 
+
+                var res = true;
+                
                 if(used_storage + files[i].size < max_storage) {
                     D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + id + path + '/' + files[i].originalname).then(
                         (returnValue) => 
                         {
-                            console.log('[' + id + '] UPLOAD COMPLETE');
+                            console.log('[' + id + ']' + files[i].originalname + 'UPLOAD COMPLETE');
+                            res = res && loopFunciton(i+1);
                         }
                     );
                 }
@@ -219,19 +248,33 @@ module.exports = function(app) {
                         console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
                     }
                     console.log('[' + id + '] UPLOAD FAIL(FULL OVER STORAGE)');
-                    msg = "최대 용량을 초과하였습니다.";
+                    msg = "용량초과" + files[i].filename + "\n";
+                    res = res && loopFunciton(i+1);
                 }
+                return res;
             }
-            res.redirect('/file' + '?path=' + path + '&msg=' + msg);
+
+
+
+            //업로드 시작
+            input_file(progress , res , (err) => {
+                files = progress.files;
+                if(err) {
+                    console.log('[' + id + '] UPLOAD ERROR');
+                }
+                else {    
+                    if(loopFunciton(0)) {
+                        msg = "업로드가 정상적으로 완료되었습니다.";
+                    }
+                    
+                    res.end(msg);
+                }
+            });
         }
         else {
             res.redirect('/');
         }
     });
-
-
-
-
 
 
     //파일다운로드시 헤더에 한글명 사용가능
@@ -241,14 +284,9 @@ module.exports = function(app) {
     
         if (header.includes("MSIE") || header.includes("Trident")) { 
             return encodeURIComponent(filename).replace(/\\+/gi, "%20");
-        } else if (header.includes("Chrome")) {
-            return iconvLite.decode(iconvLite.encode(filename, "UTF-8"), 'ISO-8859-1');
-        } else if (header.includes("Opera")) {
-            return iconvLite.decode(iconvLite.encode(filename, "UTF-8"), 'ISO-8859-1');
-        } else if (header.includes("Firefox")) {
+        } else {
             return iconvLite.decode(iconvLite.encode(filename, "UTF-8"), 'ISO-8859-1');
         }
-        return filename;
     }
 
     //파일다운로드 처리

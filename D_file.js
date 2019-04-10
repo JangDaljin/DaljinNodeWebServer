@@ -41,7 +41,7 @@ var getStats_Async = async (folderpath , filename) => {
 D_file.moveTo = async (source , destination) => {
     var res = false;
     try {
-        await await fs.renameSync(source , destination);
+        await fs.renameSync(source , destination);
         res = true;
     }
     catch(e) {

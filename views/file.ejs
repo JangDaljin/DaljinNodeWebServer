@@ -74,11 +74,10 @@
                 var used_storage        = null;
                 var max_storage         = null;
 
-
                 //초기화
                 var init = 
                 () => {
-                        files        = JSON.parse('<%- files_JSON_String %>')
+                        files        = JSON.parse('<%- files_JSON_String %>');
                         files_length = Object.keys(files).length;
                         path         = '<%= path %>';
                         
@@ -144,15 +143,6 @@
                                         
                         }                                             
                 }
-
-                var td_size_conversion = (source , size)=> {
-                        alert('11');
-                        var arr_size = getVolumeSize(parseInt(size));
-
-                        source.textContent = arr_size[0]+arr_size[1];
-                }
-
-                
 
                 //체크
                 var Check = (item , pos) => {
@@ -224,8 +214,8 @@
                         document.getElementById(delete_hidden_id).value = JSON.stringify(JSON_items);
                         document.getElementById(delete_form_id).submit();
                 }
-
-                //업로드
+                
+                //업로드 리스트
                 var Upload = (upload_file_id , upload_ul_id) => {
                         var upload_files = document.getElementById(upload_file_id);
                         var list_files = upload_files.files;
@@ -250,6 +240,45 @@
                                 ul.appendChild(item);
                         }
                 };
+
+                //업로드 시작
+                var Upload_Click = (form_id)=> {
+
+                        var form_data = new FormData(document.getElementById(form_id));
+
+                        $.ajax({
+                                url : "/fileUpload",
+                                type : "POST",
+                                data : form_data,
+                                cache : false,
+                                async : true,
+                                headers : {"cache-control" : "no-cache"},
+                                processData : false,
+                                contentType : false,
+                                success : (inputdata) => {
+                                        alert(inputdata);
+                                        window.location.href = '/file?path=' + '<%= path %>';
+                                },
+                                
+                                error : () => {
+                                        alert('에러발생');
+                                },
+                                xhr: function(){
+                                        var xhr = $.ajaxSettings.xhr() ;
+                                        // set the onprogress event handler
+                                        xhr.upload.onprogress = function(evt){ 
+                                                document.getElementById('upload_progress').style.width = parseInt(evt.loaded/evt.total*100) +'%';
+                                                document.getElementById('upload_percent').innerHTML = parseInt(evt.loaded/evt.total*100) +'%';
+                                        } ;
+                                        // set the onload event handler
+                                        xhr.upload.onload = function(){ 
+                                                
+                                        } ;
+                                        // return the customized object
+                                        return xhr ;
+                                }
+                        });
+                }
 
                 //폴더명 체크
                 var dirNameCheck = (check_text_id) => {
@@ -290,7 +319,6 @@
                                         <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="로그아웃" type="submit">
                                 </form>
                         </div>
-
                 </div>
 
                 <div class="row">
@@ -413,10 +441,10 @@
                         <div class="col">
                                 <!-- 업로드 -->
                                 <div class="container-fluid">
-                                        <form method="POST" action="/fileUpload" enctype="multipart/form-data">
+                                        <form id="uploadForm" method="POST" action="/fileUpload" enctype="multipart/form-data">
                                                 <div class="row mb-1 mt-1">
                                                         <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="i_upload_files" name="n_upload_files" multiple onchange="Upload('i_upload_files', 'i_file_list')">
+                                                                <input type="file" class="custom-file-input" id="i_upload_files" name="n_upload_files" multiple onchange="Upload('i_upload_files', 'i_file_list');">
                                                                 <label class="custom-file-label" for="customFile">SELECT YOUR FILES</label>
                                                                 <input type="hidden" name="n_upload_path" value="<%= path %>">
                                                         </div>
@@ -429,7 +457,15 @@
                                                 </div>
 
                                                 <div class="row mt-1 mb-1">
-                                                        <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="업로드"  type="submit">
+                                                        <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="업로드"  type="button" onclick="Upload_Click('uploadForm')">
+                                                </div>
+
+                                                <div class="row mt-1 mb-1">
+                                                        <div class="progress w-100 h-100">
+                                                                <div id="upload_progress" class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%; height:100%">
+                                                                        <span id="upload_percent"></span>
+                                                                </div>
+                                                        </div>
                                                 </div>
                                         </form>
                                 </div>
