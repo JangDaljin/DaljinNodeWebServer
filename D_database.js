@@ -85,7 +85,7 @@ var _connect = (expressApp) => {
                     fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.id);
                 }
                 catch (e) {
-                    console.log("USERS FOLDER INIT ERROR");
+                    console.log("[" + results[i]._doc.id + "] FOLDER ALREADY EXIST");
                 }
             }
             console.log("[DB]CONNECT COMPLETE")

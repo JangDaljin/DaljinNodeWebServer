@@ -52,14 +52,27 @@ D_route(app);
 
 http.createServer(app).listen(SERVER_PORT, SERVER_HOSTNAME, function () {
    
-    if(D_setting.PATH.INIT()) {
-        console.log('[SERVR]INIT DRIECTORY MAKE');
-    }
-    else {
-        console.log('[SERVR]INIT DRIECTORY ALREADY EXIST');
-    }
-
+    INIT(D_setting.PATH);
     D_mongoose.connect(app);
 
     console.log('[SERVER]READY');
 });
+
+
+var INIT = (PATH)=> {
+    
+    var fs = require('fs');
+
+    Object.keys(PATH).forEach(
+        (value , index) => {
+            try {
+                fs.mkdirSync(PATH[value]);
+                console.log('[SERVER]' + PATH[value] + ' MAKE');
+            }
+            catch(e) {
+                console.log('[SERVER]' + PATH[value] + ' ALREADY EXIST');
+            }
+        }
+    );
+
+}

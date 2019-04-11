@@ -2,7 +2,7 @@ var SOCKET_SETTING =
 {
     'HOSTNAME' : '192.168.1.200'
     ,
-    'PORT' : '80' 
+    'PORT' : '80'
 };
 
 var PATH = 
@@ -12,21 +12,6 @@ var PATH =
     'UPLOAD'    : '../uploads'
     ,
     'TRASH_BIN' : '../trash_bin'
-};
-
-PATH.INIT = function()  {
-    var fs = require('fs');
-    var res = false;
-    try {
-        fs.mkdirSync(PATH["DOWNLOAD"]);
-        fs.mkdirSync(PATH["UPLOAD"]);
-        fs.mkdirSync(PATH["TRASH_BIN"]);
-        res = true;
-    }
-    catch (e) {
-        res = false;
-    }
-    return res;
 };
 
 
