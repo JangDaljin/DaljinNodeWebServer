@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 
-<html lang="ko">
+<html class="h-100" lang="ko">
 
 <head>
     <meta charset="utf-8" />
@@ -11,9 +11,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <script type="text/javascript">
-        var init = () => {
+        var init = function() {
             var msg = '<%= msg %>';
             if(msg) {
                 alert(msg);
@@ -22,38 +23,44 @@
     </script>
 </head>
 
-<body class="container" onload="init();">
+<body class="h-100" onload="init();" >
+<div class="container h-100">
+        <div class="row align-items-center h-100">
+            <div class="col-sm-5 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4 mt-1"> <i class="far fa-kiss-beam"></i> 로그인 <i class="far fa-kiss-beam"></i></h2>
+                        <hr>
+                        <p class="text-success text-center">달진이 NAS 접속</p>
+                        <form method="post" action="/login">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-user"></i></span>
+                                    </div>
+                                    <input name="ID" class="form-control" placeholder="ID">
+                                </div> 
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                    </div>
+                                    <input name="PW" class="form-control" placeholder="********" type="password">
+                                </div> <!-- input-group.// -->
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-block"> 로그인  </button>
+                            </div>
+                            <div class="form-group">
+                                    <button type="button" class="btn btn-primary btn-block" onclick="window.location.href = '/adduser';"> 등록 </button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+</div>
 
-    <div class="card">
-        <article class="card-body">
-            <h4 class="card-title text-center mb-4 mt-1">로그인</h4>
-            <hr>
-            <p class="text-success text-center">달진이 클라우드 접속</p>
-            <form method="post" action="/login">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-user"></i></span>
-                        </div>
-                        <input name="ID" class="form-control" placeholder="ID">
-                    </div> 
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-                        </div>
-                        <input name="PW" class="form-control" placeholder="********" type="password">
-                    </div> <!-- input-group.// -->
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block"> 로그인  </button>
-                </div>
-                <div class="form-group">
-                        <button type="button" class="btn btn-primary btn-block" onclick="window.location='/adduser'"> 등록 </button>
-                </div>
-        </article>
-    </div>
    
 </body>
 

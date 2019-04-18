@@ -75,8 +75,7 @@
                 var max_storage         = null;
 
                 //초기화
-                var init = 
-                () => {
+                var init = function() {
                         files        = JSON.parse('<%- files_JSON_String %>');
                         files_length = Object.keys(files).length;
                         path         = '<%= path %>';
@@ -93,23 +92,23 @@
                         if(msg) {
                                 alert(msg);
                         }
-                };
+                }
 
-                var storage_init = (progress_id , percent_id) => {
+                var storage_init = function(progress_id , percent_id) {
                         var progress_element = document.getElementById(progress_id);
                         var percent_element = document.getElementById(percent_id);
 
                         var used_percent = ((used_storage / max_storage) * 100).toFixed(2);
                         
-                        var arr_max_volume = getVolumeSize(max_storage);
-                        var arr_used_volue = getVolumeSize(used_storage);
+                        var arr_max_volume = getVolumeSize(max_storage , 0);
+                        var arr_used_volue = getVolumeSize(used_storage , 0);
 
 
                         progress_element.style.width = used_percent+'%';
                         percent_element.innerHTML = used_percent + '% (' + arr_max_volume + '중 ' + arr_used_volue +'사용)';
                 }
                 
-                var getVolumeSize = (size , deter = 0) => {    
+                var getVolumeSize = function (size , deter) {    
                         if(size / 1024 > 1) {                           
                                 return getVolumeSize(size / 1024 , deter+1);  
                         } else {                                        
@@ -145,7 +144,7 @@
                 }
 
                 //체크
-                var Check = (item , pos) => {
+                var Check = function (item , pos) {
                         if(item.checked) {
                                 files_checked[pos] = true;
                         }
@@ -155,7 +154,7 @@
                 }       
 
                 //전부 체크
-                var AllCheck = (source, checkName) => {
+                var AllCheck = function (source, checkName) {
                         var checkboxes = document.getElementsByName(checkName);
                         for(var i = 0 ; i < checkboxes.length; i ++) {
                                 for(var i = 0 ; i < checkboxes.length; i++) {
@@ -166,7 +165,7 @@
                 }
 
                 //다운로드
-                var Download = (item_hidden_id , type_hidden_id , path_hidden_id , pos = 0) => {
+                var Download = function (item_hidden_id , type_hidden_id , path_hidden_id , pos) {
                         if(pos >= files_length) {
                                 return;
                         }
@@ -196,7 +195,7 @@
                 }
 
                 //삭제
-                var Delete = (delete_hidden_id , delete_form_id) => {
+                var Delete = function (delete_hidden_id , delete_form_id) {
 
                         var JSON_items = {};
                         var cnt = 0;
@@ -216,7 +215,7 @@
                 }
                 
                 //업로드 리스트
-                var Upload = (upload_file_id , upload_ul_id) => {
+                var Upload = function (upload_file_id , upload_ul_id) {
                         var upload_files = document.getElementById(upload_file_id);
                         var list_files = upload_files.files;
 
@@ -242,7 +241,7 @@
                 };
 
                 //업로드 시작
-                var Upload_Click = (form_id)=> {
+                var Upload_Click = function (form_id){
 
                         var form_data = new FormData(document.getElementById(form_id));
 
@@ -255,12 +254,12 @@
                                 headers : {"cache-control" : "no-cache"},
                                 processData : false,
                                 contentType : false,
-                                success : (inputdata) => {
+                                success : function(inputdata) {
                                         alert(inputdata);
                                         window.location.href = '/file?path=' + '<%= path %>';
                                 },
                                 
-                                error : () => {
+                                error : function () {
                                         alert('에러발생');
                                 },
                                 xhr: function(){
@@ -281,7 +280,7 @@
                 }
 
                 //폴더명 체크
-                var dirNameCheck = (check_text_id) => {
+                var dirNameCheck = function (check_text_id) {
                        var dirName = document.getElementById(check_text_id).value;
 
                        if(dirName == '' || dirName==null) {
@@ -295,7 +294,7 @@
 
 <body onload="init();storage_init('i_used_storage' , 'i_used_percent');">
 
-        <div class="container-fluid" style="padding-top: 3%; text-overflow:ellipsis;">
+        <div class="container" style="padding-top: 3%; text-overflow:ellipsis;">
                 <% if(grade == 'master') { %>
                         <div class="row mb-3">
                                 <div class="col-sm-12">
@@ -420,7 +419,7 @@
                                                                                 <input type="hidden" id="i_downloadItem" name="n_downloadItem" value="">
                                                                                 <input type="hidden" id="i_itemType" name="n_itemType" value="">
                                                                                 <input type="hidden" id="i_itemPath" name="n_itemPath" value="">
-                                                                                <input type="button" class="btn btn-outline-dark" value="다운로드" style="width: 100%; height:100%" onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath');">
+                                                                                <input type="button" class="btn btn-outline-dark" value="다운로드" style="width: 100%; height:100%" onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0);">
                                                                         </form>
                                                                 </div>
                                                 </div>
