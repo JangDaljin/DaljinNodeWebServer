@@ -73,6 +73,7 @@
                 var files_checked       = {};
                 var used_storage        = null;
                 var max_storage         = null;
+                var isIE                = false;
 
                 //초기화
                 var init = function() {
@@ -92,6 +93,30 @@
                         if(msg) {
                                 alert(msg);
                         }
+
+                        if(IECheck) isIE = true;
+                }
+
+                var IECheck = function() {
+                        var agent = navigator.userAgent.toLowerCase();
+                        var name = navigator.appName;
+                        var browser = null;
+                        if(name == 'Microsoft Internet Explorer' || agent.indexOf('trident') > -1 || agent.indexOf('edge/') > -1) {
+                                browser = 'ie';
+                                if(name === 'Microsoft Internet Explorer') { // IE old version (IE 10 or Lower)
+                                        agent = /msie ([0-9]{1,}[\.0-9]{0,})/.exec(agent);
+                                        browser += parseInt(agent[1]);
+                                } 
+                                else { // IE 11+
+                                        if(agent.indexOf('trident') > -1) { // IE 11 
+                                                browser += 11;
+                                        }
+                                        else if(agent.indexOf('edge/') > -1) { // Edge
+                                                browser = 'edge';
+                                        }
+                                }
+                        }
+                        return (browser != null)? true : false;
                 }
 
                 var storage_init = function(progress_id , percent_id) {
@@ -165,11 +190,14 @@
                 }
 
                 //다운로드
-                var Download = function (item_hidden_id , type_hidden_id , path_hidden_id , pos) {
+                var Download = function (item_hidden_id , type_hidden_id , path_hidden_id , pos , cnt) {
                         if(pos >= files_length) {
                                 return;
                         }
-
+                        if(cnt > 0 && isIE) {
+                                alert("Internet Exploere은 다중 다운로드가 불가능합니다.");
+                                return;
+                        }
                         if(files_checked[pos] == true) {
                                 document.getElementById(item_hidden_id).value = files[pos]['fullname'].trim();
                                 document.getElementById(type_hidden_id).value = files[pos]['type'];
@@ -182,7 +210,8 @@
                                         data: $('#downloadForm').serialize(), 
 
                                         successCallback: function (url) { 
-                                                Download(item_hidden_id , type_hidden_id , path_hidden_id ,  pos+1);
+
+                                                Download(item_hidden_id , type_hidden_id , path_hidden_id ,  pos+1 , cnt+1);
                                         },
                                         failCallback: function (responseHtml, url, error) { 
                                                 alert("DOWNLOAD ERROR");
@@ -190,7 +219,7 @@
                                 });
                         }
                         else {
-                                Download(item_hidden_id , type_hidden_id ,path_hidden_id, pos+1)
+                                Download(item_hidden_id , type_hidden_id ,path_hidden_id, pos+1 , cnt)
                         }
                 }
 
@@ -347,11 +376,19 @@
                                                                         <tr>
                                                                                 <td></td>
                                                                                 <td class="text-left">
+
+                                                                                        <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path.substring(0,path.lastIndexOf('/')) %>')">
+                                                                                                <i class="fas fa-reply">
+                                                                                                        ...
+                                                                                                </i>
+                                                                                        </button>
+                                                                                        <!--
                                                                                         <a href="?path=<%= path.substring(0,path.lastIndexOf('/')) %>">
                                                                                                 <i class="fas fa-reply">
                                                                                                         ...
                                                                                                 </i>
-                                                                                        </a>       
+                                                                                        </a>
+                                                                                        -->     
                                                                                 </td>
                                                                                 <td></td>
                                                                                 <td></td>
@@ -369,11 +406,20 @@
                                                                                 <% if(files_JSON[i]['type'] == 'directory') { %>
                                                                                         
                                                                                         <td class="text-left align-middle">
+
+                                                                                                <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path %>/<%= item %>')">
+                                                                                                        <i class="fas fa-folder text-truncate">
+                                                                                                                <%= item %>
+                                                                                                        </i>
+                                                                                                </button>
+
+                                                                                                <!--
                                                                                                 <a href="?path=<%= path %>/<%= item %>" class="">
                                                                                                         <i class="fas fa-folder text-truncate">
                                                                                                                 <%= item %>
                                                                                                         </i>
                                                                                                 </a>
+                                                                                                -->
                                                                                         </td>
                                                                                 <% } else { %> 
                                                                                         <td class="text-left align-middle">
@@ -419,7 +465,7 @@
                                                                                 <input type="hidden" id="i_downloadItem" name="n_downloadItem" value="">
                                                                                 <input type="hidden" id="i_itemType" name="n_itemType" value="">
                                                                                 <input type="hidden" id="i_itemPath" name="n_itemPath" value="">
-                                                                                <input type="button" class="btn btn-outline-dark" value="다운로드" style="width: 100%; height:100%" onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0);">
+                                                                                <input type="button" class="btn btn-outline-dark" value="다운로드" style="width: 100%; height:100%" onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0 , 0);">
                                                                         </form>
                                                                 </div>
                                                 </div>

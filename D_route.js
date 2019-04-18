@@ -155,7 +155,12 @@ module.exports = function(app) {
             var id = req.user.id;
             var grade = req.user.grade;
             var max_storage = req.user.max_storage;
-            var path = req.query.path || '';
+            
+            
+            var path = decodeURIComponent(req.query.path);
+            if(path == "undefined") {
+                path = '';
+            }
             var msg = req.query.msg || '';
 
             D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
@@ -282,7 +287,7 @@ module.exports = function(app) {
     function getDownloadFilename(req, filename) {
         var header = req.headers['user-agent'];
     
-        if (header.includes("MSIE") || header.includes("Trident")) { 
+        if (header.includes("MSIE") || header.includes("Trident") || header.includes("Edge"))  { 
             return encodeURIComponent(filename).replace(/\\+/gi, "%20");
         } else {
             return iconvLite.decode(iconvLite.encode(filename, "UTF-8"), 'ISO-8859-1');
