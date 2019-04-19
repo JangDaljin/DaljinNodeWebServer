@@ -285,7 +285,7 @@
                                 contentType : false,
                                 success : function(inputdata) {
                                         alert(inputdata);
-                                        window.location.href = '/file?path=' + '<%= path %>';
+                                        window.location.href = '/file?path=' + '<%= encodeURIComponent(path) %>';
                                 },
                                 
                                 error : function () {
@@ -327,7 +327,7 @@
                 <% if(grade == 'master') { %>
                         <div class="row mb-3">
                                 <div class="col-sm-12">
-                                        <input type="button" class="btn btn-info w-100" value="관리자 페이지" onclick="window.location.href='/master';">
+                                        <input type="button" class="btn btn-info w-100" value="관리자 페이지" onclick="window.location.href=encodeURIComponent('master');">
                                 </div>
                         </div>
                 <% } %>
@@ -376,19 +376,20 @@
                                                                         <tr>
                                                                                 <td></td>
                                                                                 <td class="text-left">
-
+                                                                                        <!--
                                                                                         <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path.substring(0,path.lastIndexOf('/')) %>')">
                                                                                                 <i class="fas fa-reply">
                                                                                                         ...
                                                                                                 </i>
                                                                                         </button>
-                                                                                        <!--
-                                                                                        <a href="?path=<%= path.substring(0,path.lastIndexOf('/')) %>">
+                                                                                        -->
+                                                                                        <a href="?path=<%= encodeURIComponent(path.substring(0,path.lastIndexOf('/'))) %>">
                                                                                                 <i class="fas fa-reply">
                                                                                                         ...
                                                                                                 </i>
                                                                                         </a>
-                                                                                        -->     
+
+                                                                                        
                                                                                 </td>
                                                                                 <td></td>
                                                                                 <td></td>
@@ -406,20 +407,20 @@
                                                                                 <% if(files_JSON[i]['type'] == 'directory') { %>
                                                                                         
                                                                                         <td class="text-left align-middle">
-
+                                                                                                <!--
                                                                                                 <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path %>/<%= item %>')">
                                                                                                         <i class="fas fa-folder text-truncate">
                                                                                                                 <%= item %>
                                                                                                         </i>
                                                                                                 </button>
-
-                                                                                                <!--
-                                                                                                <a href="?path=<%= path %>/<%= item %>" class="">
+                                                                                                -->
+                                                                                                
+                                                                                                <a href="?path=<%= encodeURIComponent(path +  '/' +  item) %>">
                                                                                                         <i class="fas fa-folder text-truncate">
                                                                                                                 <%= item %>
                                                                                                         </i>
                                                                                                 </a>
-                                                                                                -->
+                                                                                                
                                                                                         </td>
                                                                                 <% } else { %> 
                                                                                         <td class="text-left align-middle">
