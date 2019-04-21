@@ -23,11 +23,42 @@ module.exports = function(app) {
     });
 
     
+    /*
     //로그인 처리
     app.post('/login' , passport.authenticate('login' , {
         successRedirect : '/file',
         failureRedirect : '/?msg=로그인실패'
     }));
+    */
+
+
+    app.post('/login' , passport.authenticate('login', {
+        successRedirect : '/file',
+        failureRedirect : '/?msg=로그인실패'
+    }));
+    
+    
+    app.post('/loginNW' , (req , res) => {
+        var output = '{"RESULT" : "false"}';
+
+        passport.authenticate('login' , (err , user) => {
+            if(err || !user) {
+                res.json(JSON.parse(output));
+                return;
+            }
+            req.logIn(user , (err) => {
+                if(err) {
+                    res.json(JSON.parse(output));
+                    return;
+                }
+                output = '{"RESULT" : "true"}';
+                res.json(JSON.parse(output));
+                return;
+            });
+        })(req ,res);
+    });
+        
+
 
     //========================================================================================================================================//
 
@@ -152,7 +183,7 @@ module.exports = function(app) {
     //파일 페이지
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
-            var id = req.user.id;
+            var id = req.user.id;``
             var grade = req.user.grade;
             var max_storage = req.user.max_storage;
             
@@ -499,39 +530,5 @@ module.exports = function(app) {
         res.redirect('/');
     });
     //========================================================================================================================================//
-
-
-
-    //TEST
-    app.get('/test' , (req , res) => {
-        var INPUT = req.query.INPUT || '';
-        
-
-        var OUTPUT = {};
-        if(INPUT) {
-            OUTPUT.result = "COMPLETE";
-        }
-        else {
-            OUTPUT.result = "ERROR";
-        }
-
-        res.send(JSON.stringify(OUTPUT));
-    });
-
-
-    app.post('/test' , (req , res) => {
-        var INPUT = req.body.INPUT || '';
-        
-
-        var OUTPUT = {};
-        if(INPUT) {
-            OUTPUT.result = "COMPLETE";
-        }
-        else {
-            OUTPUT.result = "ERROR";
-        }
-
-        res.send(JSON.stringify(OUTPUT));
-    });
 
 }

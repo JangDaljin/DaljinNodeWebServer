@@ -11,7 +11,9 @@ function(req , id , pw , done) {
 
     var D_UserModel = req.app.get('D_UserModel');
 
+
     D_UserModel.findOne({'id':id} , (err,user) => {
+
         if(err) {
             console.log('[' + id + '] LOGIN ERROR');
             return done(err , null);
