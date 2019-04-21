@@ -500,4 +500,38 @@ module.exports = function(app) {
     });
     //========================================================================================================================================//
 
+
+
+    //TEST
+    app.get('/test' , (req , res) => {
+        var INPUT = req.query.INPUT || '';
+        
+
+        var OUTPUT = {};
+        if(INPUT) {
+            OUTPUT.result = "COMPLETE";
+        }
+        else {
+            OUTPUT.result = "ERROR";
+        }
+
+        res.send(JSON.stringify(OUTPUT));
+    });
+
+
+    app.post('/test' , (req , res) => {
+        var INPUT = req.body.INPUT || '';
+        
+
+        var OUTPUT = {};
+        if(INPUT) {
+            OUTPUT.result = "COMPLETE";
+        }
+        else {
+            OUTPUT.result = "ERROR";
+        }
+
+        res.send(JSON.stringify(OUTPUT));
+    });
+
 }
