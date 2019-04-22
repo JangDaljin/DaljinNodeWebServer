@@ -68,7 +68,7 @@ D_file.getTotalSizeOnRoot = (rootpath) => {
     return getFolderSize(rootpath);
 }
 
-//현재 위치 기준으로 파일 사이즈 측정(재귀 함수))
+//현재 위치 기준으로 파일 사이즈 측정(재귀 함수)
 var getFolderSize = (path) => {
     var size = 0; 
     var strArr_filelist = fs.readdirSync(path);

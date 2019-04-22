@@ -48,10 +48,10 @@ var _connect = (expressApp) => {
         D_UserSchema
         .method('encryptPassword', function (plainText, inSalt) {
             if (inSalt) {
-                return crypto.createHmac('sha1', inSalt).update(plainText).digest('hex');
+                return crypto.createHmac('sha256', inSalt).update(plainText).digest('hex');
             }
             else {
-                return crypto.createHmac('sha1', this.salt).update(plainText).digest('hex');
+                return crypto.createHmac('sha256', this.salt).update(plainText).digest('hex');
             }
         });
 

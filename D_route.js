@@ -22,16 +22,7 @@ module.exports = function(app) {
         }
     });
 
-    
-    /*
-    //로그인 처리
-    app.post('/login' , passport.authenticate('login' , {
-        successRedirect : '/file',
-        failureRedirect : '/?msg=로그인실패'
-    }));
-    */
-
-
+    // WEB LOGIN
     app.post('/login' , passport.authenticate('login', {
         successRedirect : '/file',
         failureRedirect : '/?msg=로그인실패'
@@ -312,14 +303,13 @@ module.exports = function(app) {
 
 
     //파일다운로드시 헤더에 한글명 사용가능
-    var iconvLite = require('iconv-lite');
     function getDownloadFilename(req, filename) {
         var header = req.headers['user-agent'];
     
         if (header.includes("MSIE") || header.includes("Trident") || header.includes("Edge"))  { 
             return encodeURIComponent(filename).replace(/\\+/gi, "%20");
         } else {
-            return iconvLite.decode(iconvLite.encode(filename, "UTF-8"), 'ISO-8859-1');
+            return filename;
         }
     }
 
@@ -338,7 +328,6 @@ module.exports = function(app) {
             //폴더일 경우 ZIP 변경
             if(type == 'directory') {
                 res.setHeader('Content-Type' , 'application/zip');
-                //res.setHeader('Content-Disposition', 'attachment; filename=' + downloadItem.substring(0,downloadItem.length) + '.zip');
                 res.setHeader('Content-Disposition', 'attachment; filename=' + getDownloadFilename(req, downloadItem.substring(0,downloadItem.length)+'.zip'));
 
                 var archive = archiver('zip');
