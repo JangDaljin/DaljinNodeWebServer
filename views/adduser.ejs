@@ -72,11 +72,13 @@
                 var pw = document.getElementById(element_id).value;
 
                 if(regex.test(pw)) {
-                    document.getElementById(show_element_id).style.display = 'none';
+                    document.getElementById(show_element_id).style.color = "#00ff00";
+                    $('#'+show_element_id).popover('hide');
                     PW_checked = true;
                 }
                 else {
-                    document.getElementById(show_element_id).style.display = 'block';
+                    document.getElementById(show_element_id).style.color = "#ff0000";
+                    $('#'+show_element_id).popover('show');
                     PW_checked = false;
                 }
             }
@@ -87,11 +89,13 @@
                 var confirmPW = document.getElementById(confirmPW_element_id).value;
 
                 if(PW == confirmPW) {
-                    document.getElementById(show_element_id).style.display = 'none';
+                    document.getElementById(show_element_id).style.color = "#00ff00"
+                    $('#'+show_element_id).popover('hide');
                     confirmPW_checked = true;
                 }
                 else {
-                    document.getElementById(show_element_id).style.display = 'block';
+                    document.getElementById(show_element_id).style.color = "#ff0000"
+                    $('#'+show_element_id).popover('show');
                     confirmPW_checked = false;
                 }
             }
@@ -122,81 +126,100 @@
                 }
             }
 
+
+            $(document).ready(function(){
+  $('[data-toggle="popover"]').popover(); 
+});
         </script>
 
-        <style>
-            *{
-             font-size: 0.8vw;   
-            }
-        </style>
 </head>
 
 <body class="h-100" onload="init();">
     <div class="container h-100">
-        <div class="row align-items-center  h-100">
-            <div class="col-sm-6 mx-auto my-auto">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
                 <form id="adduser_form" method="post" action="/adduser" onsubmit="return check_submit('ID' ,'validated_ID')">
-                    <div class="card mx-auto"> 
+                    <div class="card"> 
                         <div class="card-body">
                             <div class="container">
                                 <h2 class="card-title text-center mb-4 mt-1"> <i class="far fa-laugh-squint fa-1x"></i> 회원 가입 <i class="far fa-laugh-squint fa-1x"></i>   </h2> 
                                 <hr>
+
+
                                 <div class="row justify-content-center">
+                                    <div class="col-10 p-1">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                        <span class="input-group-text">아이디&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                </div>
+                                                <input type="text" class="form-control" id="ID" name="ID" >
+                                                <input type="hidden" id="validated_ID" value="">
 
-                                    <div class="col-3 p-1">
-                                            <label class="form-control text-center">아이디</label>
-                                    </div>
-                                    
-                                    <div class="col-4 p-1">
-                                            <input type="text" class="form-control" id="ID" name="ID" >
-                                            <input type="hidden" id="validated_ID" value="">
-                                    </div>
-
-                                    <div class="col-3 p-1">
-                                            <input type="button" class="btn btn-secondary w-100" value="중복확인" onclick="check_ID('ID' , 'validated_ID')">
+                                                <div class="input-group-append">
+                                                        <input type="button" class="btn btn-secondary w-100" value="중복확인" onclick="check_ID('ID' , 'validated_ID')">
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row justify-content-center">
-                                        <div class="col-3 p-1">
-                                                <label class="form-control text-center">비밀번호</label>
-                                        </div>
 
-                                        <div class="col-7 p-1">
-                                                <input type="password" class="form-control" id="PW" name="PW" onblur="check_PW('PW' , 'password_check_row');check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
-                                        </div>
-                                </div>
+                                        <div class="col-10 p-1">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                                <span class="input-group-text">비밀번호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                        </div>
+                                                            <input type="password" class="form-control" id="PW" name="PW" onfocus="check_PW('PW' , 'password_check_span');" onblur="check_PW('PW' , 'password_check_span');check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_span');">
 
-                                <div class="row" id="password_check_row" style="display: none">
-                                        <div class="col-sm-7 offset-sm-4 p-1">
-                                                <label class="form-control text-center">영문,숫자,특수문자 조합 8~15글자</label>
+                                                        <div class="input-group-append">
+                                                            <span id="password_check_span" class="input-group-text" data-toggle="popover" title="비밀번호 규칙" data-content="영문,숫자,특수문자 조합 8~15글자"><i class="far fa-check-square"></i></span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
                                         </div>
                                 </div>
 
                                 <div class="row justify-content-center">
-                                        <div class="col-3 p-1">
-                                                <label class="form-control text-center">비밀번호확인</label>
-                                        </div>
+
+                                        <div class="col-10 p-1">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                                <span class="input-group-text">비밀번호확인</span>
+                                                        </div>
+                                                        <input type="password" class="form-control" id="PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_span');">
                                         
-                                        <div class="col-7 p-1">
-                                                <input type="password" class="form-control" id="PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_row');">
+                                                        <div class="input-group-append">
+                                                            <span id="confirm_password_span" class="input-group-text" data-toggle="popover" title="비밀번호 재확인" data-content="비밀번호가 일치하지않습니다."><i class="far fa-check-square"></i></span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
                                         </div>
+
+
                                 </div>
 
-                                <div class="row" id="confirm_password_row" style="display: none">
-                                        <div class="col-sm-7 offset-sm-4 p-1">
-                                                <label class="form-control text-center">비밀번호가 같지않습니다.</label>
-                                        </div>
-                                </div>
 
                                 <div class="row justify-content-center">
-                                        <div class="col-3 p-1">
-                                                <label class="form-control text-center">승인번호</label>
+
+                                        <div class="col-10 p-1">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                                <span class="input-group-text">승인번호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                        </div>
+                                                        <input type="text" class="form-control" id="CODE" name="CODE">
+
+                                                    </div>
+                                                </div>
                                         </div>
-                                        
-                                        <div class="col-7 p-1">
-                                                <input type="text" class="form-control" id="CODE" name="CODE">
-                                        </div>
+
                                 </div>
 
                                 <div class="row justify-content-center">
