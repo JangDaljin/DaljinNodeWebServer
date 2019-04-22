@@ -96,7 +96,7 @@
 
                         if(IECheck()) {
                                 isIE = true;
-                                alert("Internet Explorer에서는 다중 다운로드가 되지않습니다.");
+                                document.getElementById('iealert').style.display = "block";
                         }
                 }
 
@@ -248,22 +248,26 @@
 
                         //리스트 초기화
                         var ul = document.getElementById(upload_ul_id);
+                        
                         while ( ul.hasChildNodes() ) 
-                        { 
+                        {       
                                 ul.removeChild( ul.firstChild ); 
                         }
 
                         //리스트 추가
                         for(var i = 0 ; i < list_files.length; i++) {
+
                                 var item = document.createElement('li');
                                 var content = document.createTextNode(list_files[i].name);
                                 
-                                item.appendChild(content);
                                 item.id='i_upload_file_' + i;
                                 item.name = 'n_upload_file_' + i;
                                 item.className = 'list-group-item d-flex justify-content-between align-items-center';
 
+                                item.appendChild(content);
+
                                 ul.appendChild(item);
+                                
                         }
                 };
 
@@ -316,12 +320,33 @@
                        return true;
                 }
 
+                $(document).ready(function(){
+                        $('[data-toggle="tooltip"]').tooltip();   
+                });
+
         </script>
+
+        <style>
+                * {
+                        font-size: 1vw;
+                }
+
+                .sizefontsize {
+                        font-size: 0.65vw;
+                }
+
+                .timefontsize {
+                        font-size : 0.6vw;
+                }
+        </style>
+
 </head>
 
 <body onload="init();storage_init('i_used_storage' , 'i_used_percent');">
 
-        <div class="container" style="padding-top: 3%; text-overflow:ellipsis;">
+
+
+        <div class="container" style="padding-top: 3%;">
                 <% if(grade == 'master') { %>
                         <div class="row mb-3">
                                 <div class="col-sm-12">
@@ -353,7 +378,7 @@
                                                 <!-- 리스트 -->
                                                 <div class="row mt-1 mb-1">
                                                         <div class="table-responsive table-bordered">                        
-                                                                <table class="table table-striped table-hover align-middle text-center">
+                                                                <table class="table table-striped table-hover align-middle text-center" style="table-layout: fixed;">
                                                                 <thead>
                                                                         <tr>
                                                                                 <th class="w-5">
@@ -363,8 +388,8 @@
                                                                                         </span>
                                                                                 </th>
                                                                                 <th class="w-50">파일명</th>
-                                                                                <th class="w-25">크기</th>
-                                                                                <th class="w-20">시간</th>
+                                                                                <th class="w-20">크기</th>
+                                                                                <th class="w-25">시간</th>
                                                                         </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -373,7 +398,7 @@
                                                                         <% if(path) { %>
                                                                         <tr>
                                                                                 <td></td>
-                                                                                <td class="text-left">
+                                                                                <td class="text-left text-truncate">
                                                                                         <!--
                                                                                         <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path.substring(0,path.lastIndexOf('/')) %>')">
                                                                                                 <i class="fas fa-reply">
@@ -393,8 +418,10 @@
                                                                                 <td></td>
                                                                         </tr>
                                                                         <% } %>
+
                                                                         <% for(var i = 0; i < files_length; i++) { %>
                                                                         <tr>
+                                                                                <!-- 체크 박스 -->
                                                                                 <% var item = files_JSON[i]['fullname'] %>
                                                                                 <td class="align-middle">
                                                                                         <div class="custom-control custom-checkbox">
@@ -402,9 +429,10 @@
                                                                                                 <label class="custom-control-label" for="i_checkbox_<%= i %>"></label>
                                                                                         </div>
                                                                                 </td>
+                                                                                <!-- 폴더 -->
                                                                                 <% if(files_JSON[i]['type'] == 'directory') { %>
                                                                                         
-                                                                                        <td class="text-left align-middle">
+                                                                                        <td class="text-left align-middle text-truncate">
                                                                                                 <!--
                                                                                                 <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path %>/<%= item %>')">
                                                                                                         <i class="fas fa-folder text-truncate">
@@ -413,23 +441,24 @@
                                                                                                 </button>
                                                                                                 -->
                                                                                                 
-                                                                                                <a href="?path=<%= encodeURIComponent(path +  '/' +  item) %>">
-                                                                                                        <i class="fas fa-folder text-truncate">
+                                                                                                <a href="?path=<%= encodeURIComponent(path +  '/' +  item) %>" data-toggle="tooltip" data-placement="left" title="<%= item %>">
+                                                                                                        <i class="fas fa-folder">
                                                                                                                 <%= item %>
                                                                                                         </i>
                                                                                                 </a>
                                                                                                 
                                                                                         </td>
-                                                                                <% } else { %> 
-                                                                                        <td class="text-left align-middle">
-                                                                                                <i class="fas fa-file text-truncate">
+                                                                                <% } else { %>
+                                                                                        <!-- 파일 -->
+                                                                                        <td class="text-left align-middle text-truncate" data-toggle="tooltip" data-placement="left" title="<%= item %>">
+                                                                                                <i class="fas fa-file">
                                                                                                         <%= item %>
                                                                                                 </i>
                                                                                         </td>
                                                                                        
                                                                                 <% } %>
-                                                                                <td class="align-middle"><%= getVolumeSize(files_JSON[i]['size'])%></td>
-                                                                                <td class="align-middle"><%= files_JSON[i]['ctime'] %></td>
+                                                                                <td class="align-middle sizefontsize"><%= getVolumeSize(files_JSON[i]['size'])%></td>
+                                                                                <td class="align-middle timefontsize"><%= files_JSON[i]['ctime'] %></td>
                                                                         </tr>
                                                                         <% } %>
                                                                 </tbody>
@@ -520,6 +549,7 @@
                 
         </div>
 
+        <% include iealert.ejs %>
 </body>
 
 </html>

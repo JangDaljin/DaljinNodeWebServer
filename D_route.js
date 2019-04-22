@@ -22,13 +22,13 @@ module.exports = function(app) {
         }
     });
 
-    // WEB LOGIN
+    // WEB로그인
     app.post('/login' , passport.authenticate('login', {
         successRedirect : '/file',
         failureRedirect : '/?msg=로그인실패'
     }));
     
-    
+    // WEB이외 로그인
     app.post('/loginNW' , (req , res) => {
         var output = '{"RESULT" : "false"}';
 
@@ -157,17 +157,25 @@ module.exports = function(app) {
     app.post('/fileList'  ,(req , res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var path = req.body.require_path || '';
+            var grade = req.user.grade;
+            var max_storage = req.user.max_storage;
+            var path = req.body.path || '';
+
             D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
                 (reutrnValue) => 
                 {
                     obj = {};
-                    res.send(JSON.stringify(returnValue));
+                    obj['path'] = path;
+                    obj['files'] = returnValue;
+                    obj['max_storage'] = max_storage;
+                    obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
+                    obj['grade'] = grade;
+                    res.json(obj);
                 }
             );
         }
         else {
-            res.redirect('/');
+            res.end();
         }
     });
 
@@ -305,13 +313,13 @@ module.exports = function(app) {
     //파일다운로드시 헤더에 한글명 사용가능
     function getDownloadFilename(req, filename) {
         var header = req.headers['user-agent'];
-    
         if (header.includes("MSIE") || header.includes("Trident") || header.includes("Edge"))  { 
             return encodeURIComponent(filename).replace(/\\+/gi, "%20");
         } else {
             return encodeURIComponent(filename);
         }
     }
+
 
     //파일다운로드 처리
     app.post('/Download/' , (req , res) => {
