@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
         <script type="text/javascript">
-            var init = () => {
+            var init = function () {
                 var param = '<%= param %>';
                 var redirect = '<%= redirect %>';
                 
@@ -31,7 +31,7 @@
 
 
             //아이디입력검사
-            var check_ID = (element_id , element_validated_id) => {
+            var check_ID = function (element_id , element_validated_id) {
 
                 var ID = document.getElementById(element_id).value;
                 
@@ -45,7 +45,7 @@
                     cache : false,
                     async : true,
                     headers : {"cache-control" : "no-cache"},
-                    success : (inputdata_jsonstr) => {
+                    success : function (inputdata_jsonstr) {
                         console.dir(inputdata_jsonstr);
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         if(inputdata['result'] == true) {
@@ -59,7 +59,7 @@
                         }
                     },
 
-                    error : () => {
+                    error : function () {
                         alert('에러발생');
                         ID_checked = false;
                     }
@@ -67,7 +67,7 @@
             }
 
             //비밀번호 입력 검사
-            var check_PW = (element_id , show_element_id) => {
+            var check_PW = function (element_id , show_element_id) {
                 var regex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
                 var pw = document.getElementById(element_id).value;
 
@@ -82,7 +82,7 @@
             }
 
             //비밀번호 확인 검사
-            var check_confirmPW = (PW_element_id , confirmPW_element_id , show_element_id) => {
+            var check_confirmPW = function (PW_element_id , confirmPW_element_id , show_element_id) {
                 var PW = document.getElementById(PW_element_id).value;
                 var confirmPW = document.getElementById(confirmPW_element_id).value;
 
@@ -98,7 +98,7 @@
             
 
             //보내기전 체크
-            var check_submit = (ID_element_id , ID_hidden_element_id) => {
+            var check_submit = function (ID_element_id , ID_hidden_element_id) {
                 var msg = "";
                 if(ID_checked == false || (document.getElementById(ID_element_id).value != document.getElementById(ID_hidden_element_id).value)) {
                     ID_checked = false;
