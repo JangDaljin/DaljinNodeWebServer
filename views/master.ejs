@@ -63,12 +63,12 @@
         var input_data = null;
         var input_data_length = null;
 
-        var init = ()=> {
+        var init = function () {
             input_data = JSON.parse('<%- data %>');
             input_data_length = Object.keys(input_data).length;
         }
 
-        var Update = (pos) => {
+        var Update = function (pos) {
             var outputdata = {};
             outputdata['id'] = input_data[pos]['id'];
             
@@ -109,7 +109,7 @@
                 cache : false,
                 async : true,
                 headers : {"cache-control" : "no-cache"},
-                success : (inputdata_jsonstr) => {
+                success : function (inputdata_jsonstr) {
                     var inputdata = JSON.parse(inputdata_jsonstr);
                     if(inputdata['result'] == true) {
                         location.reload();
@@ -118,13 +118,13 @@
                         alert('업데이트가 되지 않았습니다.');
                     }
                 },
-                error : () => {
+                error : function () {
                     alert('에러발생');
                 }
             })
         }
 
-        var Delete = (pos) => {
+        var Delete = function (pos) {
             var outputdata = {};
             outputdata['id'] = input_data[pos]['id'];
             $.ajax({
@@ -135,7 +135,7 @@
                 cache : false,
                 async : true,
                 headers : {"cache-control" : "no-cache"},
-                success : (inputdata_jsonstr) => {
+                success : function (inputdata_jsonstr) {
                     var inputdata = JSON.parse(inputdata_jsonstr);
                     if(inputdata['result'] == true) {
                         location.reload();
@@ -144,7 +144,7 @@
                         alert('삭제가 되지 않았습니다.');
                     }
                 },
-                error : () => {
+                error : function() {
                     alert('에러발생');
                 }
             })
