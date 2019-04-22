@@ -309,7 +309,7 @@ module.exports = function(app) {
         if (header.includes("MSIE") || header.includes("Trident") || header.includes("Edge"))  { 
             return encodeURIComponent(filename).replace(/\\+/gi, "%20");
         } else {
-            return filename;
+            return encodeURIComponent(filename);
         }
     }
 
