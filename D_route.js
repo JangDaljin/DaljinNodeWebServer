@@ -173,6 +173,8 @@ module.exports = function(app) {
                     obj['max_storage'] = max_storage;
                     obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
                     obj['grade'] = grade;
+                    
+                    console.dir(obj);
                     res.json(obj);
                 }
             );
