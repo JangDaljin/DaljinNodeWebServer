@@ -39,12 +39,10 @@ function(req , id , pw , done) {
 }))
 
 passport.serializeUser(function(user, done) {
-    console.log("SERIALLIZE");
     done(null , user);
 }); 
 
 passport.deserializeUser((user , done) => {
-    console.log("DESERIALIZE");
     done(null , user);
 });
 
