@@ -180,6 +180,7 @@ module.exports = function(app) {
             );
         }
         else {
+            console.log("END");
             res.end();
         }
     });
