@@ -165,6 +165,7 @@ module.exports = function(app) {
                 (reutrnValue) => 
                 {
                     obj = {};
+                    obj['id'] = id;
                     obj['path'] = path;
                     obj['files'] = returnValue;
                     obj['max_storage'] = max_storage;
