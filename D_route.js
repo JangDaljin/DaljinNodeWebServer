@@ -30,20 +30,21 @@ module.exports = function(app) {
     
     // WEB이외 로그인
     app.post('/loginNW' , (req , res) => {
-        var output = '{"RESULT" : "false"}';
+        var output = {};
+        output['error'] = false;
 
         passport.authenticate('login' , (err , user) => {
             if(err || !user) {
-                res.json(JSON.parse(output));
+                res.send(JSON.stringify(output));
                 return;
             }
             req.logIn(user , (err) => {
                 if(err) {
-                    res.json(JSON.parse(output));
+                    res.send(JSON.stringify(output));
                     return;
                 }
-                output = '{"RESULT" : "true"}';
-                res.json(JSON.parse(output));
+                output['error'] = true;
+                res.send(JSON.stringify(output));
                 return;
             });
         })(req ,res);
@@ -166,19 +167,22 @@ module.exports = function(app) {
             D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
                 (returnValue) => 
                 {
-                    obj = {};
-                    obj['id'] = id;
-                    obj['path'] = path;
-                    obj['files'] = returnValue;
-                    obj['max_storage'] = max_storage;
-                    obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
-                    obj['grade'] = grade;
-                    res.json(obj);
+                    var output = {};
+                    output['error'] = false;
+                    output['id'] = id;
+                    output['path'] = path;
+                    output['files'] = returnValue;
+                    output['max_storage'] = max_storage;
+                    output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
+                    output['grade'] = grade;
+                    res.send(JSON.stringify(output));
                 }
             );
         }
         else {
-            res.end();
+            var output = {};
+            output['error'] = true;
+            res.send(JSON.stringify(output));
         }
     });
 
