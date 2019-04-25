@@ -62,12 +62,6 @@ module.exports = function(app) {
         })(req ,res);
     });
 
-    app.post('/userInfo' , (req , res)=> {
-        var output = {}
-        output['error'] = true;
-
-    })
-
 
         
 
