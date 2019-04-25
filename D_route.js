@@ -31,8 +31,17 @@ module.exports = function(app) {
     // WEB이외 로그인
     app.post('/loginNW' , (req , res) => {
         var output = {};
-        output['error'] = false;
+        output['error'] = true;
 
+        if(req.isAuthenticated()) {
+            output['error'] = false;
+            output['id'] = req.user.id;
+            output['grade'] = req.user.grade;
+            output['max_storage'] = req.user.max_storage;
+            res.send(JSON.stringify(output));
+            return;
+        }
+        
         passport.authenticate('login' , (err , user) => {
             if(err || !user) {
                 res.send(JSON.stringify(output));
@@ -43,12 +52,21 @@ module.exports = function(app) {
                     res.send(JSON.stringify(output));
                     return;
                 }
-                output['error'] = true;
+                output['error'] = false;
+                output['id'] = user.id;
+                output['grade'] = user.grade;
+                output['max_storage'] = user.max_storage;
                 res.send(JSON.stringify(output));
                 return;
             });
         })(req ,res);
     });
+
+    app.post('/userInfo' , (req , res)=> {
+        var output = {}
+        output['error'] = true;
+
+    })
 
 
         
@@ -160,8 +178,6 @@ module.exports = function(app) {
     app.post('/fileList'  ,(req , res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var grade = req.user.grade;
-            var max_storage = req.user.max_storage;
             var path = req.body.path || '';
 
             D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
@@ -169,12 +185,8 @@ module.exports = function(app) {
                 {
                     var output = {};
                     output['error'] = false;
-                    output['id'] = id;
-                    output['path'] = path;
                     output['files'] = returnValue;
-                    output['max_storage'] = max_storage;
                     output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
-                    output['grade'] = grade;
                     res.send(JSON.stringify(output));
                 }
             );
@@ -524,6 +536,16 @@ module.exports = function(app) {
 
 
     //========================================================================================================================================//
+
+    app.post('/logoutNW' , (req , res) => {
+        var output  = {};
+        output['error'] = true;
+        if(req.isAuthenticated()) {
+            output['error'] = false
+            req.logout();
+        }
+        res.send(JSON.stringify(output));
+    });
 
     //로그아웃 처리
     app.post('/logout' , (req , res) => {
