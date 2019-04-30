@@ -4,7 +4,7 @@ var D_file = {};
 //리스트
 D_file.getList = async (dirname) => {
     var arr_Filelist = [];
-    var FILE_INFO = {};
+    var FILE_INFO = [];
     try {
         arr_Filelist = await fs.readdirSync(dirname);
     }
@@ -13,9 +13,30 @@ D_file.getList = async (dirname) => {
         return null;
     }
     for(var i = 0 ; i < arr_Filelist.length; i++) {
-        FILE_INFO[i] = await getStats_Async(dirname , arr_Filelist[i]);
+        FILE_INFO.push(await getStats_Async(dirname , arr_Filelist[i]));
     }
-    return FILE_INFO;
+
+    //정렬
+    FILE_INFO.sort((a , b) => {
+        if(a.type == b.type) {
+            if(a.name == b.name) return 0;
+            return a.name > b.name? 1 : -1
+        }
+        else {
+            if(a.type == 'directory' && a.type == 'file') {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        }
+    })
+
+    var NEW_FILE_INFO = {};
+    for(i in FILE_INFO) {
+        NEW_FILE_INFO[i] = FILE_INFO[i]
+    }
+    return NEW_FILE_INFO;
 }
 
 //파일정보 얻기

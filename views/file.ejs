@@ -429,34 +429,21 @@
                                                                                                 <label class="custom-control-label" for="i_checkbox_<%= i %>"></label>
                                                                                         </div>
                                                                                 </td>
-                                                                                <!-- 폴더 -->
+                                                                                <td class="text-left align-middle text-truncate" data-toggle="tooltip" data-placement="right" title="<%= item %>">
                                                                                 <% if(files_JSON[i]['type'] == 'directory') { %>
-                                                                                        
-                                                                                        <td class="text-left align-middle text-truncate">
-                                                                                                <!--
-                                                                                                <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path %>/<%= item %>')">
-                                                                                                        <i class="fas fa-folder text-truncate">
-                                                                                                                <%= item %>
-                                                                                                        </i>
-                                                                                                </button>
-                                                                                                -->
-                                                                                                
-                                                                                                <a href="?path=<%= encodeURIComponent(path +  '/' +  item) %>" data-toggle="tooltip" data-placement="left" title="<%= item %>">
-                                                                                                        <i class="fas fa-folder">
-                                                                                                                <%= item %>
-                                                                                                        </i>
-                                                                                                </a>
-                                                                                                
-                                                                                        </td>
-                                                                                <% } else { %>
-                                                                                        <!-- 파일 -->
-                                                                                        <td class="text-left align-middle text-truncate" data-toggle="tooltip" data-placement="left" title="<%= item %>">
-                                                                                                <i class="fas fa-file">
+                                                                                        <!-- 폴더 -->
+                                                                                        <a href="?path=<%= encodeURIComponent(path +  '/' +  item) %>">
+                                                                                                <i class="fas fa-folder">
                                                                                                         <%= item %>
                                                                                                 </i>
-                                                                                        </td>
-                                                                                       
+                                                                                        </a>
+                                                                                <% } else { %>
+                                                                                        <!-- 파일 -->
+                                                                                        <i class="fas fa-file">
+                                                                                                <%= item %>
+                                                                                        </i>
                                                                                 <% } %>
+                                                                                </td>
                                                                                 <td class="align-middle sizefontsize"><%= getVolumeSize(files_JSON[i]['size'])%></td>
                                                                                 <td class="align-middle timefontsize"><%= files_JSON[i]['ctime'] %></td>
                                                                         </tr>
