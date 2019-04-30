@@ -178,7 +178,7 @@ module.exports = function(app) {
                 (returnValue) => 
                 {
                     var output = {};
-                    output['error'] = false;
+                    output['error'] = returnValue == null ? true : false;
                     output['files'] = returnValue;
                     output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
                     res.send(JSON.stringify(output));
