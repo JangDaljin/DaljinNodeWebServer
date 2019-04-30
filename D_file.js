@@ -6,7 +6,7 @@ D_file.getList = async (dirname) => {
     var arr_Filelist = [];
     var FILE_INFO = [];
     try {
-        arr_Filelist = await fs.readdirSync(dirname , compare);
+        arr_Filelist = await fs.readdirSync(dirname);
     }
     catch (e) {
         console.log(dirname , 'WRONG NAME');
@@ -24,10 +24,10 @@ D_file.getList = async (dirname) => {
         }
         else {
             if(a.type == 'directory' && b.type == 'file') {
-                return 1;
+                return -1;
             }
             else {
-                return -1;
+                return 1;
             }
         }
     })
