@@ -286,7 +286,7 @@ module.exports = function(app) {
                         (returnValue) => 
                         {
                             console.log('[' + id + ']' + files[i].originalname + 'UPLOAD COMPLETE');
-                            res = res && loopFunciton(i+1);
+                            res = loopFunciton(i+1) && res;
                         }
                     );
                 }
@@ -296,8 +296,9 @@ module.exports = function(app) {
                         console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
                     }
                     console.log('[' + id + '] UPLOAD FAIL(FULL OVER STORAGE)');
-                    msg = "용량초과" + files[i].filename + "\n";
-                    res = res && loopFunciton(i+1);
+                    msg += "용량초과[" + files[i].originalname + "]\n";
+                    res = false;
+                    res = loopFunciton(i+1) && res;
                 }
                 return res;
             }
