@@ -320,33 +320,70 @@
                        return true;
                 }
 
+                //툴팁 작동 코드
                 $(document).ready(function(){
                         $('[data-toggle="tooltip"]').tooltip();   
                 });
 
         </script>
-
-        <style>
-                * {
-                        font-size: 1vw;
-                }
-
-                .sizefontsize {
-                        font-size: 1vw;
-                }
-
-                .timefontsize {
-                        font-size : 1vw;
-                }
-        </style>
-
 </head>
 
 <body onload="init();storage_init('i_used_storage' , 'i_used_percent');">
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+
+                <a class="navbar-brand" href="/file" style="display: inline;">
+                        <img src="/logoHorizonImage" style="display: inline;"/>
+                </a>
+
+                <button class="navbar-toggler ml-auto" 
+                                type="button" 
+                                data-toggle="collapse" 
+                                data-target="#navbarItems" 
+                                aria-controls="navbarItems" 
+                                aria-expanded="false" 
+                                aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarItems">
+                        <!-- 왼쪽 -->
+                        <ul class="navbar-nav">
+                                <!-- 다운로드 -->
+                                <form class="form-inline my-1 mx-1" id="downloadForm" method="POST" action="/Download">
+                                                                <input type="button" class="btn btn-success w-100" value="다운로드"onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0);">
+                                                                <input type="hidden" id="i_downloadItem" name="n_downloadItem" value="">
+                                                                <input type="hidden" id="i_itemType" name="n_itemType" value="">
+                                                                <input type="hidden" id="i_itemPath" name="n_itemPath" value="">
+                                </form>
+
+                                <!-- 삭제 -->
+                                <form class="form-inline my-1 mx-1" id="i_deleteForm" method="POST" action="/Delete">
+                                        <input type="hidden" id="i_deleteList" name="n_deleteList" value="">
+                                        <input type="hidden" name="n_deletePath" value="<%= path %>">
+                                        <input type="button" class="btn btn-success w-100" value="삭제" onclick="Delete('i_deleteList', 'i_deleteForm');">
+                                </form>
+                        </ul>
+                        <!-- 오른쪽 -->
+                        <ul class="navbar-nav ml-auto">
+                                <!-- 폴더 만들기 -->
+                                <form class="form-inline my-1" id="i_makeDirectoryForm" method="POST" action="/makeDirectory">
+                                        <div class="form-group w-100">
+                                                <div class="input-group w-100">
+                                                        <div class="input-group-prepend">
+                                                                <span class="input-group-text"><i class="fas fa-folder-plus"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" id="i_makeDirectory_Name" name="n_makeDirectory_Name" value="" placeholder="폴더이름">
+                                                        <input type="button" class="btn btn-success" value="폴더만들기" onclick="(dirNameCheck('i_makeDirectory_Name'))? submit() : alert('폴더명이 잘못됐습니다.')"> 
+                                                        <input type="hidden" name="n_makeDirectory_path" value="<%= path %>">
+                                                </div>
+                                        </div>   
+                                </form> 
+                        </ul>
+                </div>
+        </nav>
 
 
-
-        <div class="container" style="padding-top: 3%;">
+        <div class="container" style="padding-top: 75px">
                 <% if(grade == 'master') { %>
                         <div class="row mb-3">
                                 <div class="col-12">
@@ -357,7 +394,7 @@
 
 
                 <div class="row mb-2">
-                        <div class="col-10">
+                        <div class="col-8 col-sm-10">
                                         <div class="progress position-relative" style="height:100%">
                                                 <div id='i_used_storage' class="progress-bar bg-success progress-bar-striped" style="height: 100%;">
                                                                 <span id="i_used_percent" class="align-middle" style="color:black;"></span> 
@@ -365,15 +402,12 @@
                                         </div>
                         </div>
 
-                        <div class="col-2">
+                        <div class="col-4 col-sm-2">
                                 <form class="form-inline" method="post" action="/logout">
                                         <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="로그아웃" type="submit">
                                 </form>
                         </div>
-                </div>
-
-                <div class="row">
-                        <div class="col-8">
+                        <div class="col-sm-8">
                                 <div class="container-fluid">
                                                 <!-- 리스트 -->
                                                 <div class="row mt-1 mb-1">
@@ -420,7 +454,7 @@
                                                                         <% } %>
 
                                                                         <% for(var i = 0; i < files_length; i++) { %>
-                                                                        <tr>
+                                                                        <tr onclick="getElementById('i_checkbox_<%= i %>').checked = !getElementById('i_checkbox_<%= i %>').checked; Check(getElementById('i_checkbox_<%= i %>'), '<%= i  %>');">
                                                                                 <!-- 체크 박스 -->
                                                                                 <% var item = files_JSON[i]['fullname'] %>
                                                                                 <td class="align-middle">
@@ -444,8 +478,8 @@
                                                                                         </i>
                                                                                 <% } %>
                                                                                 </td>
-                                                                                <td class="align-middle sizefontsize"><%= getVolumeSize(files_JSON[i]['size'])%></td>
-                                                                                <td class="align-middle timefontsize"><%= files_JSON[i]['ctime'] %></td>
+                                                                                <td class="align-middle" style="font-size: 1vw;"><%= getVolumeSize(files_JSON[i]['size'])%></td>
+                                                                                <td class="align-middle timefontsize text-truncate" style="font-size : 0.78vw"><%= files_JSON[i]['ctime'] %>             </td>
                                                                         </tr>
                                                                         <% } %>
                                                                 </tbody>
@@ -453,52 +487,15 @@
                                                         </div>
                                                 </div>
 
-                                                <!-- 폴더 만들기 -->
-                                                <div class="row text-center align-middle mb-1 mt-1">
-                                                                <form class="form-inline w-100" id="i_makeDirectoryForm" method="POST" action="/makeDirectory">
-                                                                        <div class="col-8 w-100 p-0">
-                                                                                <div class="form-group w-100 p-0 m-0">
-                                                                                        <input type="text" class="form-control w-100" id="i_makeDirectory_Name" name="n_makeDirectory_Name" value="">
-                                                                                        <input type="hidden" name="n_makeDirectory_path" value="<%= path %>">
-                                                                                </div>
-                                                                        </div>
-                                                                                
+                                                
 
-                                                                        <div class="col-4 p-0">
-                                                                                <div class="form-group w-100 p-0 m-0">
-                                                                                        <input type="button" class="btn btn-outline-dark w-100" value="폴더만들기" onclick="(dirNameCheck('i_makeDirectory_Name'))? submit() : alert('폴더명이 잘못됐습니다.')"> 
-                                                                                </div>       
-                                                                        </div>
-                                                                </form> 
-                                                </div>
+                                                
 
-                                                <!-- 다운로드 -->
-                                                <div class="row text-center align-middle mb-1 mt-1">
-
-                                                                <div class="container-fluid p-0">
-                                                                        <form id="downloadForm" method="POST" action="/Download">
-                                                                                <input type="hidden" id="i_downloadItem" name="n_downloadItem" value="">
-                                                                                <input type="hidden" id="i_itemType" name="n_itemType" value="">
-                                                                                <input type="hidden" id="i_itemPath" name="n_itemPath" value="">
-                                                                                <input type="button" class="btn btn-outline-dark" value="다운로드" style="width: 100%; height:100%" onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0);">
-                                                                        </form>
-                                                                </div>
-                                                </div>
-
-                                                <!-- 삭제 -->
-                                                <div class="row mb-1 mt-1">
-                                                        <div class="container-fluid p-0">
-                                                                <form id="i_deleteForm" method="POST" action="/Delete">
-                                                                        <input type="hidden" id="i_deleteList" name="n_deleteList" value="">
-                                                                        <input type="hidden" name="n_deletePath" value="<%= path %>">
-                                                                        <input type="button" class="btn btn-outline-dark" value="삭제" style="width: 100%; height:100%" onclick="Delete('i_deleteList', 'i_deleteForm');">
-                                                                </form>
-                                                        </div> 
-                                                </div>
+                                                
                                         </div>
                         </div>
                         
-                        <div class="col-4">
+                        <div class="col-sm-4">
                                 <!-- 업로드 -->
                                 <div class="container-fluid">
                                         <form id="uploadForm" method="POST" action="/fileUpload" enctype="multipart/form-data">
