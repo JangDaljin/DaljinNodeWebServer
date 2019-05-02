@@ -416,6 +416,35 @@ module.exports = function(app) {
         }
     });
 
+    //폴더 만들기
+    app.post('/makeDirectoryNW' , (req, res)=> {
+        
+        if(req.isAuthenticated()) {
+            var id = req.user.id;
+            var path = req.body.n_makeDirectory_path || '';
+            var name = req.body.n_makeDirectory_Name || '';
+            output = {};
+            output['error'] = true
+
+            if(name != '')  {
+                D_file.makeDirectory(D_PATH["DOWNLOAD"] + '/' + id + path + '/' + name).then(
+                    (returnValue) =>
+                    {
+                        console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
+                        output['error'] = false
+                        res.send(JSON.stringify(output));
+                    }
+                );
+            }
+            else {
+                res.send(JSON.stringify(output));
+            }
+        }
+        else {
+            res.end();
+        }
+    });
+
     //파일,폴더 지우기 처리
     app.post('/Delete' , (req ,res) => {
         if(req.isAuthenticated()) {
@@ -451,6 +480,43 @@ module.exports = function(app) {
         }
         else {
             res.redirect('/');
+        }
+    });
+
+    app.post('/DeleteNW' , (req ,res) => {
+        if(req.isAuthenticated()) {
+            var id = req.user.id;
+            var deletePath = req.body.n_deletePath;
+            
+            var deleteFileList = JSON.parse(req.body.n_deleteList);
+            var deleteFileList_length = Object.keys(deleteFileList).length;
+
+            for(var i = 0 ; i < deleteFileList_length; i++) {
+                if(deleteFileList[i]['type'] == 'directory') {
+                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
+                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
+                        .then(
+                        (returnValue) => 
+                        {
+                            console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
+                        }
+                    );
+                }
+                else if(deleteFileList[i]['type'] == 'file') {
+                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
+                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
+                    .then(
+                        (returnValue) => 
+                        {
+                            console.log('[' + id + '] FILE DELETE COMPLETE');
+                        }
+                    );
+                }
+            }
+            res.send("")
+        }
+        else {
+            res.end()
         }
     });
     //========================================================================================================================================//
