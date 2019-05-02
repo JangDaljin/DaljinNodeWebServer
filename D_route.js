@@ -487,10 +487,7 @@ module.exports = function(app) {
         if(req.isAuthenticated()) {
             var id = req.user.id;
             var deletePath = req.body.n_deletePath;
-            
-            console.log(req.body.n_deleteList);
             var deleteFileList = JSON.parse(req.body.n_deleteList);
-            
             var deleteFileList_length = Object.keys(deleteFileList).length;
 
             for(var i = 0 ; i < deleteFileList_length; i++) {
