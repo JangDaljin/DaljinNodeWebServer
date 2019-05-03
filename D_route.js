@@ -163,6 +163,82 @@ module.exports = function(app) {
             );
         }
     });
+
+    //유저추가 처리(WEB 이외)
+    app.post('/adduserNW' , (req , res)=> {
+        var ID = req.body.ID || req.query.ID;
+        var PW = req.body.PW || req.query.PW;
+        var CODE = req.body.CODE || req.query.CODE;
+        
+        var output = {};
+        output['error'] = true;
+        output['msg'] = "";
+        
+
+        if(ID.trim() == '' && PW.trim() == '' && CODE.trim() == '') {
+            output['msg'] = '입력데이터 비정상'
+            res.send(JSON.stringify(output));
+            return;
+        }
+
+
+        var USER_SETTING = req.app.get('USER_SETTING');
+        var cur_USER_SETTING = null;
+        for(var i = 0 ; i < Object.keys(USER_SETTING).length; i++) {
+            if(USER_SETTING[i]['code'] == CODE) {
+                cur_USER_SETTING = USER_SETTING[i];
+                break;
+            }
+        }
+        if(cur_USER_SETTING == null) {
+            output['msg'] = '승인코드 에러';
+            res.send(JSON.stringify(output));
+        }
+        else {
+            D_Mongoose.user_ID_Check(ID).then(
+                (returnValue) => {
+                    if(!returnValue) {
+                        output['msg'] = '해당 아이디가 존재합니다';
+                        res.send(JSON.stringify(output));
+                    }
+                    else if(D_Mongoose.user_PW_Check(PW)) {
+                        output['msg'] = '비밀번호가 형식에 맞지 않습니다';
+                        res.send(JSON.stringify(output));
+                    }
+                    else {
+                        var D_UserModel = req.app.get('D_UserModel');
+                        var UserModel = new D_UserModel(
+                            {
+                                id : ID,
+                                password : PW,
+                                grade : cur_USER_SETTING['grade'],
+                                max_storage : cur_USER_SETTING['max_storage']
+                            }
+                        );
+
+                        UserModel.save((err)=> {
+                            if(err) {
+                                console.log('[' + ID + '] ADD USER ERROR');
+                                output['msg'] = '등록에 실패했습니다.';
+                        res.send(JSON.stringify(output));
+                            }
+                            else {
+                                D_file.makeDirectory(D_PATH["DOWNLOAD"]+ '/' + ID).then(
+                                    (returnValue) => 
+                                    {
+                                        console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                                        output['error'] = false;
+                                        output['msg'] = '정상적으로 등록되었습니다';
+                                        res.send(JSON.stringify(output));
+                                    }
+                                )
+                            }
+                        });
+                    }
+                }
+            );
+        }
+    });
     //========================================================================================================================================//
 
 
