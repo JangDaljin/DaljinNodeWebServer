@@ -312,7 +312,7 @@ module.exports = function(app) {
                 callback(null , D_PATH["UPLOAD"]);
             },
             filename : (req , file , callback) => {
-                callback(null , file.originalname + '_' + req.user.id);
+                callback(null , decodeURIComponent(file.originalname) + '_' + req.user.id);
             }
         })
     });
@@ -357,11 +357,11 @@ module.exports = function(app) {
 
                 var res = true;
                 
-                if(used_storage + files[i].size < max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + id + path + '/' + files[i].originalname).then(
+                if(used_storage + files[i].size <= max_storage) {
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + id + path + '/' + decodeURIComponent(files[i].originalname)).then(
                         (returnValue) => 
                         {
-                            console.log('[' + id + ']' + files[i].originalname + 'UPLOAD COMPLETE');
+                            console.log('[' + id + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
                             res = loopFunciton(i+1) && res;
                         }
                     );
@@ -372,7 +372,7 @@ module.exports = function(app) {
                         console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
                     }
                     console.log('[' + id + '] UPLOAD FAIL(FULL OVER STORAGE)');
-                    msg += "용량초과[" + files[i].originalname + "]\n";
+                    msg += "용량초과[" + decodeURIComponent(files[i].originalname) + "]\n";
                     res = false;
                     res = loopFunciton(i+1) && res;
                 }

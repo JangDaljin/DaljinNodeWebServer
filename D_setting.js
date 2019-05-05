@@ -1,8 +1,8 @@
 var SOCKET_SETTING = 
 {
-    'HOSTNAME' : '192.168.1.200'
+    'HOSTNAME' : 'localhost'
     ,
-    'PORT' : '80'
+    'PORT' : '8000'
 };
 
 var PATH = 
