@@ -6,20 +6,53 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+
+
 
     <script type="text/javascript">
         var init = function() {
-            var msg = '<%= msg %>';
-            if(msg) {
-                alert(msg);
-            }
+            
         }
+
+
+        var Login = function(dom_ID , dom_PW) {
+            outputdata = {};
+            outputdata['ID'] = document.getElementById(dom_ID).value;
+            outputdata['PW'] = document.getElementById(dom_PW).value;
+            $.ajax({
+                url : "/login",
+                type : "POST",
+                data : JSON.stringify(outputdata),
+                contentType : "application/json",
+                cache : false,
+                async : true,
+                headers : {"cache-control" : "no-cache"},
+                success : function (inputdata_jsonstr) {
+                    var inputdata = JSON.parse(inputdata_jsonstr);
+
+                    if(inputdata['error'] == false) {
+                        window.location.href = "/file";
+                    }
+                    else {
+                        alert('로그인실패');
+                    }
+                },
+
+                error : function () {
+                    alert('에러발생');
+                }
+            });
+        }
+
     </script>
 </head>
 
@@ -33,14 +66,14 @@
                         <!--<h2 class="card-title text-center mb-4 mt-1"> <i class="far fa-kiss-beam"></i> 로그인 <i class="far fa-kiss-beam"></i></h2>-->
                         <hr>
                         <!-- <p class="text-success text-center">달진이 NAS 접속</p> -->
-                        <form method="post" action="/login">
+                        <form method="post">
 
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-user"></i></span>
                                     </div>
-                                    <input name="ID" class="form-control" placeholder="ID">
+                                    <input id="i_ID" name="ID" class="form-control" placeholder="ID">
                                 </div> 
                             </div>
 
@@ -49,12 +82,12 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                     </div>
-                                    <input name="PW" class="form-control" placeholder="********" type="password">
+                                    <input id="i_PW" name="PW" class="form-control" placeholder="********" type="password">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block"> 로그인  </button>
+                                <button type="button" class="btn btn-primary btn-block" onclick="Login('i_ID' , 'i_PW');"> 로그인  </button>
                             </div>
                             <div class="form-group">
                                     <button type="button" class="btn btn-primary btn-block" onclick="window.location.href = '/adduser';"> 등록 </button>

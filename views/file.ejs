@@ -88,12 +88,6 @@
                         used_storage = parseInt('<%- used_storage %>');
                         max_storage = parseInt('<%- max_storage %>');
 
-                        //메세지표시
-                        var msg = '<%= msg %>'
-                        if(msg) {
-                                alert(msg);
-                        }
-
                         if(IECheck()) {
                                 isIE = true;
                                 document.getElementById('iealert').style.display = "block";
@@ -222,11 +216,10 @@
                 }
 
                 //삭제
-                var Delete = function (delete_hidden_id , delete_form_id) {
+                var Delete = function (dom_deletePath) {
 
                         var JSON_items = {};
                         var cnt = 0;
-
                         for(var i = 0 ; i < files_length; i++) {
                                 if(files_checked[i]==true) {
                                         var JSON_item = {};
@@ -235,10 +228,46 @@
                                         JSON_items[cnt++] = JSON_item;
                                 }
                         }
+                        if(cnt == 0) {
+                                alert("삭제 항목을 선택해주세요.");
+                                return;
+                        }
 
+                        outputdata = {};
+                        outputdata['deletePath'] = document.getElementById(dom_deletePath).value;
+                        outputdata['deleteList'] = JSON.stringify(JSON_items);
 
-                        document.getElementById(delete_hidden_id).value = JSON.stringify(JSON_items);
-                        document.getElementById(delete_form_id).submit();
+                        $.ajax({
+                                url : "/delete",
+                                type : "POST",
+                                data : JSON.stringify(outputdata),
+                                contentType : "application/json",
+                                cache : false,
+                                async : true,
+                                headers : {"cache-control" : "no-cache"},
+                                success : function (inputdata_jsonstr) {
+                                        var inputdata = JSON.parse(inputdata_jsonstr);
+                                        var msg = "";
+                                        var refresh = false;
+                                        for(var i = 0 ; i < Object.keys(inputdata).length; i++) {
+                                                if(inputdata[i]['error']) {
+                                                        msg += inputdata[i]['msg'] + "\n";
+                                                }
+                                                else {
+                                                        refresh = true;
+                                                }
+                                        }
+                                        if(msg) {
+                                                alert(msg);
+                                        }
+                                        if(refresh) {
+                                                window.location.reload();
+                                        }
+                                },
+                                error : function () {
+                                        alert('에러발생');
+                                }
+                        });
                 }
                 
                 //업로드 리스트
@@ -277,7 +306,7 @@
                         var form_data = new FormData(document.getElementById(form_id));
 
                         $.ajax({
-                                url : "/fileUpload",
+                                url : "/upload",
                                 type : "POST",
                                 data : form_data,
                                 cache : false,
@@ -310,14 +339,64 @@
                         });
                 }
 
+
                 //폴더명 체크
-                var dirNameCheck = function (check_text_id) {
-                       var dirName = document.getElementById(check_text_id).value;
+                var makeDirectory = function (dom_makeDirectoryName , dom_makeDirectoryPath) {
+                       var dirName = document.getElementById(dom_makeDirectoryName).value;
+                       var dirPath = document.getElementById(dom_makeDirectoryPath).value;
 
                        if(dirName == '' || dirName==null) {
-                               return false;
+                               alert("폴더명을 적어주세요");
+                               return;
                        }
-                       return true;
+                       
+                        outputdata = {};
+                        outputdata['mkdirName'] = dirName
+                        outputdata['mkdirPath'] = dirPath
+                        $.ajax({
+                                url : "/mkdir",
+                                type : "POST",
+                                data : JSON.stringify(outputdata),
+                                contentType : "application/json",
+                                cache : false,
+                                async : true,
+                                headers : {"cache-control" : "no-cache"},
+                                success : function (inputdata_jsonstr) {
+                                        var inputdata = JSON.parse(inputdata_jsonstr);
+                                        alert(inputdata['msg']);
+                                        if(inputdata['error'] == false) {
+                                                window.location.reload();
+                                        }
+                                },
+                                error : function () {
+                                        alert('에러발생');
+                                }
+                        });
+        
+                }
+
+                var logout = function() {
+                        $.ajax({
+                                url : "/logout",
+                                type : "POST",
+                                data : {},
+                                contentType : "application/json",
+                                cache : false,
+                                async : true,
+                                headers : {"cache-control" : "no-cache"},
+                                success : function (inputdata_jsonstr) {
+                                        var inputdata = JSON.parse(inputdata_jsonstr);
+                                        if(inputdata['error']) {
+                                                alert("로그아웃 실패");
+                                        }
+                                        else {
+                                                window.location.href="/";
+                                        }
+                                },
+                                error : function () {
+                                        alert('에러발생');
+                                }
+                        });
                 }
 
                 //툴팁 작동 코드
@@ -349,7 +428,7 @@
                         <!-- 왼쪽 -->
                         <ul class="navbar-nav">
                                 <!-- 다운로드 -->
-                                <form class="form-inline my-1 mx-1" id="downloadForm" method="POST" action="/Download">
+                                <form class="form-inline my-1 mx-1" id="downloadForm" method="POST" action="/download">
                                                                 <input type="button" class="btn btn-success w-100" value="다운로드"onclick="Download('i_downloadItem' , 'i_itemType' , 'i_itemPath' , 0);">
                                                                 <input type="hidden" id="i_downloadItem" name="n_downloadItem" value="">
                                                                 <input type="hidden" id="i_itemType" name="n_itemType" value="">
@@ -357,24 +436,24 @@
                                 </form>
 
                                 <!-- 삭제 -->
-                                <form class="form-inline my-1 mx-1" id="i_deleteForm" method="POST" action="/Delete">
-                                        <input type="hidden" id="i_deleteList" name="n_deleteList" value="">
-                                        <input type="hidden" name="n_deletePath" value="<%= path %>">
-                                        <input type="button" class="btn btn-success w-100" value="삭제" onclick="Delete('i_deleteList', 'i_deleteForm');">
+                                <form class="form-inline my-1 mx-1" id="i_deleteForm" method="POST">
+                                        <input type="hidden" id="i_deletePath" name="n_deletePath" value="<%= path %>">
+                                        <input type="button" class="btn btn-success w-100" value="삭제" onclick="Delete('i_deletePath');">
                                 </form>
                         </ul>
                         <!-- 오른쪽 -->
                         <ul class="navbar-nav ml-auto">
                                 <!-- 폴더 만들기 -->
-                                <form class="form-inline my-1" id="i_makeDirectoryForm" method="POST" action="/makeDirectory">
+                                <form class="form-inline my-1" id="i_makeDirectoryForm" action="javascript:makeDirectory('i_makeDirectory_Name' , 'i_makeDirectory_path')">
                                         <div class="form-group w-100">
                                                 <div class="input-group w-100">
                                                         <div class="input-group-prepend">
                                                                 <span class="input-group-text"><i class="fas fa-folder-plus"></i></span>
                                                         </div>
                                                         <input type="text" class="form-control" id="i_makeDirectory_Name" name="n_makeDirectory_Name" value="" placeholder="폴더이름">
-                                                        <input type="button" class="btn btn-success" value="폴더만들기" onclick="(dirNameCheck('i_makeDirectory_Name'))? submit() : alert('폴더명이 잘못됐습니다.')"> 
-                                                        <input type="hidden" name="n_makeDirectory_path" value="<%= path %>">
+                                                        <input type="button" class="btn btn-success" value="폴더만들기" onclick="makeDirectory('i_makeDirectory_Name' , 'i_makeDirectory_path')" > 
+                                                        
+                                                        <input type="hidden" id="i_makeDirectory_path" name="n_makeDirectory_path" value="<%= path %>">
                                                 </div>
                                         </div>   
                                 </form> 
@@ -407,8 +486,8 @@
                         </div>
 
                         <div class="col-4 col-sm-2">
-                                <form class="form-inline" method="post" action="/logout">
-                                        <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="로그아웃" type="submit">
+                                <form class="form-inline" method="post">
+                                        <input class="btn btn-outline-dark" name="" style="width: 100%; height:100%" value="로그아웃" type="button" onclick="logout();">
                                 </form>
                         </div>
                         <div class="col-sm-8">
@@ -437,13 +516,6 @@
                                                                         <tr>
                                                                                 <td></td>
                                                                                 <td class="text-left text-truncate">
-                                                                                        <!--
-                                                                                        <button type="button" class="btn btn-link" onclick="window.location.href='?path=' + encodeURIComponent('<%= path.substring(0,path.lastIndexOf('/')) %>')">
-                                                                                                <i class="fas fa-reply">
-                                                                                                        ...
-                                                                                                </i>
-                                                                                        </button>
-                                                                                        -->
                                                                                         <a href="?path=<%= encodeURIComponent(path.substring(0,path.lastIndexOf('/'))) %>">
                                                                                                 <i class="fas fa-reply">
                                                                                                         ...

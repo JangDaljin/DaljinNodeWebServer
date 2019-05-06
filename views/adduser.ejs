@@ -14,15 +14,7 @@
 
         <script type="text/javascript">
             var init = function () {
-                var param = '<%= param %>';
-                var redirect = '<%= redirect %>';
-                
-                if(param) {
-                    alert('<%= param %>');
-                }
-                if(redirect == '1') {
-                    window.location.href = '/';
-                }
+
             }
 
             var ID_checked = false;
@@ -46,7 +38,6 @@
                     async : true,
                     headers : {"cache-control" : "no-cache"},
                     success : function (inputdata_jsonstr) {
-                        console.dir(inputdata_jsonstr);
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         if(inputdata['result'] == true) {
                             alert('사용가능합니다.');
@@ -101,10 +92,19 @@
             }
             
 
-            //보내기전 체크
-            var check_submit = function (ID_element_id , ID_hidden_element_id) {
+            
+            //SignUp
+            var SignUp = function(dom_ID , dom_validate_ID , dom_PW , dom_CODE) {
+
+
+                var ID = document.getElementById(dom_ID).value;
+                var validated_ID = document.getElementById(dom_validate_ID).value;
+                var PW = document.getElementById(dom_PW).value;
+                var CODE = document.getElementById(dom_CODE).value;
+
+                var res = ""
                 var msg = "";
-                if(ID_checked == false || (document.getElementById(ID_element_id).value != document.getElementById(ID_hidden_element_id).value)) {
+                if(ID_checked == false || (ID != validated_ID)) {
                     ID_checked = false;
                     msg += '- 아이디 중복체크를 하세요\n';
                 }
@@ -117,19 +117,41 @@
                     msg += '- 비밀번호 확인이 완료되지 않습니다.\n';
                 }
 
-                if(ID_checked && PW_checked && confirmPW_checked) {
-                    return true;
-                }
-                else {
+                if(!(ID_checked && PW_checked && confirmPW_checked)) {
                     alert(msg);
-                    return false;
+                    return;
                 }
+                
+
+                outputdata = {};
+                outputdata['ID'] = ID;
+                outputdata['PW'] = PW;
+                outputdata['CODE'] = CODE;
+                $.ajax({
+                    url : "/adduser",
+                    type : "POST",
+                    data : JSON.stringify(outputdata),
+                    contentType : "application/json",
+                    cache : false,
+                    async : true,
+                    headers : {"cache-control" : "no-cache"},
+                    success : function (inputdata_jsonstr) {
+                        var inputdata = JSON.parse(inputdata_jsonstr);
+                        alert(inputdata['msg']);
+                        if(inputdata['error'] == false) {
+                            window.location.href = "/";
+                        }
+                    },
+                    error : function () {
+                        alert('에러발생');
+                    }
+                });
             }
 
 
             $(document).ready(function(){
-  $('[data-toggle="popover"]').popover(); 
-});
+                $('[data-toggle="popover"]').popover(); 
+            });
         </script>
 
 </head>
@@ -141,101 +163,97 @@
                 
                     <div class="card"> 
                         <div class="card-body">
-                                <form id="adduser_form" method="post" action="/adduser" onsubmit="return check_submit('ID' ,'validated_ID')">
+                            <form id="adduser_form" method="post">
 
-                            <div class="container">
-                                <h2 class="card-title text-center mb-4 mt-1"> <i class="far fa-laugh-squint fa-1x"></i> 회원 가입 <i class="far fa-laugh-squint fa-1x"></i>   </h2> 
-                                <hr>
-                                <div class="row justify-content-center">
-                                    <div class="col-10 p-1">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                        <span class="input-group-text">아이디&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                </div>
-                                                <input type="text" class="form-control " id="ID" name="ID">
-                                                
+                                <div class="container">
+                                    <h2 class="card-title text-center mb-4 mt-1"> <i class="far fa-laugh-squint fa-1x"></i> 회원 가입 <i class="far fa-laugh-squint fa-1x"></i>   </h2> 
+                                    <hr>
+                                    <div class="row justify-content-center">
+                                        <div class="col-10 p-1">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                            <span class="input-group-text">아이디&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                    </div>
 
-                                                <div class="input-group-append">
-                                                        <input type="button" class="btn btn-secondary w-100" value="중복확인" onclick="check_ID('ID' , 'validated_ID')">
+                                                    <input type="text" class="form-control " id="i_ID" name="ID">
+                                            
+                                                    <div class="input-group-append">
+                                                            <input type="button" class="btn btn-secondary w-100" value="중복확인" onclick="check_ID('i_ID' , 'i_validated_ID')">
+                                                    </div>
+                                                    <input type="hidden" id="i_validated_ID" value="">
                                                 </div>
-                                                <input type="hidden" id="validated_ID" value="">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row justify-content-center">
+                                    <div class="row justify-content-center">
 
-                                        <div class="col-10 p-1">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                                <span class="input-group-text">비밀번호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <div class="col-10 p-1">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                    <span class="input-group-text">비밀번호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                            </div>
+                                                                <input type="password" class="form-control" id="i_PW" name="PW" onfocus="check_PW('i_PW' , 'i_password_check_span');" onblur="check_PW('i_PW' , 'i_password_check_span');check_confirmPW('i_PW' , 'i_PW_Confirm' , 'i_confirm_password_span');">
+
+                                                            <div class="input-group-append">
+                                                                <span id="i_password_check_span" class="input-group-text" data-toggle="popover" title="비밀번호 규칙" data-content="영문,숫자,특수문자 조합 8~15글자"><i class="far fa-check-square"></i></span>
+                                                            </div>
+
                                                         </div>
-                                                            <input type="password" class="form-control" id="PW" name="PW" onfocus="check_PW('PW' , 'password_check_span');" onblur="check_PW('PW' , 'password_check_span');check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_span');">
-
-                                                        <div class="input-group-append">
-                                                            <span id="password_check_span" class="input-group-text" data-toggle="popover" title="비밀번호 규칙" data-content="영문,숫자,특수문자 조합 8~15글자"><i class="far fa-check-square"></i></span>
-                                                        </div>
-
                                                     </div>
-                                                </div>
-                                        </div>
-                                </div>
+                                            </div>
+                                    </div>
 
-                                <div class="row justify-content-center">
+                                    <div class="row justify-content-center">
 
-                                        <div class="col-10 p-1">
-                                                <div class="form-group">
-                                                    <div class="input-group">
-                                                        <div class="input-group-prepend">
-                                                                <span class="input-group-text">비밀번호확인</span>
+                                            <div class="col-10 p-1">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-prepend">
+                                                                    <span class="input-group-text">비밀번호확인</span>
+                                                            </div>
+                                                            <input type="password" class="form-control" id="i_PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('i_PW' , 'i_PW_Confirm' , 'i_confirm_password_span');">
+                                            
+                                                            <div class="input-group-append">
+                                                                <span id="i_confirm_password_span" class="input-group-text" data-toggle="popover" title="비밀번호 재확인" data-content="비밀번호가 일치하지않습니다."><i class="far fa-check-square"></i></span>
+                                                            </div>
+
                                                         </div>
-                                                        <input type="password" class="form-control" id="PW_Confirm" name="PW_Confirm" onblur="check_confirmPW('PW' , 'PW_Confirm' , 'confirm_password_span');">
-                                        
-                                                        <div class="input-group-append">
-                                                            <span id="confirm_password_span" class="input-group-text" data-toggle="popover" title="비밀번호 재확인" data-content="비밀번호가 일치하지않습니다."><i class="far fa-check-square"></i></span>
-                                                        </div>
-
                                                     </div>
-                                                </div>
-                                        </div>
+                                            </div>
+                                    </div>
 
 
-                                </div>
-
-
-                                <div class="row justify-content-center">
-
+                                    <div class="row justify-content-center">
                                         <div class="col-10 p-1">
                                                 <div class="form-group">
                                                     <div class="input-group">
                                                         <div class="input-group-prepend">
                                                                 <span class="input-group-text">승인번호&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                                         </div>
-                                                        <input type="text" class="form-control" id="CODE" name="CODE">
+                                                        <input type="text" class="form-control" id="i_CODE" name="CODE">
 
                                                     </div>
                                                 </div>
                                         </div>
 
+                                    </div>
+
+                                    <div class="row justify-content-center">
+                                            <div class="col-10 p-1">
+                                                    <input type="button" value="등록" class="btn btn-outline-primary w-100" onclick="SignUp('i_ID' , 'i_validated_ID' , 'i_PW' , 'i_CODE')">
+                                            </div>
+                                    </div>
                                 </div>
 
-                                <div class="row justify-content-center">
-                                        <div class="col-10 p-1">
-                                                <input type="submit" value="등록" class="btn btn-outline-primary w-100">
-                                        </div>
-                                </div>
-                            </div>
-                        </form>
-
-
+                            </form>
                         </div>
                     </div>
 
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 </html>

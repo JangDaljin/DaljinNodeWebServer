@@ -13,23 +13,17 @@ module.exports = function(app) {
     //메인 페이지
     app.get('/' , (req , res) => {
         var msg = req.query.msg || '';
-        
+
         if(req.isAuthenticated()) {
             res.redirect('/file');
         }
         else {
-            res.render('login.ejs' , {'msg' : msg});
+            res.render('login.ejs');
         }
     });
-
-    // WEB로그인
-    app.post('/login' , passport.authenticate('login', {
-        successRedirect : '/file',
-        failureRedirect : '/?msg=로그인실패'
-    }));
     
     // WEB이외 로그인
-    app.post('/loginNW' , (req , res) => {
+    app.post('/login' , (req , res) => {
         var output = {};
         output['error'] = true;
 
@@ -61,11 +55,6 @@ module.exports = function(app) {
             });
         })(req ,res);
     });
-
-
-        
-
-
     //========================================================================================================================================//
 
 
@@ -74,12 +63,10 @@ module.exports = function(app) {
     //========================================================================================================================================//
     //유저추가 페이지
     app.get('/adduser' , (req , res) => {
-        var param = req.query.param || '';
-        var redirect = req.query.redirect || '';
-        res.render('adduser.ejs' , {'param' : param , 'redirect' : redirect});
+        res.render('adduser.ejs');
     });
 
-    //아이디 중복체크(AJAX 전용)
+    //아이디 중복체크
     app.post('/checkid' , (req , res) => {
         var ID = req.body.ID;
 
@@ -102,70 +89,6 @@ module.exports = function(app) {
 
     //유저추가 처리
     app.post('/adduser' , (req , res)=> {
-        var ID = req.body.ID || req.query.ID;
-        var PW = req.body.PW || req.query.PW;
-        var CODE = req.body.CODE || req.query.CODE;
-        
-        if(ID.trim() == '' && PW.trim() == '' && CODE.trim() == '') {
-            res.redirect('/adduser?redirect=0&param=' + '형식이 잘못됐습니다.');
-            return;
-        }
-
-
-        var USER_SETTING = req.app.get('USER_SETTING');
-        var cur_USER_SETTING = null;
-        for(var i = 0 ; i < Object.keys(USER_SETTING).length; i++) {
-            if(USER_SETTING[i]['code'] == CODE) {
-                cur_USER_SETTING = USER_SETTING[i];
-                break;
-            }
-        }
-        if(cur_USER_SETTING == null) {
-            res.redirect('/adduser?redirect=0&param=' + '승인코드가 틀렸습니다');
-        }
-        else {
-            D_Mongoose.user_ID_Check(ID).then(
-                (returnValue) => {
-                    if(!returnValue) {
-                        res.redirect('/adduser?redirect=0&param=' + '이미 해당 아이디가 존재합니다.');
-                    }
-                    else if(D_Mongoose.user_PW_Check(PW)) {
-                        res.redirect('/adduser?redirect=0&param=' + '비밀번호가 형식에 맞지 않습니다');
-                    }
-                    else {
-                        var D_UserModel = req.app.get('D_UserModel');
-                        var UserModel = new D_UserModel(
-                            {
-                                id : ID,
-                                password : PW,
-                                grade : cur_USER_SETTING['grade'],
-                                max_storage : cur_USER_SETTING['max_storage']
-                            }
-                        );
-
-                        UserModel.save((err)=> {
-                            if(err) {
-                                console.log('[' + ID + '] ADD USER ERROR');
-                                res.redirect('/adduser?redirect=0&param=' + '등록에 실패했습니다.');
-                            }
-                            else {
-                                D_file.makeDirectory(D_PATH["DOWNLOAD"]+ '/' + ID).then(
-                                    (returnValue) => 
-                                    {
-                                        console.log('[' + ID + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
-                                        res.redirect('/adduser?redirect=1&param=' + '정상적으로 등록되었습니다.');
-                                    }
-                                )
-                            }
-                        });
-                    }
-                }
-            );
-        }
-    });
-
-    //유저추가 처리(WEB 이외)
-    app.post('/adduserNW' , (req , res)=> {
         var ID = req.body.ID || req.query.ID;
         var PW = req.body.PW || req.query.PW;
         var CODE = req.body.CODE || req.query.CODE;
@@ -245,7 +168,7 @@ module.exports = function(app) {
 
     //========================================================================================================================================//
     //파일 리스트 요청(WEB 이외)
-    app.post('/fileList'  ,(req , res) => {
+    app.post('/filelist'  ,(req , res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
             var path = req.body.path || '';
@@ -295,7 +218,7 @@ module.exports = function(app) {
                         obj['max_storage'] = max_storage;
                         obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
                         obj['grade'] = grade;
-                        res.render('file.ejs' , {data : JSON.stringify(obj) , 'msg' : msg});
+                        res.render('file.ejs' , { "data" : JSON.stringify(obj) } );
                     }
                 }
             );
@@ -319,7 +242,7 @@ module.exports = function(app) {
 
     
     //파일 업로드 요청
-    app.post('/fileUpload' , (req , res)=> {
+    app.post('/upload' , (req , res)=> {
         if(req.isAuthenticated()) {
 
             var path = '';
@@ -412,7 +335,7 @@ module.exports = function(app) {
 
 
     //파일다운로드 처리
-    app.post('/Download/' , (req , res) => {
+    app.post('/download/' , (req , res) => {
         if(req.isAuthenticated()) {
 
             var id =  req.user.id;
@@ -468,51 +391,36 @@ module.exports = function(app) {
     });
 
     //폴더 만들기
-    app.post('/makeDirectory' , (req, res)=> {
-        if(req.isAuthenticated()) {
-            var id = req.user.id;
-            var path = req.body.n_makeDirectory_path || '';
-            var name = req.body.n_makeDirectory_Name || '';
-            
-            if(name != '')  {
-                D_file.makeDirectory(D_PATH["DOWNLOAD"] + '/' + id + path + '/' + name).then(
-                    (returnValue) =>
-                    {
-                        console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
-                        res.redirect('/file' + '?path=' + path);
-                    }
-                );
-            }
-            else {
-                res.end();
-            }
-        }
-        else {
-            res.redirect('/');
-        }
-    });
-
-    //폴더 만들기
-    app.post('/makeDirectoryNW' , (req, res)=> {
+    app.post('/mkdir' , (req, res)=> {
         
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var path = req.body.n_makeDirectory_path || '';
-            var name = req.body.n_makeDirectory_Name || '';
+            var path = req.body.mkdirPath || '';
+            var name = req.body.mkdirName || '';
             output = {};
             output['error'] = true
+            output['msg'] = ""
 
             if(name != '')  {
                 D_file.makeDirectory(D_PATH["DOWNLOAD"] + '/' + id + path + '/' + name).then(
                     (returnValue) =>
                     {
-                        console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
-                        output['error'] = false
+                        if(returnValue) {
+                            console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE COMPLETE');
+                            output['error'] = false;
+                            output['msg'] = "폴더 생성 완료";
+                        }
+                        else {
+                            console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE ERROR');
+                            output['msg'] = "같은 파일의 이름이 존재합니다.";
+                        }
                         res.send(JSON.stringify(output));
                     }
                 );
             }
             else {
+                console.log('[' + id + ']' + id + path + '/' + name + ' FOLDER MAKE ERROR(WHITE SPACE)');
+                output['msg'] = "폴더 생성 실패";
                 res.send(JSON.stringify(output));
             }
         }
@@ -521,77 +429,65 @@ module.exports = function(app) {
         }
     });
 
-    //파일,폴더 지우기 처리
-    app.post('/Delete' , (req ,res) => {
+
+
+    app.post('/delete' , (req ,res) => {
         if(req.isAuthenticated()) {
             var id = req.user.id;
-            var deletePath = req.body.n_deletePath;
-            
-            var deleteFileList = JSON.parse(req.body.n_deleteList);
+            var deletePath = req.body.daletePath || "";
+            var deleteFileList = JSON.parse(req.body.deleteList);
             var deleteFileList_length = Object.keys(deleteFileList).length;
 
-            for(var i = 0 ; i < deleteFileList_length; i++) {
-                if(deleteFileList[i]['type'] == 'directory') {
-                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
-                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
+
+            var output = {};
+
+            var deleteLoop = (cnt = 0) => {
+                if(cnt >= deleteFileList_length) {
+                    res.send(JSON.stringify(output));
+                    return;
+                }
+
+                if(deleteFileList[cnt]['type'] == 'directory') {
+                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[cnt]['name'] ,
+                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[cnt]['name'] + '_' + id)
                         .then(
                         (returnValue) => 
                         {
-                            console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
+                            if(returnValue) {
+                                console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
+                                output[cnt] = { "error" : false , "msg" : deleteFileList[cnt] + " Delete Complete"};
+                            }
+                            else {
+                                console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
+                                output[cnt] = { "error" : true , "msg" : deleteFileList[cnt] + " Delete Error"};
+                            }
+                            deleteLoop(cnt+1)
                         }
                     );
                 }
-                else if(deleteFileList[i]['type'] == 'file') {
-                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
-                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
+                else if(deleteFileList[cnt]['type'] == 'file') {
+                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[cnt]['name'] ,
+                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[cnt]['name'] + '_' + id)
                     .then(
                         (returnValue) => 
                         {
-                            console.log('[' + id + '] FILE DELETE COMPLETE');
+                            if(returnValue) {
+                                console.log('[' + id + '] FILE DELETE COMPLETE');
+                                output[cnt] = { "error" : false , "msg" : deleteFileList[cnt] + " Delete Complete"};
+                            }
+                            else {
+                                console.log('[' + id + '] FILE DELETE COMPLETE');
+                                output[cnt] = { "error" : true , "msg" : deleteFileList[cnt] + " Delete Error"};
+                            }
+                            deleteLoop(cnt+1)
                         }
                     );
                 }
-            }
-            res.redirect('/file' + '?path=' + deletePath);
+            };
+            deleteLoop();
         }
         else {
-            res.redirect('/');
-        }
-    });
-
-    app.post('/DeleteNW' , (req ,res) => {
-        if(req.isAuthenticated()) {
-            var id = req.user.id;
-            var deletePath = req.body.n_deletePath;
-            var deleteFileList = JSON.parse(req.body.n_deleteList);
-            var deleteFileList_length = Object.keys(deleteFileList).length;
-
-            for(var i = 0 ; i < deleteFileList_length; i++) {
-                if(deleteFileList[i]['type'] == 'directory') {
-                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
-                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
-                        .then(
-                        (returnValue) => 
-                        {
-                            console.log('[' + id + '] DIRECTORY DELETE COMPLETE');
-                        }
-                    );
-                }
-                else if(deleteFileList[i]['type'] == 'file') {
-                    D_file.moveTo(D_PATH["DOWNLOAD"] + '/' + id + deletePath + '/' + deleteFileList[i]['name'] ,
-                                  D_PATH["TRASH_BIN"] + '/'+deleteFileList[i]['name'] + '_' + id)
-                    .then(
-                        (returnValue) => 
-                        {
-                            console.log('[' + id + '] FILE DELETE COMPLETE');
-                        }
-                    );
-                }
-            }
-            res.send("")
-        }
-        else {
-            res.end()
+            res.end();
         }
     });
     //========================================================================================================================================//
@@ -673,7 +569,7 @@ module.exports = function(app) {
 
     //========================================================================================================================================//
 
-    app.post('/logoutNW' , (req , res) => {
+    app.post('/logout' , (req , res) => {
         var output  = {};
         output['error'] = true;
         if(req.isAuthenticated()) {
@@ -681,15 +577,6 @@ module.exports = function(app) {
             req.logout();
         }
         res.send(JSON.stringify(output));
-    });
-
-    //로그아웃 처리
-    app.post('/logout' , (req , res) => {
-        if(req.isAuthenticated()) {
-            console.log('[' + req.user.id + '] LOGOUT COMPLETE')
-            req.logout();
-        }
-        res.redirect('/');
     });
     //========================================================================================================================================//
 
