@@ -216,7 +216,7 @@
                 }
 
                 //삭제
-                var Delete = function (dom_deletePath) {
+                var Delete = function () {
 
                         var JSON_items = {};
                         var cnt = 0;
@@ -234,7 +234,7 @@
                         }
 
                         outputdata = {};
-                        outputdata['deletePath'] = document.getElementById(dom_deletePath).value;
+                        outputdata['deletePath'] = '<%= path %>';
                         outputdata['deleteList'] = JSON.stringify(JSON_items);
 
                         $.ajax({
@@ -341,9 +341,9 @@
 
 
                 //폴더명 체크
-                var makeDirectory = function (dom_makeDirectoryName , dom_makeDirectoryPath) {
+                var makeDirectory = function (dom_makeDirectoryName) {
                        var dirName = document.getElementById(dom_makeDirectoryName).value;
-                       var dirPath = document.getElementById(dom_makeDirectoryPath).value;
+                       var dirPath = '<%= path %>';
 
                        if(dirName == '' || dirName==null) {
                                alert("폴더명을 적어주세요");
@@ -437,8 +437,7 @@
 
                                 <!-- 삭제 -->
                                 <form class="form-inline my-1 mx-1" id="i_deleteForm" method="POST">
-                                        <input type="hidden" id="i_deletePath" name="n_deletePath" value="<%= path %>">
-                                        <input type="button" class="btn btn-success w-100" value="삭제" onclick="Delete('i_deletePath');">
+                                        <input type="button" class="btn btn-success w-100" value="삭제" onclick="Delete();">
                                 </form>
                         </ul>
                         <!-- 오른쪽 -->
@@ -451,9 +450,8 @@
                                                                 <span class="input-group-text"><i class="fas fa-folder-plus"></i></span>
                                                         </div>
                                                         <input type="text" class="form-control" id="i_makeDirectory_Name" name="n_makeDirectory_Name" value="" placeholder="폴더이름">
-                                                        <input type="button" class="btn btn-success" value="폴더만들기" onclick="makeDirectory('i_makeDirectory_Name' , 'i_makeDirectory_path')" > 
+                                                        <input type="button" class="btn btn-success" value="폴더만들기" onclick="makeDirectory('i_makeDirectory_Name')" > 
                                                         
-                                                        <input type="hidden" id="i_makeDirectory_path" name="n_makeDirectory_path" value="<%= path %>">
                                                 </div>
                                         </div>   
                                 </form> 
