@@ -541,8 +541,15 @@
 
                         </ul>
                         <!-- 오른쪽 -->
-                        <ul class="navbar-nav ml-auto">
-                                <form class="form-inline my-1 mx-1" method="post">
+                        <ul class="navbar-nav ml-auto my-1 ">
+                                <% if(grade == 'master') { %>
+                                        <li class="nav-item mx-1">
+                                                <input type="button" class="btn btn-info w-100 m-0" value="관리자 페이지" onclick="window.location.href=encodeURIComponent('master');">
+                                        </li>
+                                <% } %>
+
+
+                                <form class="form-inline mx-1" method="post">
                                         <input class="btn btn-success" name="" style="width: 100%; height:100%" value="로그아웃" type="button" onclick="logout();">
                                 </form>
                         </ul>
@@ -555,15 +562,7 @@
         <div class="container" style="padding-top: 75px; padding-bottom: 60px;">
 
                 <% include iealert.ejs %>
-                <% if(grade == 'master') { %>
-                <div class="row">
-                        <div class="col-12">
-                                <input type="button" class="btn btn-info w-100" value="관리자 페이지" onclick="window.location.href=encodeURIComponent('master');">
-                        </div>
-                </div>
-                <% } %>
-
-
+                
                 <div class="row">
                         <div class="col-md-12 p-2">
                                 <!-- 사용량 -->
