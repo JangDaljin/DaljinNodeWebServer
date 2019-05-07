@@ -336,8 +336,9 @@
                                 headers : {"cache-control" : "no-cache"},
                                 processData : false,
                                 contentType : false,
-                                success : function(inputdata) {
-                                        alert(inputdata);
+                                success : function(inputdata_str) {
+                                        var inputdata = JSON.parse(inputdata_str);
+                                        alert(inputdata.msg);
                                         window.location.href = '/file?path=' + '<%= encodeURIComponent(path) %>';
                                 },
                                 

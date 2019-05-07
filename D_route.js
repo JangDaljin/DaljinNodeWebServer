@@ -304,21 +304,29 @@ module.exports = function(app) {
 
             //업로드 시작
             input_file(progress , res , (err) => {
+                var output = {};
+                output["error"] = true;
+                output["msg"] = "";
                 files = progress.files;
                 if(err) {
                     console.log('[' + id + '] UPLOAD ERROR');
                 }
                 else {    
                     if(loopFunciton(0)) {
+                        output["error"] = false;
                         msg = "업로드가 정상적으로 완료되었습니다.";
                     }
-                    
-                    res.end(msg);
+                    else {
+                        output["error"] = true;
+                        msg = msg.substring(0 , msg.length-1);
+                    }
+                    output["msg"] = msg;
+                    res.send(JSON.stringify(output));
                 }
             });
         }
         else {
-            res.redirect('/');
+            res.end();
         }
     });
 
