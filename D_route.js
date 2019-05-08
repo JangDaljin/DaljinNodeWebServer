@@ -191,6 +191,31 @@ module.exports = function(app) {
         }
     });
 
+    //파일 프레임 페이지
+    app.get('/fileframe' , (req , res) => {
+        if(req.isAuthenticated) {
+
+            var id = req.user.id;
+            var path = decodeURIComponent(req.query.path);
+            if(path == "undefined") {
+                path = '';
+            }
+
+            D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
+                (returnValue) => 
+                {   
+                    if(returnValue != null) {
+                        var output = {};
+                        output['data'] = JSON.stringify(returnValue);
+                        output['path'] = path;
+                        output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
+                        res.render('fileframe.ejs' , output);
+                    }
+                }
+            );
+        }
+    });
+
     //파일 페이지
     app.get('/file'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
@@ -198,30 +223,13 @@ module.exports = function(app) {
             var grade = req.user.grade;
             var max_storage = req.user.max_storage;
             
-            
-            var path = decodeURIComponent(req.query.path);
-            if(path == "undefined") {
-                path = '';
-            }
-            var msg = req.query.msg || '';
+            obj = {};
+            obj['id'] = id;
+            obj['max_storage'] = max_storage;
+            obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
+            obj['grade'] = grade;
 
-            D_file.getList(D_PATH["DOWNLOAD"] + '/' + id + path).then(
-                (returnValue) => 
-                {   
-                    if(returnValue == null) {
-                        res.redirect('/');
-                    }
-                    else {
-                        obj = {};
-                        obj['path'] = path;
-                        obj['files'] = returnValue;
-                        obj['max_storage'] = max_storage;
-                        obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + id);
-                        obj['grade'] = grade;
-                        res.render('file.ejs' , { "data" : JSON.stringify(obj) } );
-                    }
-                }
-            );
+            res.render('file.ejs' , obj);
         }
         else {
             res.redirect('/');
