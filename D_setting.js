@@ -26,7 +26,6 @@ var USER_SETTING =
      1 : { 'grade' : 'normal' , 'code' : '1994' , 'max_storage' : 1024*1024*100}
 };
 
-module.exports.OAUTH            = OAUTH
 module.exports.SOCKET_SETTING   = SOCKET_SETTING;
 module.exports.PATH             = PATH;
 module.exports.USER_SETTING     = USER_SETTING;
