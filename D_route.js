@@ -38,11 +38,13 @@ module.exports = function(app) {
         
         passport.authenticate('login' , (err , user) => {
             if(err || !user) {
+                console.log("NOPE1");
                 res.send(JSON.stringify(output));
                 return;
             }
             req.logIn(user , (err) => {
                 if(err) {
+                    console.log("NOPE2");
                     res.send(JSON.stringify(output));
                     return;
                 }
