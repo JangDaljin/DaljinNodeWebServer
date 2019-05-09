@@ -55,6 +55,41 @@ module.exports = function(app) {
             });
         })(req ,res);
     });
+
+    app.get('/naverlogin' , passport.authenticate('naver'));
+    app.get('/naverlogincallback' , (req , res) => {
+        var output = {};
+        output['error'] = true;
+
+        if(req.isAuthenticated()) {
+            output['error'] = false;
+            output['id'] = req.user.id;
+            output['grade'] = req.user.grade;
+            output['max_storage'] = req.user.max_storage;
+            res.send(JSON.stringify(output));
+            return;
+        }
+
+        passport.authenticate('naver' , (err , user) => {
+            if(err || !user) {
+                res.send(JSON.stringify(output));
+                return;
+            }
+            req.logIn(user , (err) => {
+                if(err) {
+                    res.send(JSON.stringify(output));
+                    return;
+                }
+                output['error'] = false;
+                output['id'] = user.id;
+                output['grade'] = user.grade;
+                output['max_storage'] = user.max_storage;
+                res.send(JSON.stringify(output));
+                return;
+            });
+        })(req,res);
+    });
+
     //========================================================================================================================================//
 
 
@@ -143,7 +178,7 @@ module.exports = function(app) {
                             if(err) {
                                 console.log('[' + ID + '] ADD USER ERROR');
                                 output['msg'] = '등록에 실패했습니다.';
-                        res.send(JSON.stringify(output));
+                                res.send(JSON.stringify(output));
                             }
                             else {
                                 D_file.makeDirectory(D_PATH["DOWNLOAD"]+ '/' + ID).then(

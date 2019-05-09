@@ -1,8 +1,8 @@
 var SOCKET_SETTING = 
 {
-    'HOSTNAME' : '192.168.1.200'
+    'HOSTNAME' : 'localhost'
     ,
-    'PORT' : '80'
+    'PORT' : '8000'
 };
 
 var PATH = 
@@ -14,11 +14,22 @@ var PATH =
     'TRASH_BIN' : '../trash_bin'
 };
 
-
 var DB_SETTING = 
 {
     'DB_URL' : 'mongodb+srv://rw:ufwlds@daljin-mcs3v.gcp.mongodb.net/test?retryWrites=true'
 };
+
+var OAUTH = 
+{
+    'NAVER' : 
+        {
+        'APP_ID' : "1YgY8mfRkWeMrJJijjWA"
+        ,
+        'APP_SECRET' : "vdwkDUS14Q"
+        ,
+        'APP_CALLBACK' : "http://daljin.dlinkddns.com/naverlogincallback"
+        }
+}
 
 var USER_SETTING = 
 {
@@ -27,7 +38,7 @@ var USER_SETTING =
      1 : { 'grade' : 'normal' , 'code' : '1994' , 'max_storage' : 1024*1024*100}
 };
 
-
+module.exports.OAUTH            = OAUTH
 module.exports.SOCKET_SETTING   = SOCKET_SETTING;
 module.exports.PATH             = PATH;
 module.exports.USER_SETTING     = USER_SETTING;
