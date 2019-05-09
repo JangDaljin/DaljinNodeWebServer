@@ -2,8 +2,6 @@
 var D_file = require('./D_file');
 var D_Mongoose = require('./D_database').D_Mongoose;
 var D_PATH = require('./D_setting').PATH;
-
-var path = require('path');
 var multer = require('multer');
 var archiver = require('archiver');
 
@@ -55,42 +53,6 @@ module.exports = function(app) {
                 return;
             });
         })(req ,res);
-    });
-
-    app.get('/naverlogin' , passport.authenticate('naver'));
-    app.get('/naverlogincallback' , (req , res) => {
-        var output = {};
-        output['error'] = true;
-
-        if(req.isAuthenticated()) {
-            output['error'] = false;
-            output['id'] = req.user.id;
-            output['grade'] = req.user.grade;
-            output['max_storage'] = req.user.max_storage;
-            res.send(JSON.stringify(output));
-            return;
-        }
-
-        passport.authenticate('naver' , (err , user) => {
-            if(err || !user) {
-                console.log("NOPE1");
-                res.send(JSON.stringify(output));
-                return;
-            }
-            req.logIn(user , (err) => {
-                if(err) {
-                    console.log("NOPE2");
-                    res.send(JSON.stringify(output));
-                    return;
-                }
-                output['error'] = false;
-                output['id'] = user.id;
-                output['grade'] = user.grade;
-                output['max_storage'] = user.max_storage;
-                res.send(JSON.stringify(output));
-                return;
-            });
-        })(req,res);
     });
 
     //========================================================================================================================================//
