@@ -7,8 +7,8 @@ var D_PATH = require('./D_setting').PATH;
 var D_Mongoose = {};
 var D_UserSchema = D_UserSchema = mongoose.Schema({
                         email: { type: String, required: true, unique: true, 'default': '' },
-                        nickname : {type : String , 'default' : ''},
-                        code: { type: String , 'default' : ''},
+                        nickname : {type : String , require : true ,'default' : ''},
+                        code: { type: String , require : true , 'default' : ''},
                         created_at: { type: Date, index: { unique: false }, 'default': Date.now },
                         updated_at: { type: Date, index: { unique: false }, 'default': Date.now },
                         max_storage : {type:Number , require:true ,'default' : 1024*1024*100},
@@ -110,6 +110,42 @@ D_Mongoose.userUpdate = async(email , grade , storage) => {
     }
 
     return res;
+}
+
+D_Mongoose.codeUpdate = async(email , code) => {
+    var user = null;
+
+
+    try {
+        user = await D_UserModel.findOne({'email' : email});
+    }
+    catch(e) {
+        console.log("[" + email + "] CODE UPDATE ERROR");
+    }
+
+    if(user != null) {
+        var setting = require('./D_setting').USER_SETTING;
+        for(var i = 0 ; i < Object.keys(setting).length; i++) {
+            if(code == setting[i].code) {
+                user.code = setting[i].code;
+                user.grade = setting[i].grade;
+                user.max_storage = setting[i].max_storage;
+                try {
+                    await user.save();
+                    return user;
+                }
+                catch(e) {
+                    console.dir(e);
+                    console.log("[" + email + "] SAVE ERROR AFTER CODE UPDATE");
+                    return null;
+                }
+                break;
+            }
+        }
+    }
+    else {
+        return null;
+    }
 }
 
 

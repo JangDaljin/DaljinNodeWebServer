@@ -16,7 +16,7 @@ var PATH =
 
 var DB_SETTING = 
 {
-    'DB_URL' : 'mongodb+srv://rw:ufwlds@daljin-mcs3v.gcp.mongodb.net/test?retryWrites=true'
+    'DB_URL' : 'mongodb+srv://rw:ufwlds@daljin-mcs3v.gcp.mongodb.net/nodeweb?retryWrites=true'
 };
 
 var OAUTH = {

@@ -81,18 +81,15 @@
                         return (browser != null)? true : false;
                 }
 
-                var storage_init = function(progress_id , percent_id) {
-                        var progress_element = document.getElementById(progress_id);
-                        var percent_element = document.getElementById(percent_id);
-
+                var storage_init = function() {
                         var used_percent = ((used_storage / max_storage) * 100).toFixed(2);
                         
+
                         var arr_max_volume = getVolumeSize(max_storage , 0);
                         var arr_used_volue = getVolumeSize(used_storage , 0);
 
-
-                        progress_element.style.width = used_percent+'%';
-                        percent_element.innerHTML = used_percent + '% (' + arr_max_volume + '중 ' + arr_used_volue +'사용)';
+                        document.getElementById('i_used_storage').style.width = used_percent+'%';
+                        document.getElementById('i_used_percent').innerHTML = used_percent + '% (' + arr_max_volume + '중 ' + arr_used_volue +'사용)';
                 }
                 
                 var getVolumeSize = function (size , deter) {    
@@ -121,12 +118,12 @@
                                                 break;                                  
                                 }  
                                 if(res=='Byte') {
+                                        if(size == 0) return 0 + res;
                                         return size.toFixed(0)+res;  
                                 }
                                 else {
                                         return size.toFixed(2)+res;  
                                 }
-                                        
                         }                                             
                 }
 
@@ -140,8 +137,10 @@
                         var type = inputdata["type"];
                         var data = inputdata["data"];
                         switch(type) {
-                                case "pathupdate" :
-                                        path = data;
+                                case "init" :
+                                        path = data['path'];
+                                        used_storage = data['used_storage'];
+                                        storage_init();
                                 break;
 
                                 case "download" : 
@@ -358,7 +357,7 @@
         
 </head>
 
-<body onload="init();storage_init('i_used_storage' , 'i_used_percent');">
+<body onload="init();">
         <nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
 
                 <a class="navbar-brand" href="/file" style="display: inline;">

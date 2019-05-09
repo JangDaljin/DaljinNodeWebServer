@@ -2,37 +2,91 @@
 <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+        <script>
+        //로그아웃
+
+        var codeUpload = function() {
+            var output = {};
+            output['code'] = document.getElementById('i_code').value;
+            $.ajax({
+                    url : "/codeupdate",
+                    type : "POST",
+                    data : JSON.stringify(output),
+                    contentType : "application/json",
+                    cache : false,
+                    async : true,
+                    headers : {"cache-control" : "no-cache"},
+                    success : function (inputdata_jsonstr) {
+                            var inputdata = JSON.parse(inputdata_jsonstr);
+                            if(!inputdata['error']) {
+                                    window.location.href = '/file';
+                            }
+                            else {
+                                    alert("코드 에러");
+                            }
+                    },
+                    error : function () {
+                            alert('에러발생');
+                    }
+            });
+        }
+
+        var logout = function() {
+                        $.ajax({
+                                url : "/logout",
+                                type : "POST",
+                                data : {},
+                                contentType : "application/json",
+                                cache : false,
+                                async : true,
+                                headers : {"cache-control" : "no-cache"},
+                                success : function (inputdata_jsonstr) {
+                                        var inputdata = JSON.parse(inputdata_jsonstr);
+                                        if(inputdata['error']) {
+                                                alert("로그아웃 실패");
+                                        }
+                                        else {
+                                                window.location.href="/";
+                                        }
+                                },
+                                error : function () {
+                                        alert('에러발생');
+                                }
+                        });
+                }
+        </script>
+        
 </head>
 
-<body style="h-100">
+<body class="h-100">
         <div class="container h-100">
                 <div class="row align-items-center h-100">
                     <div class="col-sm-5 mx-auto">
-                        <div class="card" style="padding:5%">
+                        <div class="card">
                             <div class="card-body">
-                                <h2 class="card-title text-center mb-4 mt-1">
-                                    <img src="/logoHorizonImage" width="80%"/>
-                                    <p>코드를 입력하세요.</p>
+                                <h2 class="card-title text-center mb-10 mt-1">
+                                    <img src="/logoHorizonImage" width="50%"/>
                                 </h2>
                                 <hr>
     
                                 <div class="form-group">
-                                    <input type="password" class="form-control" id="pwd" value="****">
+                                    <input type="password" class="form-control" id="i_code" placeholder="코드를 입력해주세요." style="text-align: center">
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-success p-0 w-100" onclick=""> 입력 </button>
+                                        <button type="button" class="btn btn-outline-primary w-100" onclick="codeUpload()"> 확인 </button>
                                 </div>
 
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-success p-0 w-100" onclick=""> 취소 </button>
+                                        <button class="btn btn-outline-secondary w-100" onclick="logout();"> 취소 </button>
                                 </div>
         
                             </div>

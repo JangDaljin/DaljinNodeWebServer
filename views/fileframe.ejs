@@ -56,8 +56,8 @@
                 files_checked[i] = false;
             }
             var output = {};
-            output["type"] = "pathupdate";
-            output["data"] = '<%= path %>';
+            output["type"] = "init";
+            output["data"] = { path : '<%= path %>' , 'used_storage' : '<%= used_storage %>'};
             window.parent.postMessage(JSON.stringify(output) , '*');
         }
 

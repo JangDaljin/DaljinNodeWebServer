@@ -18,6 +18,8 @@ module.exports = function(app) {
         }
     });
 
+
+    //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
     app.get('/navercallback' , (req , res) => {
 
@@ -70,6 +72,35 @@ module.exports = function(app) {
 
 
         })(req , res);
+
+    });
+
+    //코드 업데이트
+    app.post('/codeupdate' , (req ,res) => {
+         if(req.isAuthenticated()) {
+            var code = req.body.code;
+            var email = req.user.email;
+
+            var output = {};
+            output['error'] = true;
+            D_Mongoose.codeUpdate(email , code).then(
+                user => { 
+                    if(user != null) {
+                        req.session.passport.user = user;
+                        output['error'] = false;
+                        res.send(JSON.stringify(output));
+                    }
+                    else {
+                        res.send(JSON.stringify(output));
+                    }
+
+                }
+            );
+        }
+        else {
+            res.end();
+        }
+        
 
     });
 
