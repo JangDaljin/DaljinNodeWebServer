@@ -19,18 +19,6 @@ var DB_SETTING =
     'DB_URL' : 'mongodb+srv://rw:ufwlds@daljin-mcs3v.gcp.mongodb.net/test?retryWrites=true'
 };
 
-var OAUTH = 
-{
-    'NAVER' : 
-        {
-        'APP_ID' : "1YgY8mfRkWeMrJJijjWA"
-        ,
-        'APP_SECRET' : "vdwkDUS14Q"
-        ,
-        'APP_CALLBACK' : "http://daljin.dlinkddns.com/naverlogincallback"
-        }
-}
-
 var USER_SETTING = 
 {
      0 : { 'grade' : 'master' , 'code' : '0105' , 'max_storage' : 1024*1024*1024*100}
