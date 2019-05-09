@@ -1,19 +1,22 @@
 var mongoose = require('mongoose');
-var crypto = require('crypto');
 var DB_URL= require('./D_setting').DB_SETTING['DB_URL'];
 var fs = require('fs');
 var D_PATH = require('./D_setting').PATH;
 
 
 var D_Mongoose = {};
-var D_UserSchema = null;
-var D_UserModel = null;
+var D_UserSchema = D_UserSchema = mongoose.Schema({
+                        email: { type: String, required: true, unique: true, 'default': '' },
+                        nickname : {type : String , 'default' : ''},
+                        code: { type: String , 'default' : ''},
+                        created_at: { type: Date, index: { unique: false }, 'default': Date.now },
+                        updated_at: { type: Date, index: { unique: false }, 'default': Date.now },
+                        max_storage : {type:Number , require:true ,'default' : 1024*1024*100},
+                        grade : { type : String , require:true ,'default' : 'normal'}
+                    });
+var D_UserModel = mongoose.model('d_users' , D_UserSchema);
 
 D_Mongoose.connect = (expressApp) => {
-    _connect(expressApp);
-};
-
-var _connect = (expressApp) => {
     mongoose.Promise = global.Promise;
     mongoose.set('useCreateIndex' , true);
     mongoose.connect(DB_URL, { useNewUrlParser: true });
@@ -23,69 +26,14 @@ var _connect = (expressApp) => {
 
     mongoose.connection.on('open', function () {
         console.log('[DB]Connecting DB');
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //USER_SCHEMA / MODEL
-        D_UserSchema = mongoose.Schema({
-            id: { type: String, required: true, unique: true, 'default': ' ' },
-            hashed_password: { type: String, required: true, 'default': ' ' },
-            salt: { type: String, required: true },
-            created_at: { type: Date, index: { unique: false }, 'default': Date.now },
-            updated_at: { type: Date, index: { unique: false }, 'default': Date.now },
-            max_storage : {type:Number , require:true ,'default' : 1024*1024*100},
-            grade : { type : String , require:true ,'default' : 'normal'}
-        });
-
-        D_UserSchema
-        .virtual('password')
-        .set(function (password) {
-            this._password = password;
-            this.salt = this.makeSalt();
-            this.hashed_password = this.encryptPassword(password);
-        })
-        .get(function () { return this._password });
-
-        //패스워드 암호화
-        D_UserSchema
-        .method('encryptPassword', function (plainText, inSalt) {
-            if (inSalt) {
-                return crypto.createHmac('sha256', inSalt).update(plainText).digest('hex');
-            }
-            else {
-                return crypto.createHmac('sha256', this.salt).update(plainText).digest('hex');
-            }
-        });
-
-        //솔트 값 설정
-        D_UserSchema
-        .method('makeSalt', function () {
-            return Math.round((new Date().valueOf() * Math.random())) + '';
-        });
-
-        //패스워드 검증
-        D_UserSchema
-        .method('authenticate', function (plainText, inSalt, hashed_password) {
-            if (inSalt) {
-                return this.encryptPassword(plainText, inSalt) == hashed_password;
-            }
-            else {
-                return this.encryptPassword(plainText) == hashed_password;
-            }
-        });
-
-        D_UserModel = mongoose.model('d_users' , D_UserSchema)
-        
-        //앱에 등록
-        expressApp.set('D_UserSchema' , D_UserSchema);
-        expressApp.set('D_UserModel' , D_UserModel);
-
 
         D_UserModel.find({}  , (err , results) => {
             for(var i = 0 ; i < results.length; i++) {
                 try {
-                    fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.id);
+                    fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.email);
                 }
                 catch (e) {
-                    console.log("[" + results[i]._doc.id + "] FOLDER ALREADY EXIST");
+                    console.log("[" + results[i]._doc.email + "] FOLDER ALREADY EXIST");
                 }
             }
             console.log("[DB]CONNECT COMPLETE")
@@ -96,15 +44,14 @@ var _connect = (expressApp) => {
         console.log('[DB]DISCONNECTED');
         setInterval(_connect(expressApp), 5000);
     });
-}
-
+};
 
 D_Mongoose.getAllUserData = async () => {
     var results = await D_UserModel.find({});
     var output = {};
     for(var i = 0 ; i < results.length; i++) {
         var userData = {};
-        userData['id'] = results[i]._doc.id;
+        userData['email'] = results[i]._doc.email;
         userData['max_storage'] = results[i]._doc.max_storage;
         userData['grade'] = results[i]._doc.grade;
         output[i] = userData;
@@ -113,29 +60,12 @@ D_Mongoose.getAllUserData = async () => {
 }
 
 
-//유저 등록시 아이디 중복체크
-D_Mongoose.user_ID_Check = async (id) => {
-    var results = await D_UserModel.find({'id' : id});
-    if(results.length == 0) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-//유저 등록시 비밀번호 정규식 체크(8자리부터 15자리 )
-D_Mongoose.user_PW_Check = (pw) => {
-    var regex = new RegExp('^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$');
-    return regex.test(pw);
-}
-
 //유저삭제
-D_Mongoose.userDelete = async (id) => {
+D_Mongoose.userDelete = async (email) => {
     var res = false;
     var user = null;
     try {
-        user = await D_UserModel.findOne({'id' : id});
+        user = await D_UserModel.findOne({'email' : email});
     }
     catch(e) {
         console.log("USER DELETE REMOVE ERROR");
@@ -145,8 +75,8 @@ D_Mongoose.userDelete = async (id) => {
         try {
             user.remove();
             res = true;
-            require('./D_file').moveTo(D_PATH["DOWNLOAD"] + '/' + user._doc.id 
-                                     , D_PATH["TRASH_BIN"] + '/' + user._doc.id + '_' + user._doc.id);
+            require('./D_file').moveTo(D_PATH["DOWNLOAD"] + '/' + user._doc.email 
+                                     , D_PATH["TRASH_BIN"] + '/' + user._doc.email + '_' + user._doc.email);
         }
         catch(e) {
 
@@ -156,12 +86,12 @@ D_Mongoose.userDelete = async (id) => {
 }
 
 //유저업데이트
-D_Mongoose.userUpdate = async(id , grade , storage) => {
+D_Mongoose.userUpdate = async(email , grade , storage) => {
     var res = false;
 
     var user = null;
     try {
-        user = await D_UserModel.findOne({'id' : id});
+        user = await D_UserModel.findOne({'email' : email});
     }
     catch(e) {
         console.log("USER UPDATE FINDONE ERROR");
@@ -184,3 +114,5 @@ D_Mongoose.userUpdate = async(id , grade , storage) => {
 
 
 module.exports.D_Mongoose = D_Mongoose;
+module.exports.D_UserModel = D_UserModel;
+module.exports.D_UserSchema = D_UserSchema;

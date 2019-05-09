@@ -70,7 +70,7 @@
 
         var Update = function (pos) {
             var outputdata = {};
-            outputdata['id'] = input_data[pos]['id'];
+            outputdata['email'] = input_data[pos]['email'];
             
             var select_grade = document.getElementById('i_grade_setting_' + pos);
             var option = select_grade.options[select_grade.selectedIndex].value;
@@ -126,7 +126,7 @@
 
         var Delete = function (pos) {
             var outputdata = {};
-            outputdata['id'] = input_data[pos]['id'];
+            outputdata['email'] = input_data[pos]['email'];
             $.ajax({
                 url : "/userDelete",
                 type : "POST",
@@ -178,7 +178,7 @@
                             <% for(var i = 0 ; i < input_data_length; i++) { %>
                                 <tr>
                                     <td class="align-middle"><%= i %></td>
-                                    <td class="align-middle"><%= input_data[i]['id'] %></td>
+                                    <td class="align-middle"><%= input_data[i]['email'] %></td>
                                     <td class="align-middle"><%= input_data[i]['grade'] %></td>
                                     <td class="align-middle">
                                             <select class="form-control" id="i_grade_setting_<%= i %>" name="n_grade_setting_<%= i %>">

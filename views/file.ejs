@@ -39,8 +39,7 @@
         <script type="text/javascript">
 
                 var path                = null;
-                
-                var id                  = null;
+                var email                  = null;
                 var used_storage        = null;
                 var max_storage         = null;
                 var grade               = null;
@@ -48,9 +47,8 @@
 
                 //초기화
                 var init = function() {
-                        path         = "";
-                
-                        id              = '<%- id %>';
+                        path            = "";
+                        email           = '<%- email %>';
                         used_storage    = parseInt('<%- used_storage %>');
                         max_storage     = parseInt('<%- max_storage %>');
                         grade           = '<%- grade %>';
@@ -59,8 +57,6 @@
                                 isIE = true;
                                 document.getElementById('iealert').style.display = "block";
                         }
-
-
                 }
 
                 var IECheck = function() {
@@ -442,27 +438,31 @@
                 </div>
         </nav>
 
+
+
+
         <div class="container" style="padding-top: 75px; padding-bottom: 60px;">
 
                 <!-- IE 문제 표시 -->
                 <% include iealert.ejs %>
-
-                <!-- 사용량 -->
+                
                 <div class="row">
                         
-                        <div class="progress position-relative w-100" style="height:5vh">
-                                <div id='i_used_storage' class="progress-bar bg-success progress-bar-striped" style="height: 5vh">
-                                                <span id="i_used_percent" class="align-middle" style="color:black;"></span> 
+                        <!-- 센터 -->
+                        <div class="col">
+                                <!-- 사용량 -->
+                                <div class="progress position-relative w-100" style="height:5vh">
+                                        <div id='i_used_storage' class="progress-bar bg-success progress-bar-striped" style="height: 5vh">
+                                                        <span id="i_used_percent" class="align-middle" style="color:black;"></span> 
+                                        </div>
+                                </div>
+
+                                <!-- 파일 리스트 -->
+                                <div class="embed-responsive embed-responsive-16by9">
+                                        <iframe id="fileframe" class="embed-responsive-item" src="/fileframe"></iframe>
                                 </div>
                         </div>
-                                
-                </div>
 
-                <!-- 파일 리스트 -->
-                <div class="row">
-                        <div class="embed-responsive embed-responsive-16by9">
-                                <iframe id="fileframe" class="embed-responsive-item" src="/fileframe"></iframe>
-                        </div>
                 </div>
                 
         </div>
