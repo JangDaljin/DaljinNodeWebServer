@@ -26,53 +26,65 @@ module.exports = function(app) {
         passport.authenticate('naver' , (err , user) => {
             var output = {};
             output['error'] = true;
-            //헤더 유저에이전트 기반동작
-            switch(req.headers['user-agent'].toLowerCase()) {
-                //안드로이드
-                case 'android' : 
-                    if(err || !user) {
-                        res.send(JSON.stringify(output));
-                    }
-                    else {
-                        req.logIn(user , (err) => {
-                            if(err) {
-                                res.send(JSON.stringify(output));
-                                return;
-                            }
-                            else {
-                                output['error'] = false;
-                                output['email'] = user.email;
-                                output['nickname'] = user.nickname;
-                                output['code'] = user.code;
-                                output['grade'] = user.grade;
-                                output['max_storage'] = user.max_storage;
-                                res.send(JSON.stringify(output));
-                            }
-                        }); 
-                    }
-                break;
-
-                //일반 웹처리
-                default :
-                    if(err || !user) {
+            
+            if(err || !user) {
+                res.redirect('/');
+            }
+            else {
+                req.logIn(user, (err)=> {
+                    if(err) {
                         res.redirect('/');
                     }
                     else {
-                        req.logIn(user, (err)=> {
-                            if(err) {
-                                res.redirect('/');
-                            }
-                            else {
-                                res.redirect('/file');
-                            }
-                        });
+                        res.redirect('/file');
                     }
-                break;
+                });
             }
-
-
         })(req , res);
+    });
 
+    app.post('/validatetoken' , (req ,res) => {
+        var token = req.body.token;
+        var header = "Bearer " + token;
+
+        var api_url = 'https://openapi.naver.com/v1/nid/me';
+        var request = require('request');
+        var options = {
+            url: api_url,
+            headers: {'Authorization': header}
+         };
+        request.get(options, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            
+
+
+            res.send(body);
+          } else {
+            console.log('error');
+            if(response != null) {
+                var output = {};
+                output['result'] = false;
+                res.send(JSON.stringify(output));
+              console.log('error = ' + response.statusCode);
+            }
+          }
+        });
+    });
+
+    //세션 체크
+    app.get('/sessioncheck' , (req ,res) => {
+        var output = {};
+        if(req.isAuthenticated()) {
+            output['result'] = true;
+            output['email'] = req.user.email;
+            output['nickname'] = req.user.nickname;
+            output['grade'] = req.user.grade;
+            output['max_storage'] = req.user.max_storage;
+        }
+        else {
+            output['result'] = false;
+        }
+        res.send(JSON.stringify(output));
     });
 
     //코드 업데이트
