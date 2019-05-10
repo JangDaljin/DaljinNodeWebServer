@@ -13,21 +13,6 @@ passport.use(new NaverStrategy({
     callbackURL : OAUTH.NAVER.CALLBACK
 } , 
 (accessToken, refreshToken, profile, done) => {
-    naverPassportProcess(profile , done);
-}));
-
-passport.use(new NaverTokenStrategy({
-    clientID : OAUTH.NAVER.CLIENT_ID
-    ,
-    clientSecret : OAUTH.NAVER.CLIENT_SECRET
-    ,
-    callbackURL : OAUTH.NAVER.CALLBACK
-} , 
-(accessToken, refreshToken, profile, done) => {
-    naverPassportProcess(profile , done);
-}));
-
-var naverPassportProcess = (profile , done) => {
     var user_email = profile.emails[0].value;
     var user_name = profile.displayName;
 
@@ -72,8 +57,61 @@ var naverPassportProcess = (profile , done) => {
             done(null , user);
         }
     });
-}
+}));
 
+passport.use(new NaverTokenStrategy({
+    clientID : OAUTH.NAVER.CLIENT_ID
+    ,
+    clientSecret : OAUTH.NAVER.CLIENT_SECRET
+    ,
+    callbackURL : OAUTH.NAVER.CALLBACK
+} , 
+(accessToken, refreshToken, profile, done) => {
+    var user_email = profile.email
+    var user_name = profile.nickName;
+
+    var D_UserModel = require('./D_database').D_UserModel;
+
+    D_UserModel.findOne({'email':user_email} , (err,user) => {
+        if(err) {
+            console.log('[' + user_email + '] LOGIN ERROR');
+            done(err , null);
+        }
+        
+        //최초가입
+        if(!user) {
+            console.log('[' + user_email + '] NOT FOUND ID')
+            var UserModel = new D_UserModel(
+                {
+                    email : user_email,
+                    nickname : user_name ,
+                    grade : 'anonymous',
+                    code : '0000',
+                    max_storage : 1024*1024*1
+                }
+            );
+            UserModel.save((err)=> {
+                if(err) {
+                    console.log('[' + user_email + '] ADD USER ERROR');
+                    return done(err , null);
+                }
+                else {
+                    D_file.makeDirectory(D_PATH["DOWNLOAD"]+ '/' + user_email).then(
+                        (returnValue) => 
+                        {
+                            console.log('[' + user_email + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
+                            done(null , UserModel);
+                        }
+                    )
+                }
+            });   
+        }
+        else {
+            console.log('[' + user_email + '] LOGIN SUCCESS');
+            done(null , user);
+        }
+    });
+}));
 
 passport.serializeUser(function(user, done) {
     done(null , user);
