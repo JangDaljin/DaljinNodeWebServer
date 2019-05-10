@@ -67,8 +67,11 @@ passport.use(new NaverTokenStrategy({
     callbackURL : OAUTH.NAVER.CALLBACK
 } , 
 (accessToken, refreshToken, profile, done) => {
-    var user_email = profile.email
-    var user_name = profile.nickName;
+
+    var loginInfo = profile._json
+
+    var user_email = loginInfo.email
+    var user_name = loginInfo.nickname;
 
     console.dir(profile);
 
