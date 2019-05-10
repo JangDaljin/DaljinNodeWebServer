@@ -68,10 +68,7 @@ passport.use(new NaverTokenStrategy({
 } , 
 (accessToken, refreshToken, profile, done) => {
 
-    var loginInfo = profile._json
-
-
-
+    var loginInfo = profile._json.response;
     var user_email = loginInfo['email']
     var user_name = loginInfo['nickname'];
     console.dir(loginInfo);
