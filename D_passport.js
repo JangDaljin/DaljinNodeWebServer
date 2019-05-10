@@ -70,6 +70,8 @@ passport.use(new NaverTokenStrategy({
     var user_email = profile.email
     var user_name = profile.nickName;
 
+    console.dir(profile);
+
     var D_UserModel = require('./D_database').D_UserModel;
 
     D_UserModel.findOne({'email':user_email} , (err,user) => {
