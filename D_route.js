@@ -531,7 +531,7 @@ module.exports = function(app) {
     });
 
     app.get('/naverloginImage' , (req ,res) => {
-        require('fs').readFile('./views/naverlogin.png' , (error , data) => {
+        require('fs').readFile('./views/naverloginbutton.png' , (error , data) => {
             res.writeHead(200 , {'Content-Type' : 'text/html'});
             res.end(data);
         });
