@@ -21,7 +21,9 @@ module.exports = function(app) {
 
     //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
-    app.get('/navercallback' , passport.authenticate('naver' , { successRedirect = '/file' , failureRedirect='/'}));
+    app.get('/navercallback' , passport.authenticate('naver' , { 
+        successRedirect : '/file' , failureRedirect : '/'
+    }));
     app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
         (req , res) => {
             var output = {};

@@ -1,5 +1,6 @@
 var passport = require('passport');
 var NaverStrategy = require('passport-naver').Strategy;
+var NaverTokenStrategy = require('passport-naver-token').Strategy;
 var D_PATH = require('./D_setting').PATH
 var OAUTH = require('./D_setting').OAUTH
 var D_file = require('./D_file');
