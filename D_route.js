@@ -21,27 +21,23 @@ module.exports = function(app) {
 
     //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
-    app.get('/navercallback' , (req , res) => {
-
-        passport.authenticate('naver' , (err , user) => {
+    app.get('/navercallback' , passport.authenticate('naver' , { successRedirect = '/file' , failureRedirect='/'}));
+    app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
+        (req , res) => {
             var output = {};
-            output['error'] = true;
-            
-            if(err || !user) {
-                res.redirect('/');
+            output['result'] = false
+            if(req.isAuthenticated()) {
+                output['result'] = true;
+                output['email'] = req.user.email;
+                output['nickname'] = req.user.nickname;
+                output['code'] = req.user.code;
+                output['grade'] = req.user.grade;
+                output['max_storage'] = req.user.max_storage;
             }
-            else {
-                req.logIn(user, (err)=> {
-                    if(err) {
-                        res.redirect('/');
-                    }
-                    else {
-                        res.redirect('/file');
-                    }
-                });
-            }
-        })(req , res);
+            res.send(JSON.stringify(output));
+        }
     });
+
 
     app.post('/validatetoken' , (req ,res) => {
         var token = req.body.token;

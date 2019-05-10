@@ -11,8 +11,22 @@ passport.use(new NaverStrategy({
     ,
     callbackURL : OAUTH.NAVER.CALLBACK
 } , 
-function(accessToken, refreshToken, profile, done) {
-    
+(accessToken, refreshToken, profile, done) => {
+    naverPassportProcess(profile , done);
+}));
+
+passport.use(new NaverTokenStrategy({
+    clientID : OAUTH.NAVER.CLIENT_ID
+    ,
+    clientSecret : OAUTH.NAVER.CLIENT_SECRET
+    ,
+    callbackURL : OAUTH.NAVER.CALLBACK
+} , 
+(accessToken, refreshToken, profile, done) => {
+    naverPassportProcess(profile , done);
+}));
+
+var naverPassportProcess = (profile , done) => {
     var user_email = profile.emails[0].value;
     var user_name = profile.displayName;
 
@@ -57,7 +71,8 @@ function(accessToken, refreshToken, profile, done) {
             done(null , user);
         }
     });
-}));
+}
+
 
 passport.serializeUser(function(user, done) {
     done(null , user);
