@@ -71,11 +71,7 @@ passport.use(new NaverTokenStrategy({
     var loginInfo = profile._json.response;
     var user_email = loginInfo['email']
     var user_name = loginInfo['nickname'];
-    console.dir(loginInfo);
-    console.log(loginInfo);
-    console.log(user_email);
-    console.log(user_name);
-
+    
     var D_UserModel = require('./D_database').D_UserModel;
 
     D_UserModel.findOne({'email':user_email} , (err,user) => {
