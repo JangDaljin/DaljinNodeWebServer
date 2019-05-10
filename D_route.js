@@ -25,7 +25,6 @@ module.exports = function(app) {
         successRedirect : '/file' , failureRedirect : '/'
     }));
     app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
-        (req , res) => {
             var output = {};
             output['result'] = false
             if(req.isAuthenticated()) {
@@ -37,33 +36,6 @@ module.exports = function(app) {
                 output['max_storage'] = req.user.max_storage;
             }
             res.send(JSON.stringify(output));
-        }
-    });
-
-
-    app.post('/validatetoken' , (req ,res) => {
-        var token = req.body.token;
-        var header = "Bearer " + token;
-
-        var api_url = 'https://openapi.naver.com/v1/nid/me';
-        var request = require('request');
-        var options = {
-            url: api_url,
-            headers: {'Authorization': header}
-         };
-        request.get(options, function (error, response, body) {
-          if (!error && response.statusCode == 200) {
-            res.send(body);
-          } else {
-            console.log('error');
-            if(response != null) {
-                var output = {};
-                output['result'] = false;
-                res.send(JSON.stringify(output));
-              console.log('error = ' + response.statusCode);
-            }
-          }
-        });
     });
 
     //세션 체크

@@ -21,7 +21,7 @@ passport.use(new NaverStrategy({
     D_UserModel.findOne({'email':user_email} , (err,user) => {
         if(err) {
             console.log('[' + user_email + '] LOGIN ERROR');
-            done(err , null);
+            return done(err , null);
         }
         
         //최초가입
@@ -46,7 +46,7 @@ passport.use(new NaverStrategy({
                         (returnValue) => 
                         {
                             console.log('[' + user_email + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
-                            done(null , UserModel);
+                            return done(null , UserModel);
                         }
                     )
                 }
@@ -54,7 +54,7 @@ passport.use(new NaverStrategy({
         }
         else {
             console.log('[' + user_email + '] LOGIN SUCCESS');
-            done(null , user);
+            return done(null , user);
         }
     });
 }));
@@ -75,9 +75,9 @@ passport.use(new NaverTokenStrategy({
     D_UserModel.findOne({'email':user_email} , (err,user) => {
         if(err) {
             console.log('[' + user_email + '] LOGIN ERROR');
-            done(err , null);
+            return done(err , null);
         }
-        
+
         //최초가입
         if(!user) {
             console.log('[' + user_email + '] NOT FOUND ID')
@@ -100,7 +100,7 @@ passport.use(new NaverTokenStrategy({
                         (returnValue) => 
                         {
                             console.log('[' + user_email + '] ADD USER -> MAKE DEFAULT DIRECTORY COMPLETE');
-                            done(null , UserModel);
+                            return done(null , UserModel);
                         }
                     )
                 }
@@ -108,7 +108,7 @@ passport.use(new NaverTokenStrategy({
         }
         else {
             console.log('[' + user_email + '] LOGIN SUCCESS');
-            done(null , user);
+            return done(null , user);
         }
     });
 }));
