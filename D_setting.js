@@ -26,7 +26,7 @@ var OAUTH = {
         ,
         'CLIENT_SECRET' : 'vdwkDUS14Q'
         ,
-        'CALLBACK' : 'http://127.0.0.1:8000/navercallback'
+        'CALLBACK' : 'http://daljin.dlinkddns.com/navercallback'
     }
 }
 
