@@ -51,9 +51,6 @@ module.exports = function(app) {
          };
         request.get(options, function (error, response, body) {
           if (!error && response.statusCode == 200) {
-            
-
-
             res.send(body);
           } else {
             console.log('error');
@@ -74,6 +71,7 @@ module.exports = function(app) {
             output['result'] = true;
             output['email'] = req.user.email;
             output['nickname'] = req.user.nickname;
+            output['code'] = req.user.code;
             output['grade'] = req.user.grade;
             output['max_storage'] = req.user.max_storage;
         }
