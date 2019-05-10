@@ -32,7 +32,7 @@ passport.use(new NaverStrategy({
                     email : user_email,
                     nickname : user_name ,
                     grade : 'anonymous',
-                    code : '0000',
+                    code : '',
                     max_storage : 1024*1024*1
                 }
             );
@@ -86,7 +86,7 @@ passport.use(new NaverTokenStrategy({
                     email : user_email,
                     nickname : user_name ,
                     grade : 'anonymous',
-                    code : '0000',
+                    code : '',
                     max_storage : 1024*1024*1
                 }
             );
