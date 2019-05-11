@@ -30,8 +30,8 @@ passport.use(new NaverStrategy({
         }
         
         request.get(options , function(err , response , body){
-            console.dir(body);
-        })
+            console.log("[" + user_email + "/" + user_name + "] 필수항목 비동의");
+        });
         return done(null , null);
     }
 
@@ -93,7 +93,22 @@ passport.use(new NaverTokenStrategy({
     var user_email = loginInfo['email']
     var user_name = loginInfo['nickname'];
 
+
     if(!user_email || !user_name) {
+        var options = {
+            uri : 'https://nid.naver.com/oauth2.0/token',
+            qs : {
+                grant_type : 'delete',
+                client_id : OAUTH.NAVER.CLIENT_ID,
+                client_secret : OAUTH.NAVER.CLIENT_SECRET,
+                access_token : accessToken,
+                service_provider : 'NAVER'
+            }
+        }
+        
+        request.get(options , function(err , response , body){
+            console.log("[" + user_email + "/" + user_name + "] 필수항목 비동의");
+        });
         return done(null , null);
     }
     
