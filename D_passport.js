@@ -16,6 +16,10 @@ passport.use(new NaverStrategy({
     var user_email = profile.emails[0].value;
     var user_name = profile.displayName;
 
+    if(!user_email || !user_name) {
+        return done(null , null);
+    }
+
     var D_UserModel = require('./D_database').D_UserModel;
 
     D_UserModel.findOne({'email':user_email} , (err,user) => {
@@ -24,8 +28,8 @@ passport.use(new NaverStrategy({
             return done(err , null);
         }
         
-        //최초가입
         if(!user) {
+            //최초가입
             console.log('[' + user_email + '] NOT FOUND ID')
             var UserModel = new D_UserModel(
                 {
@@ -36,6 +40,8 @@ passport.use(new NaverStrategy({
                     max_storage : 1024*1024*1
                 }
             );
+
+
             UserModel.save((err)=> {
                 if(err) {
                     console.log('[' + user_email + '] ADD USER ERROR');
@@ -71,6 +77,10 @@ passport.use(new NaverTokenStrategy({
     var loginInfo = profile._json.response;
     var user_email = loginInfo['email']
     var user_name = loginInfo['nickname'];
+
+    if(!user_email || !user_name) {
+        return done(null , null);
+    }
     
     var D_UserModel = require('./D_database').D_UserModel;
 
