@@ -4,7 +4,7 @@ var NaverTokenStrategy = require('passport-naver-token').Strategy;
 var D_PATH = require('./D_setting').PATH
 var OAUTH = require('./D_setting').OAUTH
 var D_file = require('./D_file');
-var request = require('/request');
+var request = require('request');
 
 passport.use(new NaverStrategy({
     clientID : OAUTH.NAVER.CLIENT_ID
