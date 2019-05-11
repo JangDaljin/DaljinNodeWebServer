@@ -27,8 +27,11 @@ passport.use(new NaverStrategy({
                 access_token : accessToken
             }
         }
+        
         request.get(options , function(err , response , body){
-            //callback
+            console.dir(err);
+            console.dir(response);
+            console.dir(body);
         })
         return done(null , null);
     }
