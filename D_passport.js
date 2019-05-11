@@ -24,13 +24,12 @@ passport.use(new NaverStrategy({
                 grant_type : 'delete',
                 client_id : OAUTH.NAVER.CLIENT_ID,
                 client_secret : OAUTH.NAVER.CLIENT_SECRET,
-                access_token : accessToken
+                access_token : accessToken,
+                service_provider : 'NAVER'
             }
         }
         
         request.get(options , function(err , response , body){
-            console.dir(err);
-            console.dir(response);
             console.dir(body);
         })
         return done(null , null);
