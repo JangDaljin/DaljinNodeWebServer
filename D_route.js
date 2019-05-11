@@ -55,15 +55,23 @@ module.exports = function(app) {
         res.send(JSON.stringify(output));
     });
 
-    //코드 업데이트
-    app.post('/codeupdate' , (req ,res) => {
+    //자신의 코드,닉네임 업데이트
+    app.post('/userinfoupdate' , (req ,res) => {
          if(req.isAuthenticated()) {
-            var code = req.body.code;
-            var email = req.user.email;
+            var email = req.user.email
+            var nickname = req.body.nickname || "";
+            var code = req.body.code || "";
+
+            if(!nickname) {
+                nickname = req.user.nickname;
+            }
+            if(!code) {
+                code = req.user.code;
+            }
 
             var output = {};
             output['error'] = true;
-            D_Mongoose.codeUpdate(email , code).then(
+            D_Mongoose.userInfoUpdate(email , nickname , code).then(
                 user => { 
                     if(user != null) {
                         req.session.passport.user = user;
@@ -79,8 +87,23 @@ module.exports = function(app) {
         else {
             res.end();
         }
-        
+    });
 
+    app.post('/userwithdrawal' , (req ,res) => {
+        if(req.isAuthenticated()) {
+            var email = req.user.email;
+            D_Mongoose.userDelete(email).then(
+                (returnValue) => 
+                {
+                    var output = {};
+                    output['error'] = returnValue;
+                    res.send(JSON.stringify(output));
+                }
+            );
+        }
+        else {
+            res.end();
+        }
     });
     //========================================================================================================================================//
 
@@ -453,7 +476,7 @@ module.exports = function(app) {
         }
     })
 
-    //유저관리 페이지 (AJAX 유저 삭제))
+    //유저 정보 변경
     app.post('/userUpdate' , (req , res) => {
         if(req.isAuthenticated() && req.user.grade == 'master') {
             var INPUT_DATA = req.body;
@@ -479,7 +502,7 @@ module.exports = function(app) {
         }
     });
 
-    //유저관리 페이지 (AJAX 유저 정보 변경)
+    //유저 정보 삭제
     app.post('/userDelete' , (req ,res) => {
         if(req.isAuthenticated() && req.user.grade == 'master') {
             var INPUT_DATA = req.body;
@@ -501,7 +524,6 @@ module.exports = function(app) {
         else {
             res.send({})
         }
-
     });
     //========================================================================================================================================//
 

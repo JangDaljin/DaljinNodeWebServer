@@ -112,15 +112,14 @@ D_Mongoose.userUpdate = async(email , grade , storage) => {
     return res;
 }
 
-D_Mongoose.codeUpdate = async(email , code) => {
+D_Mongoose.userInfoUpdate = async(email , nickname , code) => {
     var user = null;
-
 
     try {
         user = await D_UserModel.findOne({'email' : email});
     }
     catch(e) {
-        console.log("[" + email + "] CODE UPDATE ERROR");
+        console.log("[" + email + "] USERINFO UPDATE ERROR");
     }
 
     if(user != null) {

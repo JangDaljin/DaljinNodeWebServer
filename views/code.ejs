@@ -17,7 +17,7 @@
             var output = {};
             output['code'] = document.getElementById('i_code').value;
             $.ajax({
-                    url : "/codeupdate",
+                    url : "/userinfoupdate",
                     type : "POST",
                     data : JSON.stringify(output),
                     contentType : "application/json",

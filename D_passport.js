@@ -15,9 +15,9 @@ passport.use(new NaverStrategy({
 } , 
 (accessToken, refreshToken, profile, done) => {
     var user_email = profile.emails[0].value;
-    var user_name = profile.displayName;
+    var user_nickname = profile.displayName;
 
-    NaverLoginProcess(user_email , user_name , accessToken , done);
+    NaverLoginProcess(user_email , user_nickname , accessToken , done);
 }));
 
 passport.use(new NaverTokenStrategy({
@@ -30,15 +30,15 @@ passport.use(new NaverTokenStrategy({
 (accessToken, refreshToken, profile, done) => {
     var loginInfo = profile._json.response;
     var user_email = loginInfo['email']
-    var user_name = loginInfo['nickname'];
+    var user_nickname = loginInfo['nickname'];
 
-    NaverLoginProcess(user_email , user_name , accessToken , done);
+    NaverLoginProcess(user_email , user_nickname , accessToken , done);
 }));
 
 
-var NaverLoginProcess = (user_email , user_name , accessToken , done) => {
+var NaverLoginProcess = (user_email , user_nickname , accessToken , done) => {
 //필수 항목 비동의
-if(!user_email || !user_name) {
+if(!user_email || !user_nickname) {
     var options = {
         uri : 'https://nid.naver.com/oauth2.0/token',
         qs : {
@@ -51,7 +51,7 @@ if(!user_email || !user_name) {
     }
     
     request.get(options , function(err , response , body){
-        console.log("[" + user_email + "/" + user_name + "] 필수항목 비동의");
+        console.log("[" + user_email + "/" + user_nickname + "] 필수항목 비동의");
     });
     return done(null , null);
 }
@@ -70,7 +70,7 @@ D_UserModel.findOne({'email':user_email} , (err,user) => {
         var UserModel = new D_UserModel(
             {
                 email : user_email,
-                nickname : user_name ,
+                nickname : user_nickname ,
                 grade : 'anonymous',
                 code : '',
                 max_storage : 1024*1024*1
