@@ -4,6 +4,7 @@ var NaverTokenStrategy = require('passport-naver-token').Strategy;
 var D_PATH = require('./D_setting').PATH
 var OAUTH = require('./D_setting').OAUTH
 var D_file = require('./D_file');
+var request = require('/request');
 
 passport.use(new NaverStrategy({
     clientID : OAUTH.NAVER.CLIENT_ID
@@ -17,6 +18,18 @@ passport.use(new NaverStrategy({
     var user_name = profile.displayName;
 
     if(!user_email || !user_name) {
+        var options = {
+            uri : 'https://nid.naver.com/oauth2.0/token',
+            qs : {
+                grant_type : 'delete',
+                client_id : OAUTH.NAVER.CLIENT_ID,
+                client_secret : OAUTH.NAVER.CLIENT_SECRET,
+                access_token : accessToken
+            }
+        }
+        request.get(options , function(err , response , body){
+            //callback
+        })
         return done(null , null);
     }
 
