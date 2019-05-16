@@ -24,6 +24,11 @@ app.set('USER_SETTING' , D_setting.USER_SETTING);
 app.set('views' , __dirname + '/views');
 app.set('view engine' , 'ejs');
 
+app.use('/scripts' , express.static(__dirname + '/views/scripts'));
+app.use('/styles'  , express.static(__dirname + '/views/styles'));
+app.use('/images'  ,express.static(__dirname + '/views/images'));
+
+
 app.use(cookieParser());
 app.use(expressSession(
     {

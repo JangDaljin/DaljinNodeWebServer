@@ -1,0 +1,173 @@
+html , body {
+    margin: 0 auto;
+    padding: 0;
+}
+
+.lt ul {
+    margin-top: 4px;
+    padding : 0;
+    color: #283B42;
+}
+
+.lt ul li {
+    overflow-x: hidden;
+    z-index: 1;
+    position: relative;
+    list-style :none;
+    cursor: pointer;
+    padding: 12px 30px;
+    background: #D1DDDB;
+    border: 4px solid #283B42;
+    box-sizing: content-box;
+    margin-top: -4px;
+    margin-left: -0px;
+}
+
+.lt ul li::before {
+    z-index: -1;
+    position: absolute;
+    display: block;
+    top : 0;
+    left : 0;
+    height: 100%;
+    width: 30%;
+    content: "";
+    background-color: #FFF;
+    opacity : 0.5;
+    filter: blur(30px);
+    transform: translateX(-100%) skewX(-15deg);
+}
+
+.lt ul li:after {
+    z-index: -2;
+    position: absolute;
+    display: block;
+    top : 0;
+    left : 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+    background-color: #1D6A96;
+    opacity : 0;
+}
+
+.lt ul li:hover {
+    color: #D1DDDB;
+}
+
+.lt ul li:hover::before {
+    transform: translateX(400%) skewX(-15deg);
+    opacity: .5;
+    transition: .7s;
+}
+
+.lt ul li:hover::after {
+    opacity: 1;
+    transition: 1s;
+}
+
+
+
+.lt > ul li:active {
+    transform: scale(0.95);
+    transition: 0.1s;
+}
+
+
+.lt .item-container > div {
+    display: inline-block;
+}
+
+.lt .image {
+    margin-right: 10px;
+    float: left;
+}
+
+.lt .discription {
+    font-family: 'Noto Sans KR', sans-serif;
+    vertical-align: baseline;
+}
+
+.lt .discription > .name {
+    font-size: 1.3em;
+}
+
+.lt .discription > .size {
+    font-size: 0.75em;
+}
+
+.lt .discription > .time {
+    font-size: 0.75em;
+}
+
+.lt .check {
+    float: right;
+}
+
+
+
+
+
+
+
+
+
+.gt > .grid-wrapper {
+    box-sizing: border-box;
+    border: 4px solid #283B42;
+    background: #D1DDDB;
+    display: grid;
+    grid-template-columns: repeat(7 , 1fr);
+    grid-auto-rows: minmax(150px  , auto);
+    grid-gap: 2em;
+    justify-items: center;
+    align-items: center;
+}
+
+.gt > .grid-wrapper > div {
+    padding: 0.5em;
+    box-sizing: border-box;
+    width: 9em;
+    height: 9em;
+    justify-items: center;
+    color: #283B42;
+}
+
+.gt > .grid-wrapper > .dir {
+    cursor: pointer;
+}
+
+.gt > .grid-wrapper > div:hover {
+    color: #1D6A96;
+    border: 4px solid #1D6A96;
+}
+
+.gt > .grid-wrapper > div:active {
+    transform: scale(0.8);
+    transition: 150ms;
+}
+
+.gt > .grid-wrapper > div > .image {
+    text-align: center;
+}
+
+.gt > .grid-wrapper > div > .name {
+    width: 5em;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: normal; 
+    line-height: 1.2; 
+    height: 3.6em; 
+    text-align: left; 
+    word-wrap: break-word;
+    display: -webkit-box; 
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical
+}
+
+
+
+

@@ -1,0 +1,171 @@
+/********************************
+        THEME COLOR
+        회색 : #D1DDDB
+        검정 : #283B42
+        밝은 하늘 : #85B8CB
+        진한 파랑 : #1D6A96
+        
+********************************/
+
+html {
+    height : 100%;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+}
+
+header {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #283B42;
+    height: 4em;
+    align-items: center;
+}
+
+header::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+header > .container > button {
+    float: right;
+}
+
+.logo {
+    width: 200px;
+    height : 50px;
+    float: left;
+}
+
+.d-btn-logout {
+    background:#1AAB8A;
+    color:#fff;
+    height:60px;
+    font-size:1.6em;
+    font-weight: 900;
+    padding-left: 1.3em;
+    padding-right: 1.3em;
+    border: none;
+    position:relative;
+    cursor:pointer;
+    outline:none;
+}
+
+.d-btn-logout:hover {
+    background:#fff;
+    color:#1AAB8A;
+}
+
+.d-btn-logout:hover::before,.d-btn-logout:hover::after{
+    width:100%;
+    transition:800ms ease-in-out;
+}
+
+.d-btn-logout::after{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    height:4px;
+    width:0;
+    background: #1AAB8A;
+    right:inherit;
+    top:inherit;
+    left:0;
+    bottom:0;
+}
+
+.d-btn-logout::before {
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    height:4px;
+    width:0;
+    background: #1AAB8A;
+}
+
+
+.linknav {
+    height: 2.5em;
+    background-color: #D1DDDB;
+    padding: 0;
+    margin: 0;
+}
+
+.linknav ul {
+    display: flex;
+    margin : 0;
+    padding: 0;
+    list-style: none;
+}
+
+.linknav li {
+    font-family: 'Cute Font', cursive;
+    font-size: 30px;
+    font-weight: 1000;
+    flex: 1 1 auto;
+    text-align: center; 
+    display: inline-block;
+    position: relative;
+    margin-top: 2px;
+}
+
+.linknav a {
+    color: #1D6A96;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+
+.linknav li::after {
+    content : '';
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #283B42;
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    transition: all ease-in-out 200ms;
+}
+
+.linknav a:hover {
+    color: #283B42;
+}
+
+.linknav li:hover::after {
+    width: 100%;
+}
+
+
+footer {
+    padding-left: 30px;
+    padding-right: 30px;
+    position : fixed;
+    bottom: 0;
+    left : 0;
+    right :0;
+    background-color : #283B42;
+    height: 4em;
+    font-family: 'Cute Font', cursive;
+    font-size: 23px;
+    font-weight: 500;
+    color: #fff;
+}
+
+footer > .container::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+
+.container {
+    margin : 0 , auto;
+}

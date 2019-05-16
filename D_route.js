@@ -10,19 +10,20 @@ module.exports = function(app) {
     //========================================================================================================================================//
     //메인 페이지
     app.get('/' , (req , res) => {
+        var output = {};
         if(req.isAuthenticated()) {
-            res.redirect('/file');
+            output['email'] = req.user.email;
+            output['nickname'] = req.user.nickname;
+            output['grade'] = req.user.grade;
         }
-        else {
-            res.render('login.ejs');
-        }
+        res.render('index.ejs' , output);
     });
 
 
     //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
     app.get('/navercallback' , passport.authenticate('naver' , { 
-        successRedirect : '/file' , failureRedirect : '/'
+        successRedirect : '/' , failureRedirect : '/'
     }));
     app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
             var output = {};
@@ -135,12 +136,14 @@ module.exports = function(app) {
 
     //파일 프레임 페이지
     app.get('/fileframe' , (req , res) => {
-        if(req.isAuthenticated) {
-            var email = req.user.email;
+        //if(req.isAuthenticated) {
+            // var email = req.user.email;
+            var email = 'toyyj15@naver.com';
             var path = decodeURIComponent(req.query.path);
             if(path == "undefined") {
                 path = '';
             }
+            var listtype = req.query.listtype || '';
 
             D_file.getList(D_PATH["DOWNLOAD"] + '/' + email + path).then(
                 (returnValue) => 
@@ -150,38 +153,46 @@ module.exports = function(app) {
                         output['data'] = JSON.stringify(returnValue);
                         output['path'] = path;
                         output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
+                        output['listtype'] = listtype;
                         res.render('fileframe.ejs' , output);
                     }
                 }
             );
-        }
+        //}
     });
 
     //파일 페이지
-    app.get('/file'  ,  (req , res)=> {
-        if(req.isAuthenticated()) {
-            var email = req.user.email;
-            var nickname = req.user.nickname;
-            var code = req.user.code;
-            var grade = req.user.grade;
-            var max_storage = req.user.max_storage;
+    app.get('/cloud'  ,  (req , res)=> {
+        //if(req.isAuthenticated()) {
+
+            // var email = req.user.email;
+            // var nickname = req.user.nickname;
+            // var code = req.user.code;
+            // var grade = req.user.grade;
+            // var max_storage = req.user.max_storage;
+
+            var email = 'toyyj15@naver.com';
+            var nickname = 'daljin';
+            var code = '1111';
+            var grade = 'normal';
+            var max_storage = 1024*1024*1024*100;
             
             if(code == "0000" || grade == "anonymous" || max_storage == 0) {
                 res.render('code.ejs');
             }
             else {
-                obj = {};
-                obj['email'] = email;
-                obj['nickname'] = nickname;
-                obj['max_storage'] = max_storage;
-                obj['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
-                obj['grade'] = grade;
-                res.render('file.ejs' , obj);
+                output = {};
+                output['email'] = email;
+                output['nickname'] = nickname;
+                output['max_storage'] = max_storage;
+                output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
+                output['grade'] = grade;
+                res.render('cloud.ejs' , output);
             }
-        }
-        else {
-            res.redirect('/');
-        }
+        //}
+        //else {
+        //   res.redirect('/');
+        //}
     });
 
     //업로드 미들웨어 설정

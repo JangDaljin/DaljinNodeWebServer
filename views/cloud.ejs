@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+
+<head>
+    <!-- DEFALUT SETTING -->
+    <% include ./setting %>
+    
+    <!-- DALJIN -->
+    <link rel="stylesheet" href="/styles/daljincloud.css">
+    <script src="/scripts/daljincloud.js"></script>
+
+
+    <script>
+        var path                = "";
+        var email               = '<%- email %>';
+        var used_storage        = parseInt('<%- used_storage %>');
+        var max_storage         = parseInt('<%- max_storage %>');
+        var grade               = '<%- grade %>';
+
+        
+    </script>
+</head>
+
+
+<body>
+    <% include ./header %>
+    
+    <% include ./linknav %>
+    <main role="main">
+
+        
+
+        <div class="content-container">
+        
+            <div class="content-left">
+                <div class="progress-bar" data-label="USED"></div>
+                <nav>
+                    <ul>
+                        <li>
+                                <a href="javascript:void(0)" onclick="showfileframe('list');"><i class="fas fa-list fa-3x"></i></a>
+                        </li>
+                        <li>
+                                <a href="javascript:void(0)" onclick="showfileframe('grid');"><i class="fas fa-th fa-3x"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+                <iframe id="fileframe" src="/fileframe?listtype=grid"></iframe>
+            </div>
+
+
+
+            <div class="content-right">
+                <ul>
+                    <li id="rightmenu_allcheck">
+                        <a href="#">
+                            <span><i class="fas fa-check-square"></i></span>
+                            <span>ALL CHECK</span>
+                            
+                        </a>
+                    </li>
+                    <li id="rightmenu_alluncheck">
+                        <a href="#">
+                            <span><i class="fas fa-square"></i></span>
+                            <span>ALL UNCHECK</span>
+                        </a>
+                    </li>
+                    <li id="rightmenu_download">
+                        <a href="#">
+                            <span><i class="fas fa-cloud-download-alt"></i></span>
+                            <span>Download</span>
+                            
+                        </a>
+                    </li>
+                    <li id="rightmenu_upload">
+                        <a href="#">
+                            <span><i class="fas fa-cloud-upload-alt"></i></span>
+                            <span>Upload</span>
+                        </a>
+                    </li>
+                    <li id="rightmenu_mkdir">
+                        <a href="#">
+                            <span><i class="fas fa-folder-plus"></i></span>
+                            <span>Make Directory</span>
+                        </a>
+                    </li>
+                    <li id="rightmenu_delete">
+                        <a href="#">
+                            <span><i class="fas fa-trash"></i></span>
+                            <span>Delete</span>
+                            
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </main>
+        
+
+    <% include ./footer %>
+
+
+    <!-- MAKE DIRECTORY MODAL -->
+    <div id="mkdir_modal" class="modal-background">
+        <div class="modal-container">
+            <div class="modal-bar"> 
+                <div class="modal-title">
+                    <span>DIRECTORY</span>
+                </div>
+                <div id="mkdir_modal_close" class="modal-close">
+                    <span><i class="fas fa-times fa-2x"></i></span>
+                </div>
+            </div>
+
+            <div class="modal-content">
+                <input type="text" class="modal-input-text">
+                <button class="modal-button">OK</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- UPLOAD MODAL -->
+    <div id="upload_modal" class="modal-background">
+        <div class="modal-container">
+            <div class="modal-bar"> 
+                <div class="modal-title">
+                    <span>UPLOAD</span>
+                </div>
+                <div id="upload_modal_close" class="modal-close">
+                    <span><i class="fas fa-times fa-2x"></i></span>
+                </div>
+            </div>
+
+            <div class="modal-content">
+                <div class="modal-dragbox">
+                    <div class="modal-dragbox-contentbox">
+
+                        <div class="modal-dragbox-image">
+                            <i class="fas fa-file-upload fa-4x"></i>
+                        </div>
+
+                        <div class="modal-dragbox-button">
+                            <button>UPLOAD</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+
+</html>
