@@ -17,6 +17,7 @@
         var max_storage         = parseInt('<%- max_storage %>');
         var grade               = '<%- grade %>';
 
+        var checkedFileList = {};
         
     </script>
 </head>
@@ -51,14 +52,14 @@
 
             <div class="content-right">
                 <ul>
-                    <li id="rightmenu_allcheck">
+                    <li id="rightmenu_allcheck" onclick="fileframeSendPostMsg('allcheck');">
                         <a href="#">
                             <span><i class="fas fa-check-square"></i></span>
                             <span>ALL CHECK</span>
                             
                         </a>
                     </li>
-                    <li id="rightmenu_alluncheck">
+                    <li id="rightmenu_alluncheck" onclick="fileframeSendPostMsg('alluncheck');">
                         <a href="#">
                             <span><i class="fas fa-square"></i></span>
                             <span>ALL UNCHECK</span>
@@ -68,7 +69,6 @@
                         <a href="#">
                             <span><i class="fas fa-cloud-download-alt"></i></span>
                             <span>Download</span>
-                            
                         </a>
                     </li>
                     <li id="rightmenu_upload">
@@ -84,10 +84,9 @@
                         </a>
                     </li>
                     <li id="rightmenu_delete">
-                        <a href="#">
+                        <a href="#" onclick="fileframeSendPostMsg('delete');">
                             <span><i class="fas fa-trash"></i></span>
-                            <span>Delete</span>
-                            
+                            <span>Delete</span
                         </a>
                     </li>
                     

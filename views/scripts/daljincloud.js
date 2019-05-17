@@ -18,10 +18,30 @@ $(document).ready(function () {
         $(".modal-background").hide();
     });
 
-    
 });
 
 
 var showfileframe = function(listtype) {
     $('#fileframe').attr('src' , "/fileframe?listtype=" + listtype);
 }
+
+var fileframeSendPostMsg = function(message) {
+    $('#fileframe').contentWindow.postMessage(message);
+}
+
+
+window.addEventListener('message' , function(e) {
+    var inputData = JSON.parse(e.data);
+    var type = inputData['type'];
+    var data = inputData['data'];
+
+    switch(type) {
+        case 'path' : 
+        path = data;
+        break;
+
+        case 'checkedList' :
+        
+        break;
+    }
+})

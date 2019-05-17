@@ -1,5 +1,5 @@
-<% var files = JSON.parse(data) %>
-<% var files_length = Object.keys(files).length %>
+<% var files = JSON.parse(data); %>
+<% var files_length = Object.keys(files).length; %>
 <% var getVolumeSize = (size , deter = 0) => {    
     if(size / 1024 > 1) {                           
             return getVolumeSize(size / 1024 , deter+1);  
@@ -32,8 +32,7 @@
                 return size.toFixed(2)+res;  
         }
     }                                             
-} %>
-
+}; %>
 
 <!DOCTYPE html>
 
@@ -44,52 +43,12 @@
     
     
     <script>
-        var files_checked = {};
+        //JSON{size , ctime , type , name , extension , fullname}
         var files = JSON.parse('<%- data %>');
         var files_length = parseInt('<%- files_length %>');
-
-        var init = function() {
-            for(var i = 0 ; i < files_length; i++) {
-                files_checked[i] = false;
-            }
-            var output = {};
-            output["type"] = "init";
-            output["data"] = { path : '<%= path %>' , 'used_storage' : '<%= used_storage %>'};
-            window.parent.postMessage(JSON.stringify(output) , '*');
-        }
-
-        var getCheckedList = function() {
-            var output = {};
-            var cnt = 0;
-            for(var i = 0 ; i < files_length ; i++) {
-                if(files_checked[i]) {
-                    output[cnt++] = files[i];
-                }
-            }
-            return output;
-        }
-
-        var receiveMessage = function(event) {
-            console.log("Recieved event " + JSON.stringify(event));
-        }
-        
-        window.addEventListener('message' , function(e) {
-            var output = {};
-            output["type"] = "";
-            output["data"] = "";
-            switch(e.data) {
-                case "download" :
-                    output["type"] = "download";
-                    output["data"] = getCheckedList()
-                break;
-                case "delete" :
-                    output["type"] = "delete";
-                    output["data"] = getCheckedList()
-                break;
-                
-            }
-            window.parent.postMessage(JSON.stringify(output) , '*');
-        });
+        var listtype = '<%- listtype %>';
+        var path = '<%- path %>';
+        var used_storage= '<%- used_storage %>';
 
         
     </script>
@@ -103,77 +62,70 @@
 
 
 <body>
-
     <% if(listtype == 'list') { %> 
     <div class="lt">
-        <ul>
-            <% for (var i = 0 ; i < 2; i++) { %>
-            <li>
+        <ul class="lt-ul">
+            <% for (var i = 0 ; i < files_length; i++) { %>
+            <li id="item_<%= i %>" class="lt-li">
                 <div class="item-container">
+                <% switch(files[i]['type']) {
+                case 'file' : %>
                     <!-- file -->
                     <div class="image"><i class="far fa-file fa-4x"></i></div> 
-
-
-                    <div class="discription">
-                        <div class="name">NAME</div>
-                        <div class="size">SIZE</div>
-                        <div class="time">TIME</div>
-                    </div>
-
-                    <!-- unchecked -->
-                    <div class="check"><i class="far fa-square fa-4x"></i></div>
-                    <!-- checked -->
-                    <div class="check"><i class="far fa-check-square fa-4x"></i></div>
+                <% break;
+                    case 'directory' : %>
+                    <!-- folder -->
+                    <div class="image"><i class="far fa-folder fa-4x"></i></div> 
+                <% break;
+                    default :
+                    break;
+                } %>
+                <div class="discription">
+                    <div class="name"><%= files[i]['fullname'] %></div>
+                    <div class="size"><%= getVolumeSize(files[i]['size']) %></div>
+                    <div class="time"><%= files[i]['ctime'] %>></div>
                 </div>
-            </li>
 
-            <li>
-                    <div class="item-container">
-                        <!-- folder -->
-                        <div class="image"><i class="far fa-folder fa-4x"></i></div> 
-    
-                        <div class="discription">
-                            <div class="name">NAME</div>
-                            <div class="size">SIZE</div>
-                            <div class="time">TIME</div>
-                        </div>
-    
-                        <!-- unchecked -->
-                        <div class="check"><i class="far fa-square fa-4x"></i></div>
-                        <!-- checked -->
-                        <div class="check"><i class="far fa-check-square fa-4x"></i></div>
-                        
-    
+                <div class="checkbox">
+                    <div class="uncheck">
+                        <i class="far fa-square fa-4x"></i>
                     </div>
-                </li>
-            <% } %>
+                    <div class="check">
+                        <i class="far fa-check-square fa-4x"></i>
+                    </div>
+                </div>
+            </div>
+            </li>
+        <% } %>
         </ul>
     </div>
 
     <% } else if(listtype == 'grid') { %> 
         <div class="gt">
-
             <div class="grid-wrapper">
-                <% for(var i = 0 ; i < 13; i++) { %> 
-                <!-- 파일 -->
-                <div>
-                    <div class="image">
-                            <i class="far fa-file fa-4x"></i>
-                    </div>
-                    <div class="name">
-                        asdfasdfasdfasdfavzxcvzxcvzxcvzxcvzxcvasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfas12312314343
-                    </div>
-                </div>
+                <% for (var i = 0 ; i < files_length; i++) { 
+                    switch(files[i]['type']) {
+                        case 'file' : %>
+                        <!-- 파일 -->
+                        <div class="file">
+                            <div class="image">
+                                <i class="far fa-file fa-4x"></i>
+                        <% break;
+                        case 'directory' : %>
+                        <!-- 폴더 -->
+                        <div class="dir">
+                            <div class="image">
+                                <i class="far fa-folder fa-4x"></i>
+                        <% break;
+                        default :
+                        break;
+                    } %>
+                            </div>
+                            <div class="name">
+                                <%= files[i]['fullname'] %>
+                            </div>
+                        </div>
 
-                <!-- 폴더 -->
-                <div class="dir">
-                    <div class="image">
-                            <div class="image"><i class="far fa-folder fa-4x"></i></div> 
-                    </div>
-                    <div class="name">
-                        asdfasdfasdfasdfavzxcvzxcvzxcvzxcvzxcvasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfas12312314343
-                    </div>
-                </div>
                 <% } %>
             </div>
 
