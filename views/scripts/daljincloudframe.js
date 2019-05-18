@@ -6,16 +6,23 @@ $(document).ready(function () {
     window.parent.postMessage(JSON.stringify(output) , '*');
 
     $('.checkbox').click(function() {
+        var msg = {};
+        msg['type'] = null;
+        msg['path'] = path;
+        msg['file'] = files[getItemPos($(this))];
+
         if($(this).children('.uncheck').css('display') == 'none') {
+            msg['type'] = 'uncheck';
             $(this).children('.uncheck').css('display' , 'inline-block');
             $(this).children('.check').css('display' , 'none');
-            files_checkedList[getItemPos($(this))] = false;
         }
         else {
+            msg['type'] = 'check';
             $(this).children('.uncheck').css('display' , 'none');
             $(this).children('.check').css('display' , 'inline-block');
-            files_checkedList[getItemPos($(this))] = true;
         }
+
+        window.parent.postMessage(JSON.stringify(msg) , '*');
     });
 
     $('.lt-li ,.gt-dir').dblclick(function() {
@@ -38,78 +45,60 @@ $(document).ready(function () {
 
 });
 
-var files_checkedList = new Array();
-for(var i = 0 ; i < files_length; i++) {
-    files_checkedList[i] = false;
-}
-
-var getCheckedList = function() {
-    var output = {};
-    var cnt = 0 ;
-    for(var i = 0 ;  i < files_length; i++) {
-        if(files_checkedList[i]) {
-            files[i]['path'] = path;
-            output[cnt++] = files[i];
-        }
-    }
-    return output;
-}
-
 var getItemPos = function(elem) {
     var itemId = elem.attr('id');
     return parseInt(itemId.substring(itemId.lastIndexOf('_')+1 , itemId.length));
 }
 
 var allcheckNuncheck = function(toggle) {
+    var msg = {};
+    msg['path'] = path;
     if(toggle) {
-        $('.checkbox').children('.uncheck').css('display' , 'none');
-        $('.checkbox').children('.check').css('display' , 'inline-block');
+        for(var i = 0 ; i < files_length; i++) {
+            if($('#checkbox_' + i).children('.check').css('display') == 'none') {
+                $('#checkbox_' + i).children('.uncheck').css('display' , 'none');
+                $('#checkbox_' + i).children('.check').css('display' , 'inline-block');
+                msg['type'] = 'check';
+                msg['file'] = files[i];
+                window.parent.postMessage(JSON.stringify(msg) , '*');
+            }
+        }
     }
     else {
-        $('.checkbox').children('.uncheck').css('display' , 'inline-block');
-        $('.checkbox').children('.check').css('display' , 'none');
-    }
-
-    for(var i = 0 ; i < files_length; i++) {
-        files_checkedList[i] = toggle;
+        for(var i = 0 ; i < files_length; i++) {
+            if($('#checkbox_' + i).children('.uncheck').css('display') == 'none') {
+                $('#checkbox_' + i).children('.check').css('display' , 'none');
+                $('#checkbox_' + i).children('.uncheck').css('display' , 'inline-block');
+                msg['type'] = 'uncheck';
+                msg['file'] = files[i];
+                window.parent.postMessage(JSON.stringify(msg) , '*');
+            }
+        }
     }
 }
 
 
 window.addEventListener('message' , function(e) {
-    var output = {};
-    output['type'] = null;
-    output['data'] = null;
-
     switch(e.data) {
         case "allcheck" :
             allcheckNuncheck(true);
-            output['type'] = 'allcheck';
-            output['data'] = getCheckedList();
             break;
 
         case "alluncheck" :
             allcheckNuncheck(false);
-            output['type'] = 'alluncheck';
-            output['data'] = getCheckedList();
-            break;
-
-        case "download" :
-            output['type'] = 'download';
-            output['data'] = getCheckedList();
-            break;
-
-        case "delete" :
-            output['type'] = 'delete';
-            output['data'] = getCheckedList();
             break;
 
         default :   
-            output['type'] = 'unknown';
-            output['data'] = null;
+            //init
+            var input = JSON.parse(e.data);
+            for(var i = 0 ; i < Object.keys(input).length; i++) {
+                for(var j = 0 ; j < files_length; j++) {
+                    if(input[i] == files[j]['fullname']) {
+                        $('#checkbox_'+j).children('.check').trigger('click');
+                    } 
+                }
+            }
             break;
     }
-
-    window.parent.postMessage(JSON.stringify(output) , '*');
 });
 

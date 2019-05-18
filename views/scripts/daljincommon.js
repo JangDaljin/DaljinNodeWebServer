@@ -1,4 +1,6 @@
-var getVolumeSize = function(size , deter) {    
+var getVolumeSize = function(size , deter) {
+    size += "";
+    size = parseInt(size);
     if(size / 1024 > 1) {                           
             return getVolumeSize(size / 1024 , deter+1);  
     } else {                                        
