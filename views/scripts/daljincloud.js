@@ -22,11 +22,11 @@ $(document).ready(function () {
 
 
 var showfileframe = function(listtype) {
-    $('#fileframe').attr('src' , "/fileframe?listtype=" + listtype);
+    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + listtype);
 }
 
 var fileframeSendPostMsg = function(message) {
-    $('#fileframe').contentWindow.postMessage(message);
+    $('#fileframe')[0].contentWindow.postMessage(message);
 }
 
 
@@ -36,12 +36,44 @@ window.addEventListener('message' , function(e) {
     var data = inputData['data'];
 
     switch(type) {
-        case 'path' : 
-        path = data;
+        case 'init' : 
+            path = data['path']
+            used_storage = data['used_storage'];
+            
+            $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
+            $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
         break;
 
-        case 'checkedList' :
-        
+        case 'allcheck' :
+
         break;
+
+        case 'unallcheck' :
+
+        break;
+
+        case 'download' :
+            
+        break;
+
+        case 'delete' :
+            
+        break;
+
+        
+
     }
-})
+});
+
+
+
+
+
+
+
+
+
+
+
+
+

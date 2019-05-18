@@ -16,9 +16,7 @@
         var used_storage        = parseInt('<%- used_storage %>');
         var max_storage         = parseInt('<%- max_storage %>');
         var grade               = '<%- grade %>';
-
         var checkedFileList = {};
-        
     </script>
 </head>
 
@@ -28,8 +26,6 @@
     
     <% include ./linknav %>
     <main role="main">
-
-        
 
         <div class="content-container">
         
@@ -65,7 +61,7 @@
                             <span>ALL UNCHECK</span>
                         </a>
                     </li>
-                    <li id="rightmenu_download">
+                    <li id="rightmenu_download" onclick="fileframeSendPostMsg('download');">
                         <a href="#">
                             <span><i class="fas fa-cloud-download-alt"></i></span>
                             <span>Download</span>
@@ -83,10 +79,10 @@
                             <span>Make Directory</span>
                         </a>
                     </li>
-                    <li id="rightmenu_delete">
-                        <a href="#" onclick="fileframeSendPostMsg('delete');">
+                    <li id="rightmenu_delete" onclick="fileframeSendPostMsg('delete');">
+                        <a href="#">
                             <span><i class="fas fa-trash"></i></span>
-                            <span>Delete</span
+                            <span>Delete</span>
                         </a>
                     </li>
                     

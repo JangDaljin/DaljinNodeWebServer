@@ -43,14 +43,11 @@
     
     
     <script>
-        //JSON{size , ctime , type , name , extension , fullname}
-        var files = JSON.parse('<%- data %>');
+        var files = JSON.parse('<%- data %>');  //JSON{size , ctime , type , name , extension , fullname}
         var files_length = parseInt('<%- files_length %>');
         var listtype = '<%- listtype %>';
         var path = '<%- path %>';
         var used_storage= '<%- used_storage %>';
-
-        
     </script>
     
     
@@ -65,6 +62,23 @@
     <% if(listtype == 'list') { %> 
     <div class="lt">
         <ul class="lt-ul">
+
+            <% if(path != "" && path != "#" && path != "/") { %>
+                <li id="item_-1" class="lt-li">
+                    <div class="item-container">
+                        <div class="image">
+                            <i class="fas fa-arrow-circle-left fa-4x"></i>
+                        </div> 
+                        <div class="discription">
+                            <div class="size">&nbsp;</div>
+                            <div class="name">...</div>
+                            <div class="time">&nbsp;</div>
+                        </div>
+                    </div>  
+                </li>
+            <% } %>
+
+
             <% for (var i = 0 ; i < files_length; i++) { %>
             <li id="item_<%= i %>" class="lt-li">
                 <div class="item-container">
@@ -102,33 +116,44 @@
 
     <% } else if(listtype == 'grid') { %> 
         <div class="gt">
-            <div class="grid-wrapper">
+            <div class="gt-grid-wrapper">
+
+                <% if(path != "" && path != "#" && path != "/") { %>
+                    <div id="item_-1" class="gt-dir">
+                        <div class="gt-image">
+                            <i class="fas fa-arrow-circle-left fa-4x"></i>
+                            </div>
+                        <div class="gt-name">
+                            ..
+                        </div>
+                    </div>
+                <% } %>
+
                 <% for (var i = 0 ; i < files_length; i++) { 
                     switch(files[i]['type']) {
                         case 'file' : %>
                         <!-- 파일 -->
-                        <div class="file">
-                            <div class="image">
+                        <div id="item_<%= i %>" class="gt-file gt-selectable">
+                            <div class="gt-image">
                                 <i class="far fa-file fa-4x"></i>
                         <% break;
                         case 'directory' : %>
                         <!-- 폴더 -->
-                        <div class="dir">
-                            <div class="image">
+                        <div id="item_<%= i %>" class="gt-dir gt-selectable">
+                            <div class="gt-image">
                                 <i class="far fa-folder fa-4x"></i>
                         <% break;
                         default :
                         break;
                     } %>
                             </div>
-                            <div class="name">
+                            <div class="gt-name gt-selectable">
                                 <%= files[i]['fullname'] %>
                             </div>
                         </div>
 
                 <% } %>
             </div>
-
         </div>
     <% } else { %>
 

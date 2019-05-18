@@ -116,7 +116,7 @@ html , body {
 
 
 
-.gt > .grid-wrapper {
+.gt > .gt-grid-wrapper {
     box-sizing: border-box;
     border: 4px solid #283B42;
     background: #D1DDDB;
@@ -126,34 +126,48 @@ html , body {
     grid-gap: 1em;
     justify-items: center;
     align-items: center;
+    color: #283B42;
 }
 
-.gt > .grid-wrapper > div {
+.gt > .gt-grid-wrapper > .gt-dir {
     padding: 0.5em;
     box-sizing: border-box;
     width: 9em;
     height: 9em;
-    justify-items: center;
-    align-items: center;
-    color: #283B42;
 }
 
+.gt > .gt-grid-wrapper > .gt-file {
+    padding: 0.5em;
+    box-sizing: border-box;
+    width: 9em;
+    height: 9em;
+}
 
-.gt > .grid-wrapper > div:hover {
+.gt > .gt-grid-wrapper > .gt-dir:hover {
     color: #1D6A96;
     border: 4px solid #1D6A96;
 }
 
-.gt > .grid-wrapper > div:active {
+.gt > .gt-grid-wrapper > .gt-file:hover {
+    color: #1D6A96;
+    border: 4px solid #1D6A96;
+}
+
+.gt > .gt-grid-wrapper > .gt-file:active {
     transform: scale(0.8);
     transition: 150ms;
 }
 
-.gt > .grid-wrapper > div > .image {
+.gt > .gt-grid-wrapper > .gt-dir:active {
+    transform: scale(0.8);
+    transition: 150ms;
+}
+
+.gt > .gt-grid-wrapper > div > .gt-image {
     text-align: center;
 }
 
-.gt > .grid-wrapper > div > .name {
+.gt > .gt-grid-wrapper > div > .gt-name {
     width: 5em;
     margin: 0 auto;
     text-align: center;
@@ -167,7 +181,7 @@ html , body {
     word-wrap: break-word;
     display: -webkit-box; 
     -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical
+    -webkit-box-orient: vertical;
 }
 
 
