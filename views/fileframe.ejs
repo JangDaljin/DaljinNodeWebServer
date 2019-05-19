@@ -131,23 +131,26 @@
 
                 <% for (var i = 0 ; i < files_length; i++) { 
                     switch(files[i]['type']) {
-                        case 'file' : %>
                         <!-- 파일 -->
+                        case 'file' : %>
                         <div id="item_<%= i %>" class="gt-file gt-selectable">
                             <div class="gt-image">
                                 <i class="far fa-file fa-4x"></i>
                         <% break;
-                        case 'directory' : %>
+
+
                         <!-- 폴더 -->
+                        case 'directory' : %>
                         <div id="item_<%= i %>" class="gt-dir gt-selectable">
                             <div class="gt-image">
                                 <i class="far fa-folder fa-4x"></i>
                         <% break;
+
                         default :
                         break;
                     } %>
                             </div>
-                            <div class="gt-name gt-selectable">
+                            <div class="gt-name">
                                 <%= files[i]['fullname'] %>
                             </div>
                         </div>

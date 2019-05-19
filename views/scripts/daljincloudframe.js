@@ -1,3 +1,5 @@
+var files_isChecked = [];
+
 $(document).ready(function () {
 
     var output = {};
@@ -5,23 +7,22 @@ $(document).ready(function () {
     output["data"] = { 'path' : path , 'used_storage' : used_storage};
     window.parent.postMessage(JSON.stringify(output) , '*');
 
-    $('.checkbox').click(function() {
+    $('.checkbox , .gt-selectable').click(function() {
+
         var msg = {};
         msg['type'] = null;
         msg['path'] = path;
-        msg['file'] = files[getItemPos($(this))];
+        var pos = getItemPos($(this));
+        msg['file'] = files[pos];
 
-        if($(this).children('.uncheck').css('display') == 'none') {
-            msg['type'] = 'uncheck';
-            $(this).children('.uncheck').css('display' , 'inline-block');
-            $(this).children('.check').css('display' , 'none');
+        if(itemToggle(pos)) {
+            msg['type'] = 'check';
         }
         else {
-            msg['type'] = 'check';
-            $(this).children('.uncheck').css('display' , 'none');
-            $(this).children('.check').css('display' , 'inline-block');
+            msg['type'] = 'uncheck';
         }
 
+        console.dir(msg);
         window.parent.postMessage(JSON.stringify(msg) , '*');
     });
 
@@ -39,10 +40,6 @@ $(document).ready(function () {
         }
     });
 
-    $('.gt-selectable').click(function() {
-        
-    });
-
 });
 
 var getItemPos = function(elem) {
@@ -53,33 +50,135 @@ var getItemPos = function(elem) {
 var allcheckNuncheck = function(toggle) {
     var msg = {};
     msg['path'] = path;
-    if(toggle) {
-        for(var i = 0 ; i < files_length; i++) {
-            if($('#checkbox_' + i).children('.check').css('display') == 'none') {
-                $('#checkbox_' + i).children('.uncheck').css('display' , 'none');
-                $('#checkbox_' + i).children('.check').css('display' , 'inline-block');
-                msg['type'] = 'check';
-                msg['file'] = files[i];
-                window.parent.postMessage(JSON.stringify(msg) , '*');
-            }
+
+    for(var i = 0 ; i < files_length; i++) {
+        itemToggle(i , toggle);
+        if(toggle) {
+            msg['type'] = 'check';
         }
-    }
-    else {
-        for(var i = 0 ; i < files_length; i++) {
-            if($('#checkbox_' + i).children('.uncheck').css('display') == 'none') {
-                $('#checkbox_' + i).children('.check').css('display' , 'none');
-                $('#checkbox_' + i).children('.uncheck').css('display' , 'inline-block');
-                msg['type'] = 'uncheck';
-                msg['file'] = files[i];
-                window.parent.postMessage(JSON.stringify(msg) , '*');
-            }
+        else {
+            msg['type'] = 'uncheck';
         }
+        msg['file'] = files[i];
+        window.parent.postMessage(JSON.stringify(msg) , '*');
     }
 }
 
+function itemToggle(pos) {
+    var res = false;
+    var check = null;
+    if(arguments[1] != null) {
+        check = arguments[1];
+    }
+
+    switch(listtype) {
+        case 'grid' :
+            if(check == true) {
+                $('#item_' + pos).css('background-color' , 'rgba(133 , 184 , 203 , 0.5)');
+                $('#item_' + pos).css('border' , '4px solid #1D6A96');
+                $('#item_' + pos).hover(function() {
+                    $(this).css('border' , '4px solid #283B42');
+                } , function() {
+                    $(this).css('border' , '4px solid #1D6A96');
+                });
+                res = true;
+                files_isChecked[pos] = true;
+            }
+            else if(check == false) {
+                $('#item_' + pos).css('background-color' , '#D1DDDB');
+                $('#item_' + pos).css('border' , '4px solid #D1DDDB');
+                $('#item_' + pos).hover(function() {
+                    $(this).css('border' , '4px solid #1D6A96');
+                } , 
+                function() {
+                    $(this).css('border' , '4px solid #D1DDDB');
+                });
+                res = false;
+                files_isChecked[pos] = false;
+            }
+            else {
+                if(files_isChecked[pos]) {
+                    $('#item_' + pos).css('background-color' , '#D1DDDB');
+                    $('#item_' + pos).css('border' , '4px solid #D1DDDB');
+                    $('#item_' + pos).hover(function() {
+                        $(this).css('border' , '4px solid #1D6A96');
+                    } , 
+                    function() {
+                        $(this).css('border' , '4px solid #D1DDDB');
+                    });
+                    res = false;
+                    files_isChecked[pos] = false;
+                }
+                else {
+                    $('#item_' + pos).css('background-color' , 'rgba(133 , 184 , 203 , 0.5)');
+                    $('#item_' + pos).css('border' , '4px solid #1D6A96');
+                    $('#item_' + pos).hover(function() {
+                        $(this).css('border' , '4px solid #283B42');
+                    } , function() {
+                        $(this).css('border' , '4px solid #1D6A96');
+                    });
+                    res = true;
+                    files_isChecked[pos] = true;
+                }
+            }
+            break;
+        case 'list' : 
+            if(check == true) {
+                $('#checkbox_' + pos).children('.uncheck').css('display' , 'none');
+                $('#checkbox_' + pos).children('.check').css('display' , 'inline-block');
+                res = true;
+                files_isChecked[pos] = true;
+                
+            }
+            else if(check == false){
+                $('#checkbox_' + pos).children('.uncheck').css('display' , 'inline-block');
+                $('#checkbox_' + pos).children('.check').css('display' , 'none');
+                res = false;
+                files_isChecked[pos] = false;
+            }
+            else {
+                //toggle
+                if(files_isChecked[pos]) {
+                    $('#checkbox_' + pos).children('.uncheck').css('display' , 'inline-block');
+                    $('#checkbox_' + pos).children('.check').css('display' , 'none');
+                    res = false;
+                    files_isChecked[pos] = false;
+                }
+                else {
+                    $('#checkbox_' + pos).children('.uncheck').css('display' , 'none');
+                    $('#checkbox_' + pos).children('.check').css('display' , 'inline-block');
+                    res = true;
+                    files_isChecked[pos] = true;
+                }
+            }
+            break;
+    }
+    return res;
+}
 
 window.addEventListener('message' , function(e) {
-    switch(e.data) {
+
+    var input = JSON.parse(e.data);
+    var type = input.type;
+    var data = input.data;
+    switch(type) {
+        case "init" :
+            if(!data) {
+                break;
+            }
+            for(var i = 0 ; i < files_length; i++) {
+                files_isChecked.push(false);
+            }
+
+            for(var i = 0; i < data.length; i++) {
+                for(var j = 0 ; j < files_length; j++) {
+                    if(data[i] == files[j]['fullname']) {
+                        itemToggle(j);
+                    }
+                }
+            }
+            break;
+
         case "allcheck" :
             allcheckNuncheck(true);
             break;
@@ -89,15 +188,7 @@ window.addEventListener('message' , function(e) {
             break;
 
         default :   
-            //init
-            var input = JSON.parse(e.data);
-            for(var i = 0 ; i < Object.keys(input).length; i++) {
-                for(var j = 0 ; j < files_length; j++) {
-                    if(input[i] == files[j]['fullname']) {
-                        $('#checkbox_'+j).children('.check').trigger('click');
-                    } 
-                }
-            }
+            
             break;
     }
 });

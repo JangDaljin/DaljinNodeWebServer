@@ -25,8 +25,22 @@ var showfileframe = function(listtype) {
     $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + listtype);
 }
 
-var fileframeSendPostMsg = function(message) {
-    $('#fileframe')[0].contentWindow.postMessage(message);
+function fileframeSendPostMsg() {
+    
+    var msg = {};
+    msg['type'] = arguments[0];
+
+    if(arguments[1]) {
+        msg['data'] = arguments[1];
+    }
+    else {
+        msg['data'] = null;
+    }
+
+
+    $('#fileframe')[0].contentWindow.postMessage(JSON.stringify(msg));
+
+
 }
 
 var path = "";
@@ -42,98 +56,110 @@ window.addEventListener('message' , function(e) {
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
             $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
 
-            //console.dir(JSON.stringify(getCheckedItems(path)));
-            fileframeSendPostMsg(JSON.stringify(getCheckedItems(path)));
+            console.dir(getCheckedItems(path));
+            fileframeSendPostMsg('init' , getCheckedItems(path));
         break;
 
         case 'check' :
             additem(inputData['path'] , inputData['file']);
-            console.dir(filetree);
+            console.dir(fileTree);
         break;
 
         case 'uncheck' :
             removeitem(inputData['path'] , inputData['file']);
-            //console.dir(filetree);
+            console.dir(fileTree);
         break;
 
     }
 });
 
 
-var filetree = {};
+var fileTree = new TreeNode(null , null , null);
+
+function TreeNode(parent , name , type , size) {
+    this.parent = parent;
+    this.children = [];
+
+    this.name = name;
+    this.type = type;
+    this.size = size;
+}
+
 var additem = function(path , file) {
     var sp_path = path.split('/');
-    var curFiletree = filetree;
+    var curNode = fileTree;
     var i = 1;
+    var j = 0;
     for(i = 1 ; i < sp_path.length ; i++) {
         if(sp_path[i] == "") {
             break;
         }
-        var curKeys = Object.keys(curFiletree);
         var res = false;
-        var j = 0;
-        for(j = 0 ; j < curKeys.length; j ++) {
-            if(curKeys[j] == sp_path[i]) {
+        for(j = 0 ; j < curNode.children.length; j++) {
+            if(curNode.children[j].name == sp_path[i] && curNode.children[j].type == 'directory') {
+                curNode.children[j].size += file.size;
                 res = true;
                 break;
             }
         }
         if(!res) {
-            curFiletree[sp_path[i]] = {};
+            curNode.children.push(new TreeNode(curNode , sp_path[i] , 'directory' , 0));
         }
-        curFiletree = curFiletree[sp_path[i]];
+        curNode = curNode.children[j];
     }
-    curFiletree[file.fullname] = file;
+    curNode.children.push(new TreeNode(curNode , file.fullname , file.type , file.size));
 }
 
 var removeitem = function(path , file) {
     var sp_path = path.split('/');
-    var curFiletree = filetree;
-
+    var curNode = fileTree;
     var i = 1;
+    var j = 0;
     for(i = 1 ; i < sp_path.length ; i++) {
         if(sp_path[i] == "") {
             break;
         }
-        var curKeys = Object.keys(curFiletree);
-        var j = 0;
-        for(j = 0 ; j < curKeys.length; j ++) {
-            if(curKeys[j] == sp_path[i]) {
+        for(j = 0 ; j < curNode.children.length; j++) {
+            if(curNode.children[j].name == sp_path[i] && curNode.children[j].type == 'directory') {
                 break;
             }
         }
-        curFiletree = curFiletree[sp_path[i]];
+        curNode = curNode.children[j];
     }
-    delete curFiletree[file.fullname]
+    
+    for(i = 0; i < curNode.children.length; i++) {
+        if(curNode.children[i].name == file.fullname) {
+            curNode.children.splice(i , 1);
+            break;
+        }
+    }
 }
 
 var getCheckedItems = function(path) {
     var sp_path = path.split('/');
-    var curFiletree = filetree;
+    var curNode = fileTree;
     var i = 1;
     for(i = 1 ; i < sp_path.length ; i++) {
         if(sp_path[i] == "") {
             break;
         }
-        var curKeys = Object.keys(curFiletree);
         var res = false;
         var j = 0;
-        for(j = 0 ; j < curKeys.length; j ++) {
-            if(curKeys[j] == sp_path[i]) {
+        for(j = 0 ; j < curNode.children.length; j++) {
+            if(curNode.children[j].name == sp_path[i] && curNode.children[j].type == 'directory') {
                 res = true;
                 break;
             }
         }
         if(!res) {
-            return {};
+            return null;
         }
-        curFiletree = curFiletree[sp_path[i]];
+        curNode = curNode.children[j];
     }
 
-    var output = {};
-    for(var i = 0 ; i < Object.keys(curFiletree).length; i++) {
-
-        output[i] = curFiletree[Object.keys(curFiletree)[i]].fullname;
+    var output = [];
+    for(i = 0 ; i < curNode.children.length; i++) {
+        output.push(curNode.children[i].name);
     }
     return output;
 }
