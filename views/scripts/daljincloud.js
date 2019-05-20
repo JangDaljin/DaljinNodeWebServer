@@ -1,8 +1,5 @@
 $(document).ready(function () {
     
-    
-
-
     //다운로드
     $('#rightmenu_download').click(function (e) {
         var items = getCheckedItems(path);
@@ -16,11 +13,6 @@ $(document).ready(function () {
         if(pos >= length) {
             return;
         }
-
-        var formData = new FormData();
-        formData.append('n_downloadItem' , items[pos].name.trim());
-        formData.append('n_itemType' , items[pos].type);
-        formData.append('n_itemPath' , path);
 
         var output = {};
         output['n_downloadItem'] = items[pos].name.trim();
@@ -39,6 +31,57 @@ $(document).ready(function () {
                 }
         });
     }
+
+    $('#rightmenu_delete').click(function(e) {
+        var items = getCheckedItems(path);
+        if(items == null) {
+            return;
+        }
+
+        var JSON_items = {};
+        for(var i = 0 ; i < Object.keys(items).length; i++) {
+                var JSON_item = {};
+                JSON_item['name'] = items[i].name;
+                JSON_item['type'] = files[i].type;
+                JSON_items[i] = JSON_item;
+        }
+
+        var output = {};
+        output["daletePath"] = path;
+        output["deleteList"] = JSON.stringify(JSON_items);
+
+        $.ajax({
+                url : "/delete",
+                type : "POST",
+                data : JSON.stringify(output),
+                contentType : "application/json",
+                cache : false,
+                async : true,
+                headers : {"cache-control" : "no-cache"},
+                success : function (inputdata_jsonstr) {
+                        var inputdata = JSON.parse(inputdata_jsonstr);
+                        var msg = "";
+                        var refresh = false;
+                        for(var i = 0 ; i < Object.keys(inputdata).length; i++) {
+                                if(inputdata[i]['error']) {
+                                        msg += inputdata[i]['msg'] + "\n";
+                                }
+                                else {
+                                        refresh = true;
+                                }
+                        }
+                        if(msg) {
+                                alert(msg);
+                        }
+                        if(refresh) {
+                                fileframeRefresh();
+                        }
+                },
+                error : function () {
+                        alert('에러발생');
+                }
+        });
+    });
 
     //폴더만들기 메뉴 버튼
     $("#rightmenu_mkdir").click(function (e) {
