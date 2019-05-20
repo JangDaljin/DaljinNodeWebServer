@@ -29,7 +29,7 @@ $(document).ready(function () {
         //jQuery.fileDownload.js plugin 사용
         $.fileDownload('/download', { 
                 httpMethod: "POST", 
-                data: JSON.stringify(output),
+                data: output,
 
                 successCallback: function (url) {
                         downloadNext(items , pos+1 , length);
