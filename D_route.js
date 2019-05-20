@@ -318,6 +318,11 @@ module.exports = function(app) {
             var downloadItem    = req.body.n_downloadItem     || '';
             var type            = req.body.n_itemType         || ''; 
 
+            console.log(email);
+            console.log(path);
+            console.log(downloadItem);
+            console.log(type);
+
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
 
