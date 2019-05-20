@@ -42,7 +42,7 @@ $(document).ready(function () {
         for(var i = 0 ; i < Object.keys(items).length; i++) {
                 var JSON_item = {};
                 JSON_item['name'] = items[i].name;
-                JSON_item['type'] = files[i].type;
+                JSON_item['type'] = items[i].type;
                 JSON_items[i] = JSON_item;
         }
 
@@ -74,7 +74,14 @@ $(document).ready(function () {
                                 alert(msg);
                         }
                         if(refresh) {
-                                fileframeRefresh();
+                            
+                            if(listtype == 'grid') {
+                                showfileframe('grid');
+                            }
+                            else if(listtype == 'list') {
+                                showfileframe('list');
+                            }
+                            
                         }
                 },
                 error : function () {
