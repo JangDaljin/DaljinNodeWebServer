@@ -8,7 +8,7 @@ $(document).ready(function () {
     window.parent.postMessage(JSON.stringify(output) , '*');
 
     $('.checkbox , .gt-selectable').click(function() {
-
+        event.stopPropagation();
         var msg = {};
         msg['type'] = null;
         msg['path'] = path;
@@ -21,9 +21,10 @@ $(document).ready(function () {
         else {
             msg['type'] = 'uncheck';
         }
-
-        console.dir(msg);
+        //console.dir(msg);
         window.parent.postMessage(JSON.stringify(msg) , '*');
+    }).dblclick(function() {
+        event.stopPropagation();
     });
 
     $('.lt-li ,.gt-dir').dblclick(function() {
@@ -77,7 +78,7 @@ function itemToggle(pos) {
                 $('#item_' + pos).css('background-color' , 'rgba(133 , 184 , 203 , 0.5)');
                 $('#item_' + pos).css('border' , '4px solid #1D6A96');
                 $('#item_' + pos).hover(function() {
-                    $(this).css('border' , '4px solid #283B42');
+                    $(this).css('border' , '4px solid #1D6A96');
                 } , function() {
                     $(this).css('border' , '4px solid #1D6A96');
                 });
@@ -113,7 +114,7 @@ function itemToggle(pos) {
                     $('#item_' + pos).css('background-color' , 'rgba(133 , 184 , 203 , 0.5)');
                     $('#item_' + pos).css('border' , '4px solid #1D6A96');
                     $('#item_' + pos).hover(function() {
-                        $(this).css('border' , '4px solid #283B42');
+                        $(this).css('border' , '4px solid #1D6A96');
                     } , function() {
                         $(this).css('border' , '4px solid #1D6A96');
                     });
@@ -163,20 +164,27 @@ window.addEventListener('message' , function(e) {
     var data = input.data;
     switch(type) {
         case "init" :
-            if(!data) {
+            if(data == null) {
                 break;
             }
-            for(var i = 0 ; i < files_length; i++) {
-                files_isChecked.push(false);
-            }
 
-            for(var i = 0; i < data.length; i++) {
-                for(var j = 0 ; j < files_length; j++) {
-                    if(data[i] == files[j]['fullname']) {
-                        itemToggle(j);
+            if(data.length == 0) {
+                allcheckNuncheck(true);
+            }
+            else {
+                for(var i = 0 ; i < files_length; i++) {
+                    files_isChecked.push(false);
+                }
+    
+                for(var i = 0; i < data.length; i++) {
+                    for(var j = 0 ; j < files_length; j++) {
+                        if(data[i] == files[j]['fullname']) {
+                            itemToggle(j);
+                        }
                     }
                 }
             }
+            
             break;
 
         case "allcheck" :

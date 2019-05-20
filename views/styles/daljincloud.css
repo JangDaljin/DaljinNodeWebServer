@@ -81,14 +81,25 @@ main > .content-container > .content-left > nav ul li {
     height: 3em;
     padding: 0.5em;
     background: #D1DDDB;
-}
-
-main > .content-container > .content-left > nav ul li a{
     color: #283B42;
 }
 
-main > .content-container > .content-left > nav ul li a:hover{
+main > .content-container > .content-left > nav ul .hover {
+    cursor: pointer;
+    background: #283B42;
     color: #1D6A96;
+    transition: 0.1s;
+}
+
+main > .content-container > .content-left > nav ul #li:hover {
+    cursor: pointer;
+    background: #283B42;
+    color: #1D6A96;
+    transition: 0.1s;
+}
+
+main > .content-container > .content-left > nav ul li a{
+    color: inherit;
 }
 
 

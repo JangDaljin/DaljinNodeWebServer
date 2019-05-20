@@ -1,5 +1,8 @@
 $(document).ready(function () {
     
+    
+    
+
     //폴더만들기 메뉴 버튼
     $("#rightmenu_mkdir").click(function (e) {
         e.preventDefault();
@@ -21,8 +24,9 @@ $(document).ready(function () {
 });
 
 
-var showfileframe = function(listtype) {
-    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + listtype);
+var showfileframe = function(_listtype) {
+    listtype = _listtype;
+    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + _listtype);
 }
 
 function fileframeSendPostMsg() {
@@ -39,8 +43,24 @@ function fileframeSendPostMsg() {
 
 
     $('#fileframe')[0].contentWindow.postMessage(JSON.stringify(msg));
+    var elem = null;
+    $('.frametype').css('color' , '#283B42').css('background' , '#D1DDDB').hover(
+        function() {
+            $(this).css('color' , '#1D6A96');
+        },
+        function() {
+            $(this).css('color' , '#283B42');
+        }
+    ).children('a').css('cursor' , 'pointer');
 
-
+    if(listtype == 'grid') {
+        elem = $('#gridicon');
+    }
+    else if(listtype == 'list') {
+       elem = $('#listicon');
+    }
+    elem.css('color' , '#1D6A96').css('background' , '#283B42').children('a').css('cursor' , 'default');
+    elem.unbind('mouseenter mouseleave');
 }
 
 var path = "";
@@ -56,18 +76,18 @@ window.addEventListener('message' , function(e) {
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
             $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
 
-            console.dir(getCheckedItems(path));
+            //console.dir(getCheckedItems(path));
             fileframeSendPostMsg('init' , getCheckedItems(path));
         break;
 
         case 'check' :
             additem(inputData['path'] , inputData['file']);
-            console.dir(fileTree);
+            //console.dir(fileTree);
         break;
 
         case 'uncheck' :
             removeitem(inputData['path'] , inputData['file']);
-            console.dir(fileTree);
+            //console.dir(fileTree);
         break;
 
     }
@@ -79,7 +99,7 @@ var fileTree = new TreeNode(null , null , null);
 function TreeNode(parent , name , type , size) {
     this.parent = parent;
     this.children = [];
-
+    this.ischecked = false;
     this.name = name;
     this.type = type;
     this.size = size;
@@ -107,7 +127,8 @@ var additem = function(path , file) {
         }
         curNode = curNode.children[j];
     }
-    curNode.children.push(new TreeNode(curNode , file.fullname , file.type , file.size));
+    
+    curNode.children.push(newNode);
 }
 
 var removeitem = function(path , file) {
@@ -152,7 +173,12 @@ var getCheckedItems = function(path) {
             }
         }
         if(!res) {
-            return null;
+            if(curNode.parent) {
+                return [];
+            }
+            else {
+                return null;
+            }
         }
         curNode = curNode.children[j];
     }

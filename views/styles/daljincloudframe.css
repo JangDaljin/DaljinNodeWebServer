@@ -101,10 +101,6 @@ html , body {
     float: right;
 }
 
-.checkbox > .uncheck {
-    
-}
-
 .checkbox > .check {
     display: none;
 }
