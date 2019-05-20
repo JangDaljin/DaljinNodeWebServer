@@ -162,21 +162,20 @@ function itemToggle(pos) {
 }
 
 window.addEventListener('message' , function(e) {
-
     var input = JSON.parse(e.data);
     var type = input.type;
     var data = input.data;
     switch(type) {
         case "init" :
-            if(data == null || data.length == 0) {
+            if(data == null || Object.keys(data).length == 0) {
                 break;
             }
             else {
                 for(var i = 0 ; i < files_length; i++) {
                     files_isChecked.push(false);
                 }
-    
-                for(var i = 0; i < data.length; i++) {
+
+                for(var i = 0; i < Object.keys(data).length; i++) {
                     for(var j = 0 ; j < files_length; j++) {
                         if(data[i] == files[j]['fullname']) {
                             itemToggle(j);

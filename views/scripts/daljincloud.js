@@ -9,7 +9,6 @@ $(document).ready(function () {
         if(items == null) {
             return;
         }
-
         downloadNext(items , 0 , items.length);
     });
 
@@ -23,10 +22,14 @@ $(document).ready(function () {
         formData.append('n_itemType' , items[pos].type);
         formData.append('n_itemPath' , path);
 
+        var output = {};
+        output['n_downloadItem'] = items[pos].name.trim();
+        output['n_itemType'] = items[pos].type;
+        output['n_itemPath'] = path
         //jQuery.fileDownload.js plugin 사용
         $.fileDownload('/download', { 
                 httpMethod: "POST", 
-                data: formData.serialize(), 
+                data: JSON.stringify(output),
 
                 successCallback: function (url) {
                         downloadNext(items , pos+1 , length);
@@ -67,7 +70,6 @@ var showfileframe = function(_listtype) {
 }
 
 function fileframeSendPostMsg() {
-    
     var msg = {};
     msg['type'] = arguments[0];
 
@@ -79,7 +81,7 @@ function fileframeSendPostMsg() {
     }
 
 
-    $('#fileframe')[0].contentWindow.postMessage(JSON.stringify(msg));
+    $('#fileframe')[0].contentWindow.postMessage(JSON.stringify(msg) , '*');
     var elem = null;
     $('.frametype').css('color' , '#283B42').css('background' , '#D1DDDB').hover(
         function() {
@@ -117,9 +119,10 @@ window.addEventListener('message' , function(e) {
             var items   = getCheckedItems(path);
             var output = null;
             if(items != null) {
-                output = [];
+                output = {};
+                var cnt = 0;
                 for(var i = 0 ; i < items.length; i++) {
-                    output.push(items[i]);
+                    output[cnt++] = items[i].name;
                 }
             }
             fileframeSendPostMsg('init' , output);
