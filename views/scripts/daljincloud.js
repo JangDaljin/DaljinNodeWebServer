@@ -1,7 +1,38 @@
 $(document).ready(function () {
     
     
-    
+
+
+    //다운로드
+    $('#rightmenu_download').click(function (e) {
+        
+    });
+
+    var downloadNext = function(files , pos , length){
+        if(pos >= length) {
+                return;
+        }
+
+        document.getElementById('i_downloadItem').value = files[pos]['fullname'].trim();
+        document.getElementById('i_itemType').value = files[pos]['type'];
+        document.getElementById('i_itemPath').value = path;
+
+        var formData = new FormData();
+        formData.append('n_itemPath' , )
+
+        //jQuery.fileDownload.js plugin 사용
+        $.fileDownload($('#downloadForm').prop('action'), { 
+                httpMethod: "POST", 
+                data: $("#downloadForm").serialize(), 
+
+                successCallback: function (url) {
+                        downloadNext(files , pos+1 , length);
+                },
+                failCallback: function (responseHtml, url, error) { 
+                        alert("DOWNLOAD ERROR");
+                }
+        });
+    }
 
     //폴더만들기 메뉴 버튼
     $("#rightmenu_mkdir").click(function (e) {
@@ -20,6 +51,9 @@ $(document).ready(function () {
         e.preventDefault();
         $(".modal-background").hide();
     });
+
+
+
 
 });
 
@@ -96,13 +130,12 @@ window.addEventListener('message' , function(e) {
 
 var fileTree = new TreeNode(null , null , null);
 
-function TreeNode(parent , name , type , size) {
+function TreeNode(parent , name , type) {
     this.parent = parent;
     this.children = [];
-    this.ischecked = false;
     this.name = name;
     this.type = type;
-    this.size = size;
+    this.ischecked = false;
 }
 
 var additem = function(path , file) {
@@ -117,7 +150,6 @@ var additem = function(path , file) {
         var res = false;
         for(j = 0 ; j < curNode.children.length; j++) {
             if(curNode.children[j].name == sp_path[i] && curNode.children[j].type == 'directory') {
-                curNode.children[j].size += file.size;
                 res = true;
                 break;
             }
@@ -127,8 +159,20 @@ var additem = function(path , file) {
         }
         curNode = curNode.children[j];
     }
-    
-    curNode.children.push(newNode);
+
+    var isExist = false;
+    for(i = 0; i < curNode.children.length; i++) {
+        if(curNode.children[i].fullname == file.fullname && curNode.children[i].type == file.type) {
+            isExist = true;
+            curNode.children[i].ischecked = true;
+            break;
+        }
+    }
+    if(isExist == false) {
+        var newNode = new TreeNode(curNode , file.fullname , file.type);
+        newNode.ischecked = true;
+        curNode.children.push(newNode);
+    }
 }
 
 var removeitem = function(path , file) {
@@ -149,8 +193,14 @@ var removeitem = function(path , file) {
     }
     
     for(i = 0; i < curNode.children.length; i++) {
+
         if(curNode.children[i].name == file.fullname) {
-            curNode.children.splice(i , 1);
+            if(curNode.children[i].type == 'directory') {
+                curNode.children[i].ischecked = false;
+            }
+            else {
+                curNode.children.splice(i , 1);
+            }
             break;
         }
     }
@@ -173,19 +223,22 @@ var getCheckedItems = function(path) {
             }
         }
         if(!res) {
-            if(curNode.parent) {
-                return [];
-            }
-            else {
-                return null;
-            }
+            return null;
         }
         curNode = curNode.children[j];
     }
 
     var output = [];
     for(i = 0 ; i < curNode.children.length; i++) {
-        output.push(curNode.children[i].name);
+        if(curNode.children[i].type == 'directory') {
+            if(curNode.children[i].ischecked) {
+                output.push(curNode.children[i].name);
+            }
+        }
+        else {
+            output.push(curNode.children[i].name);
+        }
+        
     }
     return output;
 }

@@ -8,6 +8,7 @@ $(document).ready(function () {
     window.parent.postMessage(JSON.stringify(output) , '*');
 
     $('.checkbox , .gt-selectable').click(function() {
+        event.preventDefault();
         event.stopPropagation();
         var msg = {};
         msg['type'] = null;
@@ -28,6 +29,7 @@ $(document).ready(function () {
     });
 
     $('.lt-li ,.gt-dir').dblclick(function() {
+        event.stopPropagation();
         var itemPos = getItemPos($(this));
         
         if(itemPos == -1) {
@@ -39,6 +41,8 @@ $(document).ready(function () {
                                         "&listtype=" + listtype;
             }
         }
+    }).click(function() {
+        event.stopPropagation();
     });
 
 });
@@ -166,10 +170,6 @@ window.addEventListener('message' , function(e) {
         case "init" :
             if(data == null) {
                 break;
-            }
-
-            if(data.length == 0) {
-                allcheckNuncheck(true);
             }
             else {
                 for(var i = 0 ; i < files_length; i++) {
