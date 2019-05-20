@@ -168,7 +168,7 @@ window.addEventListener('message' , function(e) {
     var data = input.data;
     switch(type) {
         case "init" :
-            if(data == null) {
+            if(data == null || data.length == 0) {
                 break;
             }
             else {

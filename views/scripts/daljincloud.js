@@ -5,28 +5,31 @@ $(document).ready(function () {
 
     //다운로드
     $('#rightmenu_download').click(function (e) {
-        
-    });
-
-    var downloadNext = function(files , pos , length){
-        if(pos >= length) {
-                return;
+        var items = getCheckedItems(path);
+        if(items == null) {
+            return;
         }
 
-        document.getElementById('i_downloadItem').value = files[pos]['fullname'].trim();
-        document.getElementById('i_itemType').value = files[pos]['type'];
-        document.getElementById('i_itemPath').value = path;
+        downloadNext(items , 0 , items.length);
+    });
+
+    var downloadNext = function(items , pos , length){
+        if(pos >= length) {
+            return;
+        }
 
         var formData = new FormData();
-        formData.append('n_itemPath' , )
+        formData.append('n_downloadItem' , items[pos].name.trim());
+        formData.append('n_itemType' , items[pos].type);
+        formData.append('n_itemPath' , path);
 
         //jQuery.fileDownload.js plugin 사용
-        $.fileDownload($('#downloadForm').prop('action'), { 
+        $.fileDownload('/download', { 
                 httpMethod: "POST", 
-                data: $("#downloadForm").serialize(), 
+                data: formData.serialize(), 
 
                 successCallback: function (url) {
-                        downloadNext(files , pos+1 , length);
+                        downloadNext(items , pos+1 , length);
                 },
                 failCallback: function (responseHtml, url, error) { 
                         alert("DOWNLOAD ERROR");
@@ -111,7 +114,15 @@ window.addEventListener('message' , function(e) {
             $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
 
             //console.dir(getCheckedItems(path));
-            fileframeSendPostMsg('init' , getCheckedItems(path));
+            var items   = getCheckedItems(path);
+            var output = null;
+            if(items != null) {
+                output = [];
+                for(var i = 0 ; i < items.length; i++) {
+                    output.push(items[i]);
+                }
+            }
+            fileframeSendPostMsg('init' , output);
         break;
 
         case 'check' :
@@ -232,13 +243,12 @@ var getCheckedItems = function(path) {
     for(i = 0 ; i < curNode.children.length; i++) {
         if(curNode.children[i].type == 'directory') {
             if(curNode.children[i].ischecked) {
-                output.push(curNode.children[i].name);
+                output.push(curNode.children[i]);
             }
         }
         else {
-            output.push(curNode.children[i].name);
+            output.push(curNode.children[i]);
         }
-        
     }
     return output;
 }
