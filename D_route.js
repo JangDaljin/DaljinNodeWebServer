@@ -136,9 +136,9 @@ module.exports = function(app) {
 
     //파일 프레임 페이지
     app.get('/fileframe' , (req , res) => {
-        //if(req.isAuthenticated) {
-            // var email = req.user.email;
-            var email = 'toyyj15@naver.com';
+        if(req.isAuthenticated) {
+            var email = req.user.email;
+            // var email = 'toyyj15@naver.com';
             var path = decodeURIComponent(req.query.path);
             if(path == "undefined") {
                 path = '';
@@ -158,24 +158,24 @@ module.exports = function(app) {
                     }
                 }
             );
-        //}
+        }
     });
 
     //파일 페이지
     app.get('/cloud'  ,  (req , res)=> {
-        //if(req.isAuthenticated()) {
+        if(req.isAuthenticated()) {
 
-            // var email = req.user.email;
-            // var nickname = req.user.nickname;
-            // var code = req.user.code;
-            // var grade = req.user.grade;
-            // var max_storage = req.user.max_storage;
+            var email = req.user.email;
+            var nickname = req.user.nickname;
+            var code = req.user.code;
+            var grade = req.user.grade;
+            var max_storage = req.user.max_storage;
 
-            var email = 'toyyj15@naver.com';
-            var nickname = 'daljin';
-            var code = '1111';
-            var grade = 'normal';
-            var max_storage = 1024*1024*1024*100;
+            // var email = 'toyyj15@naver.com';
+            // var nickname = 'daljin';
+            // var code = '1111';
+            // var grade = 'normal';
+            // var max_storage = 1024*1024*1024*100;
             
             if(code == "0000" || grade == "anonymous" || max_storage == 0) {
                 res.render('code.ejs');
@@ -189,10 +189,10 @@ module.exports = function(app) {
                 output['grade'] = grade;
                 res.render('cloud.ejs' , output);
             }
-        //}
-        //else {
-        //   res.redirect('/');
-        //}
+        }
+        else {
+          res.redirect('/');
+        }
     });
 
     //업로드 미들웨어 설정
