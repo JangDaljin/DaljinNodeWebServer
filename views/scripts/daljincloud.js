@@ -11,6 +11,7 @@ $(document).ready(function () {
 
     var downloadNext = function(items , pos , length){
         if(pos >= length) {
+            treeClear();
             return;
         }
 
@@ -74,14 +75,14 @@ $(document).ready(function () {
                                 alert(msg);
                         }
                         if(refresh) {
-                            
+                            treeClear();
                             if(listtype == 'grid') {
                                 showfileframe('grid');
                             }
                             else if(listtype == 'list') {
                                 showfileframe('list');
                             }
-                            
+
                         }
                 },
                 error : function () {
@@ -200,6 +201,10 @@ function TreeNode(parent , name , type) {
     this.name = name;
     this.type = type;
     this.ischecked = false;
+}
+
+var treeClear = function() {
+    fileTree = new TreeNode(null , null , null);
 }
 
 var additem = function(path , file) {
