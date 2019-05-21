@@ -161,8 +161,6 @@ $(document).ready(function () {
                 alert("폴더 업로드 불가");
                 return;
             }
-            console.log("??FFF");
-            alert(files.length + "??B");
             upload(files);
         }else{
             alert("ERROR");
@@ -175,18 +173,10 @@ $(document).ready(function () {
 
     var upload = function(files) {
         $('#uploadprogressbar').show();
-        console.dir(files);
-
 
         var formData = new FormData();
         formData.append("n_upload_path" , path);
         formData.append('n_upload_files' , files);
-
-        console.dir(formData);
-
-        alert('stop');
-
-        
 
         $.ajax({
                 url : "/upload",
