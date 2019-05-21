@@ -217,7 +217,7 @@ module.exports = function(app) {
             form.parse(req , (err , fields , files) => {
                 path = fields['n_upload_path'];
             });
-
+            console.log('upload path = ' + path);
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
@@ -226,11 +226,11 @@ module.exports = function(app) {
             var msg = "";
             var files = null;
 
-            console.dir(files);
-            console.log('upload paht = ' + path);
+            
 
             //progress stream을 거쳐 현재 퍼센트 제공
             var input_file = upload.array('n_upload_files');
+            console.dir(input_file);
             var progress = require('progress-stream')({
                 length:'0'
             });
