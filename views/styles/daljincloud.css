@@ -48,7 +48,7 @@ main > .content-container > .content-left {
     padding-top : 0.5em;
     padding-bottom: 0.5em;
     width: calc(100% - 275px);
-    height: 100%;
+    height: clac(100% - 2em);
     display: block;
     box-sizing: border-box;
 }
@@ -118,10 +118,11 @@ main > .content-container > .content-right {
     display: block;
     box-sizing: border-box;
     width: 275px;
-    height: 100%;
+    height: clac(100% - 2em);
 }
 
 main > .content-container > .content-right > ul {
+    box-sizing: border-box;
     float: right;
     padding: 0px;
     margin: 0;
