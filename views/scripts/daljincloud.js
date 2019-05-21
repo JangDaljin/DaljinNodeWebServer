@@ -11,8 +11,7 @@ $(document).ready(function () {
 
     var downloadNext = function(items , pos , length){
         if(pos >= length) {
-            treeClear(path);
-            showfileframe();
+            fileframeSendPostMsg('alluncheck');
             return;
         }
 
@@ -162,26 +161,7 @@ function fileframeSendPostMsg() {
         msg['data'] = null;
     }
 
-
     $('#fileframe')[0].contentWindow.postMessage(JSON.stringify(msg) , '*');
-    var elem = null;
-    $('.frametype').css('color' , '#283B42').css('background' , '#D1DDDB').hover(
-        function() {
-            $(this).css('color' , '#1D6A96');
-        },
-        function() {
-            $(this).css('color' , '#283B42');
-        }
-    ).children('a').css('cursor' , 'pointer');
-
-    if(listtype == 'grid') {
-        elem = $('#gridicon');
-    }
-    else if(listtype == 'list') {
-       elem = $('#listicon');
-    }
-    elem.css('color' , '#1D6A96').css('background' , '#283B42').children('a').css('cursor' , 'default');
-    elem.unbind('mouseenter mouseleave');
 }
 
 var path = "";
@@ -191,11 +171,36 @@ window.addEventListener('message' , function(e) {
     switch(type) {
         case 'init' : 
             var data = inputData['data'];
+
+            //변수 초기화
             path = data['path']
             used_storage = data['used_storage'];
             
+            //프로그래스바 초기화
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
             $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
+
+
+            //파일프로임 타입버튼 초기화
+            var elem = null;
+            $('.frametype').css('color' , '#283B42').css('background' , '#D1DDDB').hover(
+                function() {
+                    $(this).css('color' , '#1D6A96');
+                },
+                function() {
+                    $(this).css('color' , '#283B42');
+                }
+            ).children('a').css('cursor' , 'pointer');
+
+            if(listtype == 'grid') {
+                elem = $('#gridicon');
+            }
+            else if(listtype == 'list') {
+            elem = $('#listicon');
+            }
+            elem.css('color' , '#1D6A96').css('background' , '#283B42').children('a').css('cursor' , 'default');
+            elem.unbind('mouseenter mouseleave');
+
 
             //console.dir(getCheckedItems(path));
             var items   = getCheckedItems(path);
