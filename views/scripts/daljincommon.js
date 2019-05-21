@@ -13,11 +13,11 @@ $(document).ready(function () {
                         console.dir(inputdata);
                         if(inputdata['result']) {
                                 $('#naver_login').hide();
-                                $('#btn_logout').show();
+                                $('#btn_logout').css('display' , 'flex');
                         }
                         
                         else {
-                                $('#naver_login').show();
+                                $('#naver_login').css('display' , 'flex');
                                 $('#btn_logout').hide();
                         }
                                 

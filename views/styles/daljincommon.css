@@ -44,7 +44,7 @@ header > .container > button {
 }
 
 #naver_login {
-    display: flex;
+    display: none;
     float: right;
     width: 18em;
     height:4em;
@@ -64,7 +64,7 @@ header > .container > button {
 }
 
 .d-btn-logout {
-    display: flex;
+    display: none;
     float: right;
     background:#1AAB8A;
     color:#fff;
