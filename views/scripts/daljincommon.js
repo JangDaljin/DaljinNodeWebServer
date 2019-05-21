@@ -10,7 +10,6 @@ $(document).ready(function () {
                 headers : {"cache-control" : "no-cache"},
                 success : function (inputdata_jsonstr) {
                         var inputdata = JSON.parse(inputdata_jsonstr);
-                        console.dir(inputdata);
                         if(inputdata['result']) {
                                 $('#naver_login').hide();
                                 $('#btn_logout').css('display' , 'flex');

@@ -469,7 +469,7 @@ var additem = function(path , file) {
 
     var isExist = false;
     for(i = 0; i < curNode.children.length; i++) {
-        if(curNode.children[i].fullname == file.fullname && curNode.children[i].type == file.type) {
+        if(curNode.children[i].name == file.fullname && curNode.children[i].type == file.type) {
             isExist = true;
             curNode.children[i].ischecked = true;
             break;
@@ -500,7 +500,6 @@ var removeitem = function(path , file) {
     }
     
     for(i = 0; i < curNode.children.length; i++) {
-
         if(curNode.children[i].name == file.fullname) {
             if(curNode.children[i].type == 'directory') {
                 curNode.children[i].ischecked = false;
