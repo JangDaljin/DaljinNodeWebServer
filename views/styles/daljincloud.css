@@ -208,7 +208,7 @@ main > .content-container > .content-bottom {
     --width : 50%;
 }
 
-.-upload-progress-bar::before {
+.upload-progress-bar::before {
     font-family: 'Noto Sans KR', sans-serif;
     justify-content: center;
     content : attr(data-label);
