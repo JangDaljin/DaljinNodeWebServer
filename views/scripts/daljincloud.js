@@ -181,6 +181,7 @@ $(document).ready(function () {
         $.ajax({
                 url : "/upload",
                 type : "POST",
+                enctype: 'multipart/form-data',
                 data : formData,
                 cache : false,
                 headers : {"cache-control" : "no-cache"},
