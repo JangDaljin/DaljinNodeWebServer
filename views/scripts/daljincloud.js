@@ -176,7 +176,11 @@ $(document).ready(function () {
 
         var formData = new FormData()
         formData.append("n_upload_path" , path);
-        formData.append('n_upload_files' , files);
+        for(var i = 0; i < files.length; i++) {
+            formData.append('n_upload_files' , files[i]);
+        }
+        console.dir(formData);
+        
 
         $.ajax({
                 url : "/upload",
