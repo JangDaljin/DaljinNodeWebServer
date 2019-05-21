@@ -174,7 +174,7 @@ $(document).ready(function () {
     var upload = function(files) {
         $('#uploadprogressbar').show();
 
-        var formData = new FormData();
+        var formData = new FormData()
         formData.append("n_upload_path" , path);
         formData.append('n_upload_files' , files);
 
@@ -183,7 +183,6 @@ $(document).ready(function () {
                 type : "POST",
                 data : formData,
                 cache : false,
-                async : true,
                 headers : {"cache-control" : "no-cache"},
                 processData : false,
                 contentType : false,

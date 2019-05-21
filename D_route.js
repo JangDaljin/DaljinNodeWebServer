@@ -218,7 +218,6 @@ module.exports = function(app) {
                 console.log("path : " + fields['n_upload_path']);
                 path = fields['n_upload_path'];
             });
-            console.dir(form);
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
