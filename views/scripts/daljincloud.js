@@ -138,6 +138,84 @@ $(document).ready(function () {
     });
 
 
+    $('#dropzone').on('dragover' , function(e){ 
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).css('border-color' , '#1D6A96');
+    });
+
+    
+    $('#dropzone').on('dragleave' , function(e){ 
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).css('border-color' , '#283B42');
+    });
+
+    
+    $('#dropzone').on('drop' , function(e){ 
+        e.stopPropagation();
+        e.preventDefault();
+        var files = e.originalEvent.dataTransfer.files;
+        if(files != null){
+            if(files.length < 1){
+                alert("폴더 업로드 불가");
+                return;
+            }
+            upload(files);
+        }else{
+            alert("ERROR");
+        }
+    });
+
+    $('#uploadbutton').change(function (e) {
+        upload($(this)[0].files);
+    });
+
+    var upload = function(files) {
+        var formData = new FormData();
+        formData.append("n_upload_path" , path);
+        formData.append('n_upload_files' , files)
+
+        $('#uploadprogressbar').show();
+
+        $.ajax({
+                url : "/upload",
+                type : "POST",
+                data : formData,
+                cache : false,
+                async : true,
+                headers : {"cache-control" : "no-cache"},
+                processData : false,
+                contentType : false,
+                success : function(inputdata_str) {
+                        var inputdata = JSON.parse(inputdata_str);
+                        alert(inputdata.msg);
+
+                        showfileframe();
+                        $('#uploadprogressbar').hide();
+                        $('#uploadprogressbar')[0].style.setProperty('--width' , '0%');
+                        $('#uploadprogressbar').attr('data-label' , '0%');
+                },
+                
+                error : function () {
+                        alert('에러발생');
+                },
+                xhr: function(){
+                        var xhr = $.ajaxSettings.xhr() ;
+                        // 프로그래스 이벤트
+                        xhr.upload.onprogress = function(evt){ 
+                                $('#uploadprogressbar')[0].style.setProperty('--width' , parseInt(evt.loaded/evt.total*100) +'%');
+                                $('#uploadprogressbar').attr('data-label' , parseInt(evt.loaded/evt.total*100) +'%');
+                        } ;
+                        // 종료 이벤트
+                        xhr.upload.onload = function(){ 
+                                
+                        } ;
+                        // return the customized object
+                        return xhr ;
+                }
+        });
+    }
 
 
 

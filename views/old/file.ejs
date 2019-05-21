@@ -237,8 +237,10 @@
                 //업로드 시작
                 var Upload_start = function (form_id){
                         var bottomNav = document.getElementById('bottomNavbar');
-                        var form_data = new FormData(document.getElementById(form_id));
+
+                        var form_data = new FormData();
                         form_data.append("n_upload_path" , path);
+                        
                         bottomNav.style.visibility = "visible";
 
                         $.ajax({

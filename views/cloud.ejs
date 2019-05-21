@@ -90,7 +90,7 @@
             </div>
 
             <div class="content-bottom">
-                <div class="upload-progress-bar" data-label="USED"></div>
+                <div id="uploadprogressbar" class="upload-progress-bar" data-label="0%"></div>
             </div>
         </div>
     </main>
@@ -133,14 +133,14 @@
 
             <div class="modal-content">
                 <div class="modal-dragbox">
-                    <div class="modal-dragbox-contentbox">
+                    <div id="dropzone" class="modal-dragbox-contentbox">
 
                         <div class="modal-dragbox-image">
                             <i class="fas fa-file-upload fa-4x"></i>
                         </div>
 
                         <div class="modal-dragbox-button">
-                            <button>UPLOAD</button>
+                            <input id="uploadbutton" type="file" value="UPLOAD" multiple>
                         </div>
 
                     </div>

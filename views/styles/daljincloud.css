@@ -199,6 +199,8 @@ main > .content-container > .content-bottom {
 }
 
 .upload-progress-bar {
+    display: none;
+    position: relative;
     box-sizing: border-box;
     width: 100%;
     height: 3em;
