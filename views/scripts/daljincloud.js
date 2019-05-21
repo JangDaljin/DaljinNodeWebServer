@@ -148,13 +148,15 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         $(this).css('border-color' , '#1D6A96').css('color' , '#1D6A96');
+        $('.modal-dragbox-image').css('color' , '#1D6A96');
     });
 
     
     $('#dropzone').on('dragleave' , function(e){ 
         e.stopPropagation();
         e.preventDefault();
-        $(this).css('border-color' , '#283B42').css('color' , '#283B42');
+        $(this).css('border-color' , '#283B42');
+        $('.modal-dragbox-image').css('color' , '#283B42');
     });
 
     
