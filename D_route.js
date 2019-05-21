@@ -215,10 +215,9 @@ module.exports = function(app) {
             var path = '';
             var form = new(require('formidable')).IncomingForm();
             form.parse(req , (err , fields , files) => {
-                console.log("hhhh" + fields['n_upload_path']);
+                console.log("path : " + fields['n_upload_path']);
                 path = fields['n_upload_path'];
             });
-            console.dir(req);
             console.dir(form);
             var email = req.user.email;
             var max_storage = req.user.max_storage;
@@ -279,7 +278,6 @@ module.exports = function(app) {
                 output["error"] = true;
                 output["msg"] = "";
                 files = progress.files;
-                console.dir(files);
                 if(err) {
                     console.log('[' + email + '] UPLOAD ERROR');
                 }
