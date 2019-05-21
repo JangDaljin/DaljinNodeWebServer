@@ -3,7 +3,7 @@ var totalSize = 0;
 var uploadSize = 0;
 var curFileLoaded = 0;
 var isUploading = false;
-
+var uploadMsg = "";
 $(document).ready(function () {
     
     //다운로드
@@ -22,9 +22,9 @@ $(document).ready(function () {
         }
 
         var output = {};
-        output['n_downloadItem'] = items[pos].name.trim();
-        output['n_itemType'] = items[pos].type;
-        output['n_itemPath'] = path
+        output['item'] = items[pos].name.trim();
+        output['type'] = items[pos].type;
+        output['path'] = path
         //jQuery.fileDownload.js plugin 사용
         $.fileDownload('/download', { 
                 httpMethod: "POST", 
@@ -200,16 +200,17 @@ $(document).ready(function () {
         queueUploadLoop(path);
     }
 
+    
     var queueUploadLoop = function(curPath) {
-
         if(uploadQueue.isEmpty()) {
             //종료
             return;
         }
 
+        isUploading = true;
         var formData = new FormData();
-        formData.append("n_upload_path" , curPath);
-        formData.append("n_upload_files" , uploadQueue.dequeue());
+        formData.append("path" , curPath);
+        formData.append("files" , uploadQueue.dequeue());
 
         $.ajax({
             url : "/upload",
@@ -222,6 +223,7 @@ $(document).ready(function () {
             contentType : false,
             success : function(inputdata_str) {
                     var inputdata = JSON.parse(inputdata_str);
+                    uploadMsg += inputdata.msg;
 
                     if(uploadQueue.isEmpty()) {
                         $('#uploadprogressbar')[0].style.setProperty('--width' , '0%');
@@ -229,10 +231,14 @@ $(document).ready(function () {
                         $('#uploadprogressbar').hide();
                         uploadSize = 0;
                         totalSize = 0;
-                        alert(inputdata.msg);
+                        uploadSize = 0;
+                        isUploading = false;
+                        alert(uploadMsg);
+                        uploadMsg = "";
                         showfileframe();
                     }
                     else {
+                        uploadMsg += "\n";
                         queueUploadLoop(curPath);
                     }
             },

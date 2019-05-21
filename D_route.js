@@ -215,8 +215,7 @@ module.exports = function(app) {
             var path = '';
             var form = new(require('formidable')).IncomingForm();
             form.parse(req , (err , fields , files) => {
-                console.log("path : " + fields['n_upload_path']);
-                path = fields['n_upload_path'];
+                path = fields['path'];
             });
             var email = req.user.email;
             var max_storage = req.user.max_storage;
@@ -229,7 +228,7 @@ module.exports = function(app) {
             
 
             //progress stream을 거쳐 현재 퍼센트 제공
-            var input_file = upload.array('n_upload_files');
+            var input_file = upload.array('files');
             var progress = require('progress-stream')({
                 length:'0'
             });
@@ -316,9 +315,9 @@ module.exports = function(app) {
         if(req.isAuthenticated()) {
 
             var email =  req.user.email;
-            var path            = req.body.n_itemPath         || '';
-            var downloadItem    = req.body.n_downloadItem     || '';
-            var type            = req.body.n_itemType         || ''; 
+            var path            = req.body.path         || '';
+            var downloadItem    = req.body.item         || '';
+            var type            = req.body.type         || ''; 
 
             //jQuery.fileDownload.js 사용을 위한 쿠키설정
             res.setHeader("Set-Cookie", "fileDownload=true; path=/");
