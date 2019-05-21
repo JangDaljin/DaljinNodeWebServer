@@ -148,7 +148,7 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         $(this).css('border-color' , '#1D6A96').css('color' , '#1D6A96');
-        $(this).css('backround-color' , '#283B42');
+        $(this).css('background-color' , '#283B42');
         $('.modal-dragbox-image').css('color' , '#1D6A96');
     });
 
@@ -157,7 +157,7 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         $(this).css('border-color' , '#283B42');
-        $(this).css('backround-color' , 'inherit');
+        $(this).css('background-color' , 'inherit');
         $('.modal-dragbox-image').css('color' , '#283B42');
     });
 
