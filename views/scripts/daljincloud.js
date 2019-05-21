@@ -113,13 +113,13 @@ $(document).ready(function () {
             return;
         }
 
-        outputdata = {};
-        outputdata['mkdirName'] = dir_name;
-        outputdata['mkdirPath'] = path;
+        output = {};
+        output['mkdirName'] = dir_name;
+        output['mkdirPath'] = path;
         $.ajax({
                 url : "/mkdir",
                 type : "POST",
-                data : JSON.stringify(outputdata),
+                data : JSON.stringify(output),
                 contentType : "application/json",
                 cache : false,
                 async : true,
@@ -128,8 +128,7 @@ $(document).ready(function () {
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         alert(inputdata['msg']);
                         if(inputdata['error'] == false) {
-                                document.getElementById(dom_makeDirectoryName).value = "";
-                                fileframeRefresh();
+                                showfileframe();
                         }
                 },
                 error : function () {
@@ -138,7 +137,7 @@ $(document).ready(function () {
         });
     });
 
-    
+
 
 
 
@@ -235,8 +234,37 @@ function TreeNode(parent , name , type) {
     this.ischecked = false;
 }
 
-var treeClear = function() {
-    fileTree = new TreeNode(null , null , null);
+var treeClear = function(path) {
+    var sp_path = path.split('/');
+    var curNode = fileTree;
+    var i = 1;
+    for(i = 1 ; i < sp_path.length ; i++) {
+        if(sp_path[i] == "") {
+            break;
+        }
+        var res = false;
+        var j = 0;
+        for(j = 0 ; j < curNode.children.length; j++) {
+            if(curNode.children[j].name == sp_path[i] && curNode.children[j].type == 'directory') {
+                res = true;
+                break;
+            }
+        }
+        if(!res) {
+            return null;
+        }
+        curNode = curNode.children[j];
+    }
+    
+    i = 0;
+    while(i < curNode.children.length ) {
+        if(curNode.children[i].ischecked) {
+            curNode.children[i].splice(i , 1);
+        }
+        else {
+            i++;
+        }
+    }
 }
 
 var additem = function(path , file) {
