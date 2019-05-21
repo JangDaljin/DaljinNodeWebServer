@@ -148,7 +148,7 @@ $(document).ready(function () {
         e.stopPropagation();
         e.preventDefault();
         $(this).css('border-color' , '#1D6A96').css('color' , '#1D6A96');
-        $(this).css('background-color' , '#283B42');
+        $(this).css('background-color' , 'rgba(40 ,59, 66 , 0.5)');
         $('.modal-dragbox-image').css('color' , '#1D6A96');
     });
 
