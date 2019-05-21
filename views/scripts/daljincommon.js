@@ -1,3 +1,33 @@
+$(document).ready(function () {
+        //session check
+        $.ajax({
+                url : "/sessioncheck",
+                type : "GET",
+                data : {},
+                contentType : "application/json",
+                cache : false,
+                async : true,
+                headers : {"cache-control" : "no-cache"},
+                success : function (inputdata_jsonstr) {
+                        var inputdata = JSON.parse(inputdata_jsonstr);
+                        console.dir(inputdata);
+                        if(inputdata['result']) {
+                                $('#naver_login').hide();
+                                $('#btn_logout').show();
+                        }
+                        
+                        else {
+                                $('#naver_login').show();
+                                $('#btn_logout').hide();
+                        }
+                                
+                },
+                error : function () {
+                        
+                }
+        });
+});
+
 var getVolumeSize = function(size , deter) {
     size += "";
     size = parseInt(size);

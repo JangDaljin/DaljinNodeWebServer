@@ -43,10 +43,33 @@ header > .container > button {
     float: left;
 }
 
+#naver_login {
+    display: flex;
+    float: right;
+    width: 18em;
+    height:4em;
+    justify-content: center;
+    align-items: center;
+}
+#naver_login::after {
+    content: '';
+    display: table;
+    clear: both;
+    vertical-align: middle;
+}
+
+#naver_login > img {
+    width: 18em;
+    height: 4em;
+}
+
 .d-btn-logout {
+    display: flex;
+    float: right;
     background:#1AAB8A;
     color:#fff;
-    height:60px;
+    height:2.5em;
+    width: 6em;
     font-size:1.6em;
     font-weight: 900;
     padding-left: 1.3em;
@@ -55,6 +78,8 @@ header > .container > button {
     position:relative;
     cursor:pointer;
     outline:none;
+    justify-content: center;
+    align-items: center;
 }
 
 .d-btn-logout:hover {
