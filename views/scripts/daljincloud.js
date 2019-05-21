@@ -33,6 +33,7 @@ $(document).ready(function () {
         });
     }
 
+    //삭제
     $('#rightmenu_delete').click(function(e) {
         var items = getCheckedItems(path);
         if(items == null) {
