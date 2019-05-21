@@ -212,6 +212,7 @@ main > .content-container > .content-right > ul li a span:nth-child(2) {
 
 main > .content-container > .content-bottom {
     width: 100%;
+    clear: both;
 }
 
 .upload-progress-bar {
