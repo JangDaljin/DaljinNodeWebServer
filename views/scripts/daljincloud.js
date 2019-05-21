@@ -173,9 +173,13 @@ $(document).ready(function () {
 
     var upload = function(files) {
         console.dir(files);
+
+
         var formData = new FormData();
         formData.append("n_upload_path" , path);
-        formData.append('n_upload_files' , files)
+        formData.append('n_upload_files' , files);
+
+        console.dir(formData);
 
         $('#uploadprogressbar').show();
 
