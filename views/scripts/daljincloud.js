@@ -176,6 +176,7 @@ $(document).ready(function () {
         formData.append("n_upload_path" , path);
         formData.append('n_upload_files' , files)
 
+        console.dir(files);
         $('#uploadprogressbar').show();
 
         $.ajax({
