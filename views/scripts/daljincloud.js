@@ -11,7 +11,7 @@ $(document).ready(function () {
 
     var downloadNext = function(items , pos , length){
         if(pos >= length) {
-            treeClear();
+            treeClear(path);
             showfileframe();
             return;
         }
@@ -76,7 +76,7 @@ $(document).ready(function () {
                                 alert(msg);
                         }
                         if(refresh) {
-                            treeClear();
+                            treeClear(path);
                             showfileframe();
                         }
                 },
