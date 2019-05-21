@@ -73,7 +73,7 @@ D_UserModel.findOne({'email':user_email} , (err,user) => {
                 nickname : user_nickname ,
                 grade : 'anonymous',
                 code : '',
-                max_storage : 1024*1024*1
+                max_storage : 1024*1024*10
             }
         );
         //신규 저장
