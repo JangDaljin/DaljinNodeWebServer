@@ -26,6 +26,31 @@ $(document).ready(function () {
                         
                 }
         });
+
+        //LOGOUT
+        $('#btn_logout').click(function (e) {
+                $.ajax({
+                        url : "/logout",
+                        type : "POST",
+                        data : {},
+                        contentType : "application/json",
+                        cache : false,
+                        async : true,
+                        headers : {"cache-control" : "no-cache"},
+                        success : function (inputdata_jsonstr) {
+                                var inputdata = JSON.parse(inputdata_jsonstr);
+                                if(inputdata['error']) {
+                                        alert("로그아웃 실패");
+                                }
+                                else {
+                                        window.location.href="/";
+                                }
+                        },
+                        error : function () {
+                                alert('에러발생');
+                        }
+                });
+        });
 });
 
 var getVolumeSize = function(size , deter) {
