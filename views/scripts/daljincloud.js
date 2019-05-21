@@ -12,6 +12,7 @@ $(document).ready(function () {
     var downloadNext = function(items , pos , length){
         if(pos >= length) {
             treeClear();
+            showfileframe();
             return;
         }
 
@@ -76,13 +77,7 @@ $(document).ready(function () {
                         }
                         if(refresh) {
                             treeClear();
-                            if(listtype == 'grid') {
-                                showfileframe('grid');
-                            }
-                            else if(listtype == 'list') {
-                                showfileframe('list');
-                            }
-
+                            showfileframe();
                         }
                 },
                 error : function () {
@@ -109,14 +104,51 @@ $(document).ready(function () {
         $(".modal-background").hide();
     });
 
+    //폴더만들기
+    $('#mkdir_ok').click(function (e) {
+        var dir_name = $('#mkdir_text').val();
+        $('#mkdir_text').val('');
+        if(!dir_name) {
+            alert('파일명을 재설정 해주세요.');
+            return;
+        }
+
+        outputdata = {};
+        outputdata['mkdirName'] = dir_name;
+        outputdata['mkdirPath'] = path;
+        $.ajax({
+                url : "/mkdir",
+                type : "POST",
+                data : JSON.stringify(outputdata),
+                contentType : "application/json",
+                cache : false,
+                async : true,
+                headers : {"cache-control" : "no-cache"},
+                success : function (inputdata_jsonstr) {
+                        var inputdata = JSON.parse(inputdata_jsonstr);
+                        alert(inputdata['msg']);
+                        if(inputdata['error'] == false) {
+                                document.getElementById(dom_makeDirectoryName).value = "";
+                                fileframeRefresh();
+                        }
+                },
+                error : function () {
+                        alert('에러발생');
+                }
+        });
+    });
+
+    
 
 
 
 });
 
 
-var showfileframe = function(_listtype) {
-    listtype = _listtype;
+var showfileframe = function() {
+    if(arguments[0]) {
+        listtype = arguments[0];
+    }
     $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + _listtype);
 }
 
