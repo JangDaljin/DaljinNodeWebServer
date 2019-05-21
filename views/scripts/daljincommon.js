@@ -56,5 +56,39 @@ $(document).ready(function () {
         });
 });
 
+function Queue(){
+        this.datas = [];
+}
 
+Queue.prototype.isEmpty = function(){
+        return this.datas.length==0?true:false;
+}
+
+Queue.prototype.length = function(){
+        return this.datas.length;
+}
+
+Queue.prototype.enqueue = function(element){
+        this.datas.push(element);
+        this.print();
+}
+
+Queue.prototype.dequeue = function(){
+        element = this.peek();
+        this.datas.shift();
+        return element;
+}
+
+Queue.prototype.peek = function(){
+        element = this.datas[0]==undefined?null:this.datas[0];
+        return element;
+}
+
+Queue.prototype.toArray = function(){
+        return this.datas;
+}
+
+Queue.prototype.clear = function(){
+        this.dats = [];
+}
 

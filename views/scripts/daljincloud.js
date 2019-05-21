@@ -1,3 +1,9 @@
+var uploadQueue = new Queue();
+var totalSize = 0;
+var uploadSize = 0;
+var curFileLoaded = 0;
+var isUploading = false;
+
 $(document).ready(function () {
     
     //다운로드
@@ -161,27 +167,104 @@ $(document).ready(function () {
                 alert("폴더 업로드 불가");
                 return;
             }
-            upload(files);
+
+            //upload(files);
+            qUpload(files);
         }else{
             alert("ERROR");
         }
     });
 
     $('#uploadbutton').change(function (e) {
-        upload($(this)[0].files);
+        //upload($(this)[0].files);
+        var files = $(this)[0].files
+        qUpload(files);
     });
+
+    
+    var qUpload = function (files) {
+        for(var i = 0 ; i < files.length; i++) {
+            uploadQueue.enqueue(files[i]);
+            totalSize += files[i].size;
+        }
+
+        if(isUploading) {
+            return;
+        }
+        $('#uploadprogressbar').show();
+
+        queueUploadLoop(path);
+    }
+
+    var queueUploadLoop = function(curPath) {
+
+        if(uploadQueue.isEmpty()) {
+            //종료
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append("n_upload_path" , curPath);
+        formData.append("n_upload_files" , uploadQueue.dequeue());
+
+        $.ajax({
+            url : "/upload",
+            type : "POST",
+            enctype: 'multipart/form-data',
+            data : formData,
+            cache : false,
+            headers : {"cache-control" : "no-cache"},
+            processData : false,
+            contentType : false,
+            success : function(inputdata_str) {
+                    var inputdata = JSON.parse(inputdata_str);
+
+                    if(uploadQueue.isEmpty()) {
+                        $('#uploadprogressbar')[0].style.setProperty('--width' , '0%');
+                        $('#uploadprogressbar').attr('data-label' , '0%');
+                        $('#uploadprogressbar').hide();
+                        uploadSize = 0;
+                        totalSize = 0;
+                        alert(inputdata.msg);
+                        showfileframe();
+                    }
+                    else {
+                        queueUploadLoop(curPath);
+                    }
+            },
+            
+            error : function () {
+                    alert('에러발생');
+            },
+            xhr: function(){
+                    var xhr = $.ajaxSettings.xhr() ;
+                    // 프로그래스 이벤트
+                    xhr.upload.onprogress = function(evt){ 
+                            $('#uploadprogressbar')[0].style.setProperty('--width' , parseInt((uploadSize+evt.loaded)/totalSize*100) +'%');
+                            $('#uploadprogressbar').attr('data-label' , parseInt((uploadSize+evt.loaded)/totalSize*100) +'%');
+                            curFileLoaded = evt.loaded;
+                    } ;
+                    // 종료 이벤트
+                    xhr.upload.onload = function(){ 
+                        uploadSize += curFileLoaded;
+                    };
+                    // return the customized object
+                    return xhr ;
+            }
+        });
+    }
+
 
     var upload = function(files) {
         $('#uploadprogressbar').show();
+
 
         var formData = new FormData()
         formData.append("n_upload_path" , path);
         for(var i = 0; i < files.length; i++) {
             formData.append('n_upload_files' , files[i]);
         }
-        console.dir(formData);
         
-
         $.ajax({
                 url : "/upload",
                 type : "POST",
@@ -220,9 +303,6 @@ $(document).ready(function () {
                 }
         });
     }
-
-
-
 });
 
 
