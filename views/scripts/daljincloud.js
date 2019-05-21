@@ -264,7 +264,7 @@ var treeClear = function(path) {
     i = 0;
     while(i < curNode.children.length ) {
         if(curNode.children[i].ischecked) {
-            curNode.children[i].splice(i , 1);
+            curNode.children.splice(i , 1);
         }
         else {
             i++;
