@@ -161,6 +161,7 @@ $(document).ready(function () {
                 alert("폴더 업로드 불가");
                 return;
             }
+            alert(files.length + "??B");
             upload(files);
         }else{
             alert("ERROR");
