@@ -70,7 +70,6 @@ Queue.prototype.length = function(){
 
 Queue.prototype.enqueue = function(element){
         this.datas.push(element);
-        this.print();
 }
 
 Queue.prototype.dequeue = function(){
