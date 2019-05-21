@@ -395,15 +395,10 @@ main > .content-container > .content-bottom {
     transition: 0.3s;
 }
 
-#uploadbutton {
-    border: none;
-    box-sizing: border-box;
-    font-family: 'Noto Sans KR', sans-serif;
-    height: 2.5em;
-    width: 40%;
-}
+
 
 .modal-dragbox-button label {
+    font-family: 'Noto Sans KR', sans-serif;
     display: inline-block;
     padding: .5em .75em;
     color: #283B42;
