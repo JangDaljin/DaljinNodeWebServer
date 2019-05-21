@@ -148,7 +148,7 @@ var showfileframe = function() {
     if(arguments[0]) {
         listtype = arguments[0];
     }
-    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + _listtype);
+    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + listtype);
 }
 
 function fileframeSendPostMsg() {
