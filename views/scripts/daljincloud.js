@@ -172,6 +172,7 @@ $(document).ready(function () {
     });
 
     var upload = function(files) {
+        $('#uploadprogressbar').show();
         console.dir(files);
 
 
@@ -181,7 +182,9 @@ $(document).ready(function () {
 
         console.dir(formData);
 
-        $('#uploadprogressbar').show();
+        alert('stop');
+
+        
 
         $.ajax({
                 url : "/upload",
