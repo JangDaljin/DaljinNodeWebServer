@@ -226,6 +226,9 @@ module.exports = function(app) {
             var msg = "";
             var files = null;
 
+            console.dir(files);
+            console.log('upload paht = ' + path);
+
             //progress stream을 거쳐 현재 퍼센트 제공
             var input_file = upload.array('n_upload_files');
             var progress = require('progress-stream')({
