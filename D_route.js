@@ -230,7 +230,6 @@ module.exports = function(app) {
 
             //progress stream을 거쳐 현재 퍼센트 제공
             var input_file = upload.array('n_upload_files');
-            console.dir(input_file);
             var progress = require('progress-stream')({
                 length:'0'
             });
@@ -278,6 +277,7 @@ module.exports = function(app) {
                 output["error"] = true;
                 output["msg"] = "";
                 files = progress.files;
+                console.dir(files);
                 if(err) {
                     console.log('[' + email + '] UPLOAD ERROR');
                 }
