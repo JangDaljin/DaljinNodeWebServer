@@ -48,7 +48,7 @@ main > .content-container > .content-left {
     padding-top : 0.5em;
     padding-bottom: 0.5em;
     width: calc(100% - 275px);
-    height: calc(100% - 4em);
+    height: calc(100% - 2em);
     display: block;
     box-sizing: border-box;
 }
@@ -118,7 +118,7 @@ main > .content-container > .content-right {
     display: block;
     box-sizing: border-box;
     width: 275px;
-    height: calc(100% - 4em);
+    height: calc(100% - 2em);
 }
 
 main > .content-container > .content-right > ul {
@@ -220,9 +220,8 @@ main > .content-container > .content-bottom {
     bottom: .5em;
     width: var(--width);
     min-width: 2rem;
-    max-width: calc(100% - 3em);
+    max-width: calc(100% - 2em);
     background-color: #1D6A96;
-    padding: 1em;
 }
 
 /*** modal ***/
