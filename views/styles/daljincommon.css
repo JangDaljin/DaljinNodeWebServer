@@ -169,6 +169,11 @@ header > .container > button {
     width: 100%;
 }
 
+main {
+    box-sizing: border-box;
+    height: calc(100% - 13.5em);
+}
+
 
 footer {
     padding-left: 30px;

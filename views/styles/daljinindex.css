@@ -1,0 +1,144 @@
+main {
+    position: relative;
+    background-image: linear-gradient(to top, #fddb92 0%, #d1fdff 100%);
+    z-index: -2;
+}
+
+
+
+#wdw {
+    background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 4vw;
+    box-sizing: border-box;
+    border-radius: 20px;
+    height: 30%;
+    width: 70%;
+    position: absolute;
+    top: 35%;
+    left: 15%;
+
+    animation: 3s ease-out 0s 1 fadeIn;
+}
+
+
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.item {
+    position: absolute;
+    z-index: -1;
+}
+
+.item {
+    cursor: pointer;
+}
+
+#item_1{
+    top: 10%;
+    left: 10%;
+    animation: 1.5s ease-out 0s 1 slideInFromLeft;
+}
+
+#item_2 {
+    top: 10%;
+    left: 35%;
+    animation: 2s ease-out 0s 1 slideInFromTop;
+}
+
+#item_3 {
+    top:13%;
+    right: 14%;
+    animation: 1s ease-out 0s 1 slideInFromRight;
+}
+
+#item_4 {
+    bottom: 9%;
+    left: 3%;
+    animation: 1.8s ease-out 0s 1 slideInFromBottom;
+}
+
+#item_5 {
+    bottom: 20%;
+    right: 30%;
+    animation: 1s ease-out 0s 1 slideInFromBottom;
+}
+
+#item_6 {
+    bottom: 3%;
+    right: 3%;
+    animation: 2s ease-out 0s 1 slideInFromRight;
+}
+
+
+.small {
+    width: 5%;
+}
+
+.medium {
+    width: 7.5%;
+}
+
+.big {
+    width: 10%;
+}
+
+.item > img {
+    width: 100%;
+}

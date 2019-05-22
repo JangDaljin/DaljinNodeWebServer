@@ -1,8 +1,4 @@
-main {
-    background-color: white;
-    box-sizing: border-box;
-    height: calc(100% - 13.5em);
-}
+
 
 .progress-bar {
     position: relative;
