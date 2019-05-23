@@ -104,7 +104,7 @@ header > .container > button {
     position:relative;
     cursor:pointer;
     outline:none;
-    display: flex;
+    display: none;
     font-size: 1.6em;
     justify-content: center;
     align-items: center;
