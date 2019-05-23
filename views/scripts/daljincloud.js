@@ -346,9 +346,7 @@ window.addEventListener('message' , function(e) {
             
             //프로그래스바 초기화
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
-            alert(getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
-            alert(used_storage / max_storage + '%');
-            $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '%');
+            $('.progress-bar')[0].style.setProperty('--width' , (sused_storage / max_storage * 100) + '%');
 
 
             //파일프로임 타입버튼 초기화
