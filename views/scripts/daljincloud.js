@@ -346,7 +346,6 @@ window.addEventListener('message' , function(e) {
             
             //프로그래스바 초기화
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
-            alert((used_storage / max_storage * 100) + '%');
             $('.progress-bar')[0].style.setProperty('--width' , (used_storage / max_storage * 100) + '%');
 
 
