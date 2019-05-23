@@ -11,13 +11,13 @@ $(document).ready(function () {
                 success : function (inputdata_jsonstr) {
                         var inputdata = JSON.parse(inputdata_jsonstr);
                         if(inputdata['result']) {
-                                //$('.naver_login').hide();
-                                //$('#btn_logout').css('display' , 'flex');
+                                $('.naver_login').hide();
+                                $('#btn_logout').css('display' , 'flex');
                         }
                         
                         else {
-                                //$('.naver_login').css('display' , 'flex');
-                                //$('#btn_logout').hide();
+                                $('.naver_login').css('display' , 'flex');
+                                $('#btn_logout').hide();
                         }
                                 
                 },
