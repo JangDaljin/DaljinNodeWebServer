@@ -93,23 +93,23 @@ header > .container > button {
 
 
 .d-btn-logout {
-    display: none;
     float: right;
     background:#1AAB8A;
     color:#fff;
     height:2.5em;
-    width: 6em;
-    font-size:1.6em;
     font-weight: 900;
-    padding-left: 1.3em;
-    padding-right: 1.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     border: none;
     position:relative;
     cursor:pointer;
     outline:none;
+    display: flex;
+    font-size: 1.6em;
     justify-content: center;
     align-items: center;
 }
+
 
 .d-btn-logout:hover {
     background:#fff;
@@ -123,6 +123,8 @@ header > .container > button {
 
 .d-btn-logout::after{
     content:'';
+    display: table;
+    clear: both;
     position:absolute;
     top:0;
     right:0;
