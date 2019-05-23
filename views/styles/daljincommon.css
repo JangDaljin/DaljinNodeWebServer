@@ -38,30 +38,50 @@ header > .container > button {
 }
 
 .logo {
-    width: 200px;
-    height : 50px;
+    height : 4em;
     float: left;
 }
 
-#naver_login {
+.naver_login {
     display: none;
     float: right;
-    width: 18em;
     height:4em;
     justify-content: center;
     align-items: center;
 }
-#naver_login::after {
+
+.naver_login::after {
     content: '';
     display: table;
     clear: both;
     vertical-align: middle;
 }
 
-#naver_login > img {
-    width: 18em;
+@media screen and (min-width : 769px) {
+    #naver_img_1 {
+        display: block;
+    }
+
+    #naver_img_2 {
+        display: none;
+    }
+}
+
+@media screen and (max-width : 768px) {
+    #naver_img_1 {
+        display: none;
+    }
+
+    #naver_img_2 {
+        display: block;
+    }
+}
+
+.naver_login > img {
     height: 4em;
 }
+
+
 
 .d-btn-logout {
     display: none;
@@ -174,6 +194,13 @@ main {
     height: calc(100% - 13.5em);
 }
 
+@media screen and (min-width : 769px) {
+
+}
+
+@media screen and (max-width : 768px) {
+
+}
 
 footer {
     padding-left: 30px;
@@ -192,7 +219,7 @@ footer {
 
 footer > .container::after {
     content: '';
-    display: block;
+    display: table;
     clear: both;
 }
 
