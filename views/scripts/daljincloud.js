@@ -3,7 +3,6 @@ var totalSize = 0;
 var uploadSize = 0;
 var curFileLoaded = 0;
 var isUploading = false;
-var uploadMsg = "";
 $(document).ready(function () {
     
     //다운로드
@@ -223,8 +222,6 @@ $(document).ready(function () {
             contentType : false,
             success : function(inputdata_str) {
                     var inputdata = JSON.parse(inputdata_str);
-                    uploadMsg += inputdata.msg;
-
                     if(uploadQueue.isEmpty()) {
                         $('#uploadprogressbar')[0].style.setProperty('--width' , '0%');
                         $('#uploadprogressbar').attr('data-label' , '0%');
@@ -233,12 +230,10 @@ $(document).ready(function () {
                         totalSize = 0;
                         uploadSize = 0;
                         isUploading = false;
-                        alert(uploadMsg);
-                        uploadMsg = "";
+                        alert('업로드 완료');
                         showfileframe();
                     }
                     else {
-                        uploadMsg += "\n";
                         queueUploadLoop(curPath);
                     }
             },
@@ -351,7 +346,8 @@ window.addEventListener('message' , function(e) {
             
             //프로그래스바 초기화
             $('.progress-bar').attr('data-label' , getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
-            $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '');
+            alert(getVolumeSize(used_storage , 0) + '/' + getVolumeSize(max_storage , 0));
+            $('.progress-bar')[0].style.setProperty('--width' , used_storage / max_storage + '%');
 
 
             //파일프로임 타입버튼 초기화
