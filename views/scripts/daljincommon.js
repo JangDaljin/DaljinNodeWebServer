@@ -52,11 +52,13 @@ $(document).ready(function () {
         });
 });
 
-var getVolumeSize = function(size , deter) {
-        if(typeof(size) != "number") {
+var getVolumeSize = function(_size , deter) {
+        size = parseInt(_size);
+
+        if(isNaN(size)) {
                 return typeof(size);
         }
-        size = parseInt(size);
+
         if(size / 1024 > 1) {                           
                 return getVolumeSize(size / 1024 , deter+1);  
         } else {                                        
