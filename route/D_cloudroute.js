@@ -1,168 +1,13 @@
-﻿var passport = require('./D_passport');
-var D_file = require('./D_file');
-var D_Mongoose = require('./D_database').D_Mongoose;
-var D_PATH = require('./D_setting').PATH;
+var D_file = require('../D_file');
+var D_PATH = require('../D_setting').PATH;
 var multer = require('multer');
 var archiver = require('archiver');
 
 module.exports = function(app) {
-
-    //========================================================================================================================================//
-    //메인 페이지
-    app.get('/' , (req , res) => {
-        var output = {};
-        if(req.isAuthenticated()) {
-            output['email'] = req.user.email;
-            output['nickname'] = req.user.nickname;
-            output['grade'] = req.user.grade;
-        }
-        res.render('index.ejs' , output);
-    });
-
-
-    //네이버로그인
-    app.get('/naverlogin' , passport.authenticate('naver'));
-    app.get('/navercallback' , passport.authenticate('naver' , { 
-        successRedirect : '/' , failureRedirect : '/'
-    }));
-    app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
-            var output = {};
-            output['result'] = false
-            if(req.isAuthenticated()) {
-                output['result'] = true;
-                output['email'] = req.user.email;
-                output['nickname'] = req.user.nickname;
-                output['code'] = req.user.code;
-                output['grade'] = req.user.grade;
-                output['max_storage'] = req.user.max_storage;
-            }
-            res.send(JSON.stringify(output));
-    });
-
-    //세션 체크
-    app.get('/sessioncheck' , (req ,res) => {
-        var output = {};
-        if(req.isAuthenticated()) {
-            output['result'] = true;
-            output['email'] = req.user.email;
-            output['nickname'] = req.user.nickname;
-            output['code'] = req.user.code;
-            output['grade'] = req.user.grade;
-            output['max_storage'] = req.user.max_storage;
-        }
-        else {
-            output['result'] = false;
-        }
-        res.send(JSON.stringify(output));
-    });
-
-    //자신의 코드,닉네임 업데이트
-    app.post('/userinfoupdate' , (req ,res) => {
-         if(req.isAuthenticated()) {
-            var email = req.user.email
-            var nickname = req.body.nickname || "";
-            var code = req.body.code || "";
-
-            if(!nickname) {
-                nickname = req.user.nickname;
-            }
-            if(!code) {
-                code = req.user.code;
-            }
-
-            var output = {};
-            output['error'] = true;
-            D_Mongoose.userInfoUpdate(email , nickname , code).then(
-                user => { 
-                    if(user != null) {
-                        req.session.passport.user = user;
-                        output['error'] = false;
-                        res.send(JSON.stringify(output));
-                    }
-                    else {
-                        res.send(JSON.stringify(output));
-                    }
-                }
-            );
-        }
-        else {
-            res.end();
-        }
-    });
-
-    app.post('/userwithdrawal' , (req ,res) => {
-        if(req.isAuthenticated()) {
-            var email = req.user.email;
-            D_Mongoose.userDelete(email).then(
-                (returnValue) => 
-                {
-                    var output = {};
-                    output['error'] = returnValue;
-                    res.send(JSON.stringify(output));
-                }
-            );
-        }
-        else {
-            res.end();
-        }
-    });
-    //========================================================================================================================================//
-
-
-    //========================================================================================================================================//
-    //파일 리스트 요청(WEB 이외)
-    app.post('/filelist'  ,(req , res) => {
-        if(req.isAuthenticated()) {
-            var email = req.user.email;
-            var path = req.body.path || '';
-
-            D_file.getList(D_PATH["DOWNLOAD"] + '/' + email + path).then(
-                (returnValue) => 
-                {
-                    var output = {};
-                    output['error'] = returnValue == null ? true : false;
-                    output['files'] = returnValue;
-                    output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
-                    res.send(JSON.stringify(output));
-                }
-            );
-        }
-        else {
-            var output = {};
-            output['error'] = true;
-            res.send(JSON.stringify(output));
-        }
-    });
-
-    //파일 프레임 페이지
-    app.get('/fileframe' , (req , res) => {
-        if(req.isAuthenticated) {
-            var email = req.user.email;
-            // var email = 'toyyj15@naver.com';
-            var path = decodeURIComponent(req.query.path);
-            if(path == "undefined") {
-                path = '';
-            }
-            var listtype = req.query.listtype || '';
-
-            D_file.getList(D_PATH["DOWNLOAD"] + '/' + email + path).then(
-                (returnValue) => 
-                {   
-                    if(returnValue != null) {
-                        var output = {};
-                        output['data'] = JSON.stringify(returnValue);
-                        output['path'] = path;
-                        output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
-                        output['listtype'] = listtype;
-                        res.render('fileframe.ejs' , output);
-                    }
-                }
-            );
-        }
-    });
+    var router = require('express').Router();
 
     //파일 페이지
-    app.get('/cloud'  ,  (req , res)=> {
+    router.get('/'  ,  (req , res)=> {
         if(req.isAuthenticated()) {
 
             var email = req.user.email;
@@ -195,6 +40,60 @@ module.exports = function(app) {
         }
     });
 
+    
+    //파일 리스트 요청(WEB 이외)
+    router.post('/filelist'  ,(req , res) => {
+        if(req.isAuthenticated()) {
+            var email = req.user.email;
+            var path = req.body.path || '';
+
+            D_file.getList(D_PATH["DOWNLOAD"] + '/' + email + path).then(
+                (returnValue) => 
+                {
+                    var output = {};
+                    output['error'] = returnValue == null ? true : false;
+                    output['files'] = returnValue;
+                    output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
+                    res.send(JSON.stringify(output));
+                }
+            );
+        }
+        else {
+            var output = {};
+            output['error'] = true;
+            res.send(JSON.stringify(output));
+        }
+    });
+
+    //파일 프레임 페이지
+    router.get('/fileframe' , (req , res) => {
+        if(req.isAuthenticated) {
+            var email = req.user.email;
+            // var email = 'toyyj15@naver.com';
+            var path = decodeURIComponent(req.query.path);
+            if(path == "undefined") {
+                path = '';
+            }
+            var listtype = req.query.listtype || '';
+
+            D_file.getList(D_PATH["DOWNLOAD"] + '/' + email + path).then(
+                (returnValue) => 
+                {   
+                    if(returnValue != null) {
+                        var output = {};
+                        output['data'] = JSON.stringify(returnValue);
+                        output['path'] = path;
+                        output['used_storage'] = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
+                        output['listtype'] = listtype;
+                        res.render('fileframe.ejs' , output);
+                    }
+                }
+            );
+        }
+    });
+
+    
+
     //업로드 미들웨어 설정
     var upload = multer({
         storage : multer.diskStorage({
@@ -209,7 +108,7 @@ module.exports = function(app) {
 
     
     //파일 업로드 요청
-    app.post('/upload' , (req , res)=> {
+    router.post('/upload' , (req , res)=> {
         if(req.isAuthenticated()) {
 
             var path = '';
@@ -311,7 +210,7 @@ module.exports = function(app) {
 
 
     //파일다운로드 처리
-    app.post('/download/' , (req , res) => {
+    router.post('/download/' , (req , res) => {
         if(req.isAuthenticated()) {
 
             var email =  req.user.email;
@@ -367,7 +266,7 @@ module.exports = function(app) {
     });
 
     //폴더 만들기
-    app.post('/mkdir' , (req, res)=> {
+    router.post('/mkdir' , (req, res)=> {
         
         if(req.isAuthenticated()) {
             var email = req.user.email;
@@ -407,7 +306,7 @@ module.exports = function(app) {
 
 
 
-    app.post('/delete' , (req ,res) => {
+    router.post('/delete' , (req ,res) => {
         if(req.isAuthenticated()) {
             var email = req.user.email;
             var deletePath = req.body.daletePath || "";
@@ -475,7 +374,7 @@ module.exports = function(app) {
 
     //========================================================================================================================================//
     //유저관리 페이지
-    app.get('/master' , (req , res) => {
+    router.get('/master' , (req , res) => {
         if(req.isAuthenticated() && req.user.grade == 'master') {
             D_Mongoose.getAllUserData().then(
                 (returnValue) => {
@@ -489,7 +388,7 @@ module.exports = function(app) {
     })
 
     //유저 정보 변경
-    app.post('/userUpdate' , (req , res) => {
+    router.post('/userUpdate' , (req , res) => {
         if(req.isAuthenticated() && req.user.grade == 'master') {
             var INPUT_DATA = req.body;
             var email = INPUT_DATA['email'];
@@ -515,7 +414,7 @@ module.exports = function(app) {
     });
 
     //유저 정보 삭제
-    app.post('/userDelete' , (req ,res) => {
+    router.post('/userDelete' , (req ,res) => {
         if(req.isAuthenticated() && req.user.grade == 'master') {
             var INPUT_DATA = req.body;
             var email = INPUT_DATA['email'];
@@ -539,37 +438,5 @@ module.exports = function(app) {
     });
     //========================================================================================================================================//
 
-
-
-
-    //========================================================================================================================================//
-    app.post('/logout' , (req , res) => {
-        var output  = {};
-        output['error'] = true;
-        if(req.isAuthenticated()) {
-            output['error'] = false
-            req.logout();
-        }
-        res.send(JSON.stringify(output));
-    });
-    //========================================================================================================================================//
-
-
-
-    //========================================================================================================================================//
-    app.get('/logoHorizonImage' , (req ,res) => {
-        require('fs').readFile('./views/daljin_logo_horizon.png' , (error , data) => {
-            res.writeHead(200 , {'Content-Type' : 'text/html'});
-            res.end(data);
-        });
-    });
-
-    app.get('/naverloginImage' , (req ,res) => {
-        require('fs').readFile('./views/naverloginbutton.png' , (error , data) => {
-            res.writeHead(200 , {'Content-Type' : 'text/html'});
-            res.end(data);
-        });
-    });
-
+    return router;
 }
-    //========================================================================================================================================//

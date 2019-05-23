@@ -7,7 +7,9 @@ var express = require('express')
     , cookieParser = require('cookie-parser')
     , cors = require('cors');
 
-var D_route = require('./D_route')
+var D_route = require('./route/D_route')
+    ,D_cloudroute = require('./route/D_cloudroute')
+    ,D_calenderroute = require('./route/D_calenderroute')
     , D_mongoose = require('./D_database').D_Mongoose
     , D_passport = require('./D_passport')
     , D_setting = require('./D_setting');
@@ -52,6 +54,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/' , D_route(app));
+app.use('/cloud' , D_cloudroute(app));
+app.use('/calender' ,D_calenderroute(app));
 D_route(app);
 
 

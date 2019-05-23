@@ -25,7 +25,7 @@ $(document).ready(function () {
         output['type'] = items[pos].type;
         output['path'] = path
         //jQuery.fileDownload.js plugin 사용
-        $.fileDownload('/download', { 
+        $.fileDownload('/cloud/download', { 
                 httpMethod: "POST", 
                 data: output,
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
         output["deleteList"] = JSON.stringify(JSON_items);
 
         $.ajax({
-                url : "/delete",
+                url : "/cloud/delete",
                 type : "POST",
                 data : JSON.stringify(output),
                 contentType : "application/json",
@@ -122,7 +122,7 @@ $(document).ready(function () {
         output['mkdirName'] = dir_name;
         output['mkdirPath'] = path;
         $.ajax({
-                url : "/mkdir",
+                url : "/cloud/mkdir",
                 type : "POST",
                 data : JSON.stringify(output),
                 contentType : "application/json",
@@ -212,7 +212,7 @@ $(document).ready(function () {
         formData.append("files" , uploadQueue.dequeue());
 
         $.ajax({
-            url : "/upload",
+            url : "/cloud/upload",
             type : "POST",
             enctype: 'multipart/form-data',
             data : formData,
@@ -271,7 +271,7 @@ $(document).ready(function () {
     //     }
         
     //     $.ajax({
-    //             url : "/upload",
+    //             url : "/cloud/upload",
     //             type : "POST",
     //             enctype: 'multipart/form-data',
     //             data : formData,
@@ -315,7 +315,7 @@ var showfileframe = function() {
     if(arguments[0]) {
         listtype = arguments[0];
     }
-    $('#fileframe').attr('src' , "/fileframe?path=" + path + "&listtype=" + listtype);
+    $('#fileframe').attr('src' , "/cloud/fileframe?path=" + path + "&listtype=" + listtype);
 }
 
 function fileframeSendPostMsg() {
