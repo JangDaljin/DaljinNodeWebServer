@@ -65,6 +65,11 @@ header > .container > button {
     #naver_img_2 {
         display: none;
     }
+
+    
+    .d-btn-logout span {
+        display: inline;
+    }
 }
 
 @media screen and (max-width : 768px) {
@@ -74,6 +79,10 @@ header > .container > button {
 
     #naver_img_2 {
         display: block;
+    }
+
+    .d-btn-logout span {
+        display: none;
     }
 }
 
@@ -192,14 +201,6 @@ header > .container > button {
 main {
     box-sizing: border-box;
     height: calc(100% - 13.5em);
-}
-
-@media screen and (min-width : 769px) {
-
-}
-
-@media screen and (max-width : 768px) {
-
 }
 
 footer {
