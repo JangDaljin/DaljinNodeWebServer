@@ -15,12 +15,6 @@ module.exports = function(app) {
             var code = req.user.code;
             var grade = req.user.grade;
             var max_storage = req.user.max_storage;
-
-            // var email = 'toyyj15@naver.com';
-            // var nickname = 'daljin';
-            // var code = '1111';
-            // var grade = 'normal';
-            // var max_storage = 1024*1024*1024*100;
             
             if(code == "0000" || grade == "anonymous" || max_storage == 0) {
                 res.render('code.ejs');

@@ -227,8 +227,3 @@ footer > .container::after {
     display: table;
     clear: both;
 }
-
-
-.container {
-    margin : 0 , auto;
-}

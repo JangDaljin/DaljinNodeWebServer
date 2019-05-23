@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<head>
+    <% include ./setting.ejs %>
+    <link rel="stylesheet" href ="/styles/daljincalender.css">
+    <script src="/scripts/daljincalender.js"></script>
+</head>
+
+
+<body>
+
+    <% include ./header %>
+    <% include ./linknav %>
+
+    <main data-role="main">
+
+
+    <div class="content-left">
+        <div>
+            <div class="year"><span>2019</span></div>
+            <div class="month"><span>05</span></div>
+        </div>
+        <div class="calender premonth"></div>
+        <div class="calender postmonth"></div>
+    </div>
+
+    <div class="content-right">
+        <div class="calender inmonth">
+            
+        </div>
+    </div>
+
+    </main>
+    <% include ./footer %>
+
+</body>
+</html>
