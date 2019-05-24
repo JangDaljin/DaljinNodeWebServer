@@ -1,44 +1,142 @@
 $(document).ready(function () {
-    
     var date = new Date();
 
     var year = date.getFullYear()
-    var month = date.getMonth()
+    var month = date.getMonth()+1
+    showAllCalender(year , month);
 
-    showTitle($('.in-calender') , year , month +1);
-    showCalender($('.in-month-calender') , year , month+1);
+
+    //년도 바꾸기
+    $('#in-year').click(function (e) {
+        $('#in-year').hide();
+        $('#in-year-input').show();
+        $('#in-year-input').focus();
+    });
+
+    $('#in-year-input').keyup(function (e) { 
+        //글자수 4개까지 인정
+        if($(this).val().length > 4) {
+            $(this).val($(this).val().substring(0,4));
+         }
+
+        if(e.keyCode == 13) {
+
+            var inputtext = $(this).val()
+
+            if(inputtext.length != 0 && parseInt(inputtext) >= 0 && parseInt(inputtext) <= 9999) {
+                showAllCalender(parseInt($('#in-year-input').val()) , parseInt($('#in-month').text()));
+            }
+            $('#in-year').show();
+            $('#in-year-input').hide();
+            $('#in-year-input').val('');
+        }
+    });
+
+    $('#in-year-input').blur(function (e) {
+        $('#in-year').show();
+        $('#in-year-input').hide();
+        $('#in-year-input').val('');
+    });
+
+
+    //월 바꾸기
+    $('#in-month').click(function (e) {
+        $('#in-month').hide();
+        $('#in-month-input').show();
+        $('#in-month-input').focus();
+    });
+
+    $('#in-month-input').blur(function (e) {
+        $('#in-month').show();
+        $('#in-month-input').hide();
+        $('#in-month-input').val('');
+    });
+
+    $('#in-month-input').keyup(function (e) { 
+        //글자수 2개까지 인정
+        if($(this).val().length > 2) {
+           $(this).val($(this).val().substring(0,2));
+        }
+
+
+        if(e.keyCode == 13) {
+
+            var inputtext = $(this).val()
+
+            if(inputtext.length != 0 && parseInt(inputtext) >= 1 && parseInt(inputtext) <= 12) {
+                showAllCalender(parseInt($('#in-year').text()) , parseInt($('#in-month-input').val()));
+            }
+
+            $('#in-month').show();
+            $('#in-month-input').hide();
+            $('#in-month-input').val('');
+        }
+    });
+
+
+    //td 클릭
+    $('td').click(function(e) {
+        $('.modal-background').css('display' , 'flex');
+    });
+
+    //메모 종료
+    $('#exit').click(function (e) {
+        $('.modal-background').hide();
+    });
+
+    //메모 저장
+    $('#save').click(function (e) {
+        
+    });
     
-
-
-    if(month == 0) {
-        showTitle($('.pre-calender') , year-1 , 1);
-        showCalender($('.pre-month-calender') , year-1 , 1);
-    }
-    else {
-        showTitle($('.pre-calender') , year , month);
-        showCalender($('.pre-month-calender') , year , month);
-    }
-
-    if(month == 11) {
-        showTitle($('.post-calender') , year+1 , month1);
-        showCalender($('.post-month-calender') , year+1 , 1);
-    }
-    else {
-        showTitle($('.post-calender') , year , month+2);
-        showCalender($('.post-month-calender') , year , month+2);
-    }
+    
 });
 
 var day31Month = new Array(1 , 3 , 5 , 7 , 8 , 10 , 12);
 var day30Month = new Array(4, 6 , 9 ,11);
 
 
+
+var showAllCalender = function(year , month) {
+
+    //지난달
+    if(month == 1) {
+        showTitle($('.pre-calender') , year-1 , 12);
+        showCalender($('.pre-month-calender') , year-1 , 12);
+    }
+    else {
+        showTitle($('.pre-calender') , year , month-1);
+        showCalender($('.pre-month-calender') , year , month-1);
+    }
+
+    //이번달
+    showTitle($('.in-calender') , year , month);
+    showCalender($('.in-month-calender') , year , month);
+
+
+    //다음달
+    if(month == 12) {
+        showTitle($('.post-calender') , year+1 , 1);
+        showCalender($('.post-month-calender') , year+1 , 1);
+    }
+    else {
+        showTitle($('.post-calender') , year , month+1);
+        showCalender($('.post-month-calender') , year , month+1);
+    }
+}
+
 var showTitle = function(elem , year , month) {
     elem.children('.year').children('span').html(year);
-    elem.children('.month').children('span').html(month);
+    elem.children('.month').children('span').html(month);   
 }
 
 var showCalender = function(elem, year , month) {
+
+
+
+
+
+
     var date = new Date(year + '-' + month + '-1');
     var offsetDay = date.getDay();
     var max_day = 0;
@@ -59,7 +157,7 @@ var showCalender = function(elem, year , month) {
         }
     }
     else {
-        alert('error');
+        alert('year = ' + year + '\n' + 'month = ' + month);
     }
 
     var tr_cnt = 0;
@@ -94,7 +192,6 @@ var showCalender = function(elem, year , month) {
         res += '<div class="calender-content"><div>';
         res += "</td>";
         tr_cnt++;
-
         if(tr_cnt == 7) {
             res += "</tr>";
             tr_cnt = 0;
@@ -112,8 +209,4 @@ var showCalender = function(elem, year , month) {
 
 
     elem.html(res);
-
-
-
-
 }

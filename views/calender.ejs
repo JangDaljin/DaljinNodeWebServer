@@ -18,24 +18,27 @@
     <div class="content-left">
         <div class="in-calender">
             <div class="in-calender-year year">
-            <span></span>
+                <span id="in-year"></span>
+                <input id="in-year-input" type="text" value="">
             </div>
+
             <div class="in-calender-month month">
-            <span></span>
+                <span id="in-month"></span>
+                <input id="in-month-input" type="text" value="">
             </div>
         </div>
 
 
         <div class="side-calender-container">
             <div class="side-calender pre-calender">
-                <div class="side-calender-year pre-calender-year year"></div>
-                <div class="side-calender-month pre-calender-month month"></div>
+                <div class="side-calender-year pre-calender-year year"><span></span></div>
+                <div class="side-calender-month pre-calender-month month"><span></span></div>
                 <div class="calender pre-month-calender"></div>
             </div>
 
             <div class="side-calender post-calender">
-                <div class="side-calender-year post-calender-year year"></div>
-                <div class="side-calender-month post-calender-month month"></div>
+                <div class="side-calender-year post-calender-year year"><span></span></div>
+                <div class="side-calender-month post-calender-month month"><span></span></div>
                 <div class="calender post-month-calender"></div>
             </div>
         </div>
@@ -50,6 +53,38 @@
 
     </main>
     <% include ./footer %>
+
+
+    <div class="modal-background">
+
+        <div class="modal-main">
+            <div class="modal-title">
+                <div class="modal-title-message"><i class="fas fa-sticky-note"></i>&nbsp;메모</div>
+                <div class="modal-toolbox">
+                <span id="save"><i class="far fa-save fa-2x"></i></span>
+                &nbsp;&nbsp;
+                <span id="exit"><i class="fas fa-times fa-2x"></i></span>
+                </div>
+            </div>
+            <hr>
+            <ul>
+                <li class="modal-content-title">
+                    <div class="left">제목</div>
+                    <div class="right"><input id="content-title" type="text"></div>
+                </li>
+
+                <li class="modal-content-date">
+                    <div class="left">날짜</div>
+                    <div class="right"><input id="content-date" type="text"></div>
+                </li>
+
+                <li class="modal-content">
+                    <div class="left">내용</div>
+                    <div class="right"><textarea row="" col="" id="content"></textarea></div>
+                </li>
+            </ul>
+        </div>
+    </div>
 
 </body>
 </html>

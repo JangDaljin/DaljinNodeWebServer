@@ -10,12 +10,24 @@
 
     .content-right {
         width: 70% !important;
+        min-height: 0 !important;
     }
 
     .side-calender-container {
         display: none;
     }
+
+    td .calender-date{
+        text-align: center;
+    }
+
+    td .calender-content {
+        display: none;
+    }
+
 }
+
+
 
 
 .content-left {
@@ -27,6 +39,10 @@
     min-height: 700px;
 }
 
+main {
+    overflow: auto;
+}
+
 .content-left::after {
     content: '';
     display: table;
@@ -35,7 +51,6 @@
 
 .in-calender {
     width: 100%;
-    height: 30%;
 }
 
 .in-calender-year {
@@ -45,17 +60,34 @@
     font-size: 3em;
     font-weight: 600;
     font-family: 'Orbitron', sans-serif;
-    height: 40%;
+    
+}
+
+.in-calender span {
+    cursor: pointer;
+}
+
+.in-calender-year input[type=text] {
+    display: none;
+    font: inherit;
+    width: 4em;
+    text-align: center;
 }
 
 .in-calender-month {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     font-family: 'Orbitron', sans-serif;
     font-weight: 800;
-    font-size: 6em;
-    height: 40%;
+    font-size: 5em;
+}
+
+.in-calender-month input[type=text] {
+    display: none;
+    font: inherit;
+    width: 2em;
+    text-align: center;
 }
 
 .content-right {
@@ -63,6 +95,7 @@
     float: right;
     width: 80%;
     height: 100%;
+    min-height: 700px;
 }
 
 .content-right::after {
@@ -134,7 +167,7 @@ table {
 }
 
 th {
-    border : 1px solid black;
+    border : 1px solid #283B42;
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 0.8em;
     border-radius: 10px;
@@ -149,13 +182,19 @@ td {
     border-left: 1px;
     border-right: 1px;
     border-bottom: 1px;
-    border-color: black;
+    border-color: #283B42;
     border-style: dashed;
     position: relative;
     border-radius: 10px;
     padding: 0;
     margin: 0;
     min-height: 0;
+}
+
+td:hover {
+    cursor: pointer;
+    background: #D1DDDB;
+    border-style: solid;
 }
 
 .calender-date {
@@ -170,8 +209,174 @@ td {
     font-size: 0.5em;
 }
 
+.calender-content-on {
+    display: none;
+}
+
+.calender-content-off {
+    visibility: hidden;
+    display: none;
+}
+
 
 .side-calender td {
     text-align: center;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/********** MODAL **********/
+.modal-background {
+    display: none;
+    background : rgba(33 , 33 , 33 , 0.5);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.modal-main {
+    color: #283B42;
+    width: 30em;
+    height: 30em;
+    background: #D1DDDB;
+    padding: .5em 1em 1em 1em;
+    box-shadow: .8em .8em 0.5em #222;
+    border-radius: 1em;
+    border : 4px solid #283B42;
+}
+
+.modal-title {
+    height: 10%;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 1.6em;
+    font-weight: 600;
+}
+
+.modal-title-message {
+    float: left;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.modal-title-message::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.modal-toolbox {
+    float: right;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.modal-main ul {
+    display: block;
+    height: 88%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 1.5em;
+    list-style: none;
+}
+
+.modal-content-title {
+    height: 10%;
+    border-top: 1px solid #283B42;
+}
+
+.modal-content-date {
+    height: 10%;
+}
+
+.modal-content {
+    height: 80%;
+}
+
+
+.modal-main .left {
+    float: left;
+    display: flex;
+    width: 20%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    border-right: 4px double #283B42;
+    border-bottom: 1px solid #283B42;
+    box-sizing: border-box;
+    border-collapse: collapse;
+}
+
+
+.modal-main .left::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.modal-main .right {
+    float : right;
+    width: 80%;
+    height: 100%;
+}
+
+.modal-main .right::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.modal-main .right input[type=text] {
+    width: 100%;
+    height: 100%;
+    font: inherit;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #283B42;
+    border-top: none;
+    outline: none;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.modal-main .right textarea {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    font: inherit;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #283B42;
+    outline: none;
+}
+
+
+
+
+
+/********** MODAL **********/s

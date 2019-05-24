@@ -31,6 +31,7 @@ D_Mongoose.connect = (expressApp) => {
             for(var i = 0 ; i < results.length; i++) {
                 try {
                     fs.mkdirSync(D_PATH["DOWNLOAD"] + '/' + results[i]._doc.email);
+                    fs.mkdirSync(D_PATH["MEMO"] + '/' + results[i]._doc.email);
                 }
                 catch (e) {
                     console.log("[" + results[i]._doc.email + "] FOLDER ALREADY EXIST");
