@@ -25,6 +25,10 @@
         display: none;
     }
 
+    .in-month-calender .content-on {
+        background: #85B8CB;
+    }
+
 }
 
 
@@ -40,6 +44,7 @@
 }
 
 main {
+    color: #283B42;
     overflow: auto;
 }
 
@@ -66,6 +71,12 @@ main {
 .in-calender span {
     cursor: pointer;
 }
+
+td {
+    width: calc(100%/7);
+    padding: 0;
+}
+
 
 .in-calender-year input[type=text] {
     display: none;
@@ -123,6 +134,14 @@ main {
     text-align: center;
 }
 
+.side-calender .calender-content {
+    display: none;
+}
+
+.side-calender .content-on {
+    background-color:#85B8CB;
+}
+
 .side-calender-year {
     display: inline-block;
     font-family: 'Orbitron', sans-serif;
@@ -136,11 +155,11 @@ main {
 }
 
 .sat {
-    color: blue;
+    color: #1D6A96;
 }
 
 .sun {
-    color: red;
+    color: #ff6347  ;
 }
 
 .not-use {

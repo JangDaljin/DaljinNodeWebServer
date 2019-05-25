@@ -12,6 +12,8 @@ var PATH =
     'UPLOAD'    : '../uploads'
     ,
     'TRASH_BIN' : '../trash_bin'
+    ,
+    'MEMO' : '../calender'
 };
 
 var DB_SETTING = 

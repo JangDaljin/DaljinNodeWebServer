@@ -149,3 +149,74 @@ Queue.prototype.clear = function(){
         this.dats = [];
 }
 
+var YYYYMMDD = function(_year , _month , _date , split) {
+        var year = parseInt(_year);
+        var month = parseInt(_month);
+        var date = parseInt(_date);
+
+        if(year == "NaN" || month == "NaN" || date == "NaN") {
+                return null;
+        }
+
+        var res = "";
+
+        //year
+        if(year >= 0 && year < 10) {
+                res += "000";
+        }
+        else if(year >= 10 && year < 100) {
+                res += '00';
+        }
+        else if(year >= 100 && year < 1000) {
+                res += '0';
+        }
+        else if(year >= 1000 && year < 10000) {
+                
+        }
+        else {
+                return null;
+        }
+        res += year;
+
+        //split
+        if(split) {
+                res += split;
+        }
+
+        //month
+        if(month < 10) {
+                res += '0';
+        }
+        else if(month > 12 || month < 1) {
+                return null;
+        }
+        res += month;
+
+        //solit
+        if(split) {
+                res += split;
+        }
+
+        //date
+        if(date < 10 && date > 0) {
+                res += '0';
+        }
+        else if(date > 28 && month == 2) {
+                //윤년
+                if(date == 29 && year % 4 == 0 && ( !(year % 100 == 0) || year % 400 == 0)) {
+                        // true
+                }
+                else {
+                        return null;
+                }
+        }
+        else if(date == 31 && (month == 4 || month == 6 || month == 9 || month == 11)){
+                return null;
+        }
+        else if(date > 31) {
+                return null;
+        }
+
+        res += date;
+        return res;
+}
