@@ -126,6 +126,21 @@ $(document).ready(function () {
             }
         });
     });
+
+    //팝업 제목 50글자 제한
+    $('#content-title').on('keyup' , function(e) {
+        if($(this).val().length > 50) {
+            $(this).val($(this).val().substring(0,50))
+        }
+    });
+
+
+    //팝업 내용 500글자 제한
+    $('#content').on('keyup' , function(e) {
+        if($(this).val().length > 500) {
+            $(this).val($(this).val().substring(0,500))
+        }
+    });
     
     
 });

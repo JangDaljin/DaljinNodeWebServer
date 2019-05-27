@@ -220,3 +220,14 @@ var YYYYMMDD = function(_year , _month , _date , split) {
         res += date;
         return res;
 }
+
+var getByteLength = function(str) {
+
+        if(typeof(str) != "string") {
+                return null;
+        }
+
+        var b,i,c = null;
+        for(b=i=0; c=str.charCodeAt(i++); b+=c>>15?4:c>>11?3:c>>7?2:1);
+        return b;
+}
