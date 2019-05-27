@@ -1,7 +1,7 @@
 $(document).ready(function () {
         //session check
         $.ajax({
-                url : "/sessioncheck?history="+window.location.href,
+                url : "/sessioncheck",
                 type : "GET",
                 data : {},
                 contentType : "application/json",

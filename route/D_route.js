@@ -45,6 +45,7 @@ module.exports = function(app) {
     //세션 체크
     app.get('/sessioncheck' , (req ,res) => {
         var output = {};
+        output['result'] = false;
         if(req.isAuthenticated()) {
             output['result'] = true;
             output['email'] = req.user.email;
@@ -52,9 +53,6 @@ module.exports = function(app) {
             output['code'] = req.user.code;
             output['grade'] = req.user.grade;
             output['max_storage'] = req.user.max_storage;
-        }
-        else {
-            output['result'] = false;
         }
         res.send(JSON.stringify(output));
     });
