@@ -26,6 +26,11 @@ $(document).ready(function () {
                 }
         });
 
+        //NAVER LOGIN
+        $('#naver_login').click(function (e) {
+                window.location.href = "naverlogin?history=" + window.location.pathname;
+        });
+
         //LOGOUT
         $('#btn_logout').click(function (e) {
                 $.ajax({
