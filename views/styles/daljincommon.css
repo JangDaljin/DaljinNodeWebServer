@@ -46,6 +46,7 @@ header > .container > button {
     height:4em;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .naver_login::after {
