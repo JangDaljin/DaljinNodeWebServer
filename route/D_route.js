@@ -21,6 +21,7 @@ module.exports = function(app) {
     app.get('/navercallback' , passport.authenticate('naver' , { 
         failureRedirect : '/'
     }) , (req , res) => {
+        console.log("req.query.history = " + req.query.history);
         var history = encodeURIComponent(req.query.history) || "";
         if(history == null || history == "undefined") {
             history = '/';
