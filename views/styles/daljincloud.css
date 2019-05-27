@@ -22,7 +22,7 @@
     top: .5em;
     bottom: .5em;
     width: var(--width);
-    min-width: 12em;
+    min-width: 8em;
     max-width: calc(100% - 3em);
     background-color: #1D6A96;
     border-radius: 0.5em;
