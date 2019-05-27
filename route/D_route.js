@@ -19,15 +19,8 @@ module.exports = function(app) {
     //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
     app.get('/navercallback' , passport.authenticate('naver' , { 
-        failureRedirect : '/'
-    }) , (req , res) => {
-        console.log("req.query.history = " + req.query.history);
-        var history = encodeURIComponent(req.query.history) || "";
-        if(history == null || history == "undefined") {
-            history = '/';
-        }
-        res.redirect(history);
-    });
+        successRedirect : '/' , failureRedirect : '/'
+    }));
     app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
             var output = {};
             output['result'] = false
