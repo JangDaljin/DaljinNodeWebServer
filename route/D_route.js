@@ -22,7 +22,7 @@ module.exports = function(app) {
         failureRedirect : '/'
     }) , (req , res) => {
         var history = encodeURIComponent(req.query.history) || "";
-        if(!history) {
+        if(history == null || history == "undefined") {
             history = '/';
         }
         res.redirect(history);
