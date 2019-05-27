@@ -55,6 +55,8 @@ $(document).ready(function () {
                         }
                 });
         });
+
+        
 });
 
 var getVolumeSize = function(_size , deter) {
@@ -96,28 +98,6 @@ var getVolumeSize = function(_size , deter) {
                 }
         }                                             
 };
-
-
-
-$(document).ready(function () {
-        var dropZone = $('#d_div');
-
-        dropZone.on('dragover' , function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                $(this).css('border' , '3px dashed blue');
-        });
-        dropZone.on('dragleave' , function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                $(this).css('border' , '3px dashed black');
-        });
-        dropZone.on('drop' , function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                console.dir(e.originalEvent.dataTransfer.files);
-        });
-});
 
 function Queue(){
         this.datas = [];

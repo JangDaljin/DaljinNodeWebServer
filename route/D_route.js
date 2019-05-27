@@ -18,7 +18,11 @@ module.exports = function(app) {
 
     //네이버로그인
     app.get('/naverlogin' , passport.authenticate('naver'));
-    app.get('/navercallback' , passport.authenticate('naver'));
+    app.get('/navercallback' , passport.authenticate('naver',{
+        successRedirect : '/'
+        ,
+        failureRedirect : '/'
+    }));
     app.get('/navertokenlogin' , passport.authenticate('naver-token' , null) , (req , res) => {
             var output = {};
             output['result'] = false

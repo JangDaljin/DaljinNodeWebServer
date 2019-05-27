@@ -18,7 +18,29 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <!-- DALJIN -->
-
 <link rel="stylesheet" href="/styles/daljincommon.css">
 <script src="/scripts/daljincommon.js"></script>
 
+<script>
+    var agent = navigator.userAgent.toLowerCase();
+    var name = navigator.appName;
+    var browser = null;
+    if(name == 'Microsoft Internet Explorer' || agent.indexOf('trident') > -1 || agent.indexOf('edge/') > -1) {
+            browser = 'ie';
+            if(name === 'Microsoft Internet Explorer') { // IE old version (IE 10 or Lower)
+                    agent = /msie ([0-9]{1,}[\.0-9]{0,})/.exec(agent);
+                    browser += parseInt(agent[1]);
+            } 
+            else { // IE 11+
+                    if(agent.indexOf('trident') > -1) { // IE 11 
+                            browser += 11;
+                    }
+                    else if(agent.indexOf('edge/') > -1) { // Edge
+                            browser = 'edge';
+                    }
+            }
+    }
+    if(browser != null) {
+        alert("이 사이트는 Chrome에 중점을 두고 제작되었습니다.");
+    }
+</script>

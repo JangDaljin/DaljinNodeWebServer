@@ -142,7 +142,6 @@ $(document).ready(function () {
         });
     });
 
-
     $('#dropzone').on('dragover' , function(e){ 
         e.stopPropagation();
         e.preventDefault();
