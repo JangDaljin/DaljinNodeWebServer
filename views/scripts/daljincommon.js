@@ -1,3 +1,4 @@
+var isLogin = false;
 $(document).ready(function () {
         //session check
         $.ajax({
@@ -13,22 +14,19 @@ $(document).ready(function () {
                         if(inputdata['result']) {
                                 $('.naver_login').hide();
                                 $('#btn_logout').css('display' , 'flex');
+                                isLogin = true;
                         }
                         
                         else {
                                 $('.naver_login').css('display' , 'flex');
                                 $('#btn_logout').hide();
+                                isLogin = false;
                         }
                                 
                 },
                 error : function () {
                         
                 }
-        });
-
-        //NAVER LOGIN
-        $('.naver_login').click(function (e) {
-                
         });
 
         //LOGOUT
@@ -47,6 +45,7 @@ $(document).ready(function () {
                                         alert("로그아웃 실패");
                                 }
                                 else {
+                                        isLogin = false;
                                         window.location.href="/";
                                 }
                         },

@@ -147,8 +147,12 @@ $(document).ready(function () {
 
 //td 클릭
 var tdclick = function(item , year , month , date) {
-    $('.modal-background').css('display' , 'flex');
+    if(!isLogin) {
+        alert('로그인을 먼저 해주세요');
+        return;
+    }
 
+    $('.modal-background').css('display' , 'flex');
     var yyyymmdd = YYYYMMDD(year,month,date);
     if(MemoList[yyyymmdd]) {
         $('#content-title').val(MemoList[yyyymmdd].title);
