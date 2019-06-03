@@ -19,6 +19,7 @@
     "mongoose": "^5.4.19",
     "multer": "^1.4.1",
     "passport": "^0.4.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-naver": "^1.0.6",
     "passport-naver-token": "^1.0.2",

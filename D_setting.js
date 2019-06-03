@@ -1,8 +1,8 @@
 var SOCKET_SETTING = 
 {
-    'HOSTNAME' : '192.168.1.200'
+    'HOSTNAME' : 'localhost'
     ,
-    'PORT' : '80'
+    'PORT' : '8000'
 };
 
 var PATH = 
@@ -29,6 +29,18 @@ var OAUTH = {
         'CLIENT_SECRET' : 'vdwkDUS14Q'
         ,
         'CALLBACK' : 'http://daljin.dlinkddns.com/navercallback'
+    }
+
+    ,
+
+    'GOOGLE' :
+    {
+        
+        'CLIENT_ID' : '854819661421-b6ipmcvabufu3b99q6guj35pj56m323u.apps.googleusercontent.com'
+        ,
+        'CLIENT_SECRET' : 'E2uYmIU5USo8x_M9BwAhN3jz'
+        ,
+        'CALLBACK' : 'http://daljin.dlinkddns.com/googlecallback'
     }
 }
 

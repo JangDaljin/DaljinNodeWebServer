@@ -1,11 +1,14 @@
 var passport = require('passport');
 var NaverStrategy = require('passport-naver').Strategy;
 var NaverTokenStrategy = require('passport-naver-token').Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var D_PATH = require('./D_setting').PATH
 var OAUTH = require('./D_setting').OAUTH
 var D_file = require('./D_file');
 var request = require('request');
 
+
+//NAVER
 passport.use(new NaverStrategy({
     clientID : OAUTH.NAVER.CLIENT_ID
     ,
@@ -98,6 +101,17 @@ D_UserModel.findOne({'email':user_email} , (err,user) => {
         return done(null , user);
     }
 })};
+
+
+passport.use(new GoogleStrategy({
+    clientID : OAUTH.GOOGLE.CLIENT_ID,
+    clientSecret : OAUTH.GOOGLE.CLIENT_SECRET,
+    callbackURL : OAUTH.GOOGLE.CALLBACK
+} , (accessToken , refreshToken , profile , done) => {
+    console.dir(profile);
+    user = profile;
+    return done(null , user);
+}));
 
 passport.serializeUser(function(user, done) {
     done(null , user);
