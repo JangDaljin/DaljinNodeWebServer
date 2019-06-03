@@ -37,6 +37,18 @@ module.exports = function(app) {
             res.send(JSON.stringify(output));
     });
 
+    app.get('/googlelogin' , (req , res) => {
+
+    });
+
+    app.get('/googlecallback' , (req , res) => {
+
+    });
+
+    app.get('/googletokenlogin' , (req , res) => {
+
+    });
+
     //세션 체크
     app.get('/sessioncheck' , (req ,res) => {
         var output = {};

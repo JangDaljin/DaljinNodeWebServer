@@ -30,6 +30,18 @@ var OAUTH = {
         ,
         'CALLBACK' : 'http://daljin.dlinkddns.com/navercallback'
     }
+
+    ,
+
+    'GOOGLE' :
+    {
+        
+        'CLIENT_ID' : '854819661421-b6ipmcvabufu3b99q6guj35pj56m323u.apps.googleusercontent.com'
+        ,
+        'CLIENT_SECRET' : 'E2uYmIU5USo8x_M9BwAhN3jz'
+        ,
+        'CALLBACK' : 'http://daljin.dlinkddns.com/googlecallback'
+    }
 }
 
 var USER_SETTING = 
