@@ -109,14 +109,11 @@ module.exports = function(app) {
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
-            var path = '';
             var form = new(require('formidable')).IncomingForm();
             form.parse(req , (err , fields , files) => {
                 path = fields['path'];
-                console.log("uploadpath : " + path);
-            
+
                 var msg = "";
-                var files = null;
 
                 //progress stream을 거쳐 현재 퍼센트 제공
                 var input_file = upload.array('files');
