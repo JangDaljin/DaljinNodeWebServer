@@ -94,11 +94,12 @@ module.exports = function(app) {
             destination : (req , file , callback) => {
                 let email = req.user.email || '';
                 let path = req.body.path || '';
+                console.log(path);
 
                 callback(null , D_PATH["DOWNLOAD"] + '/' + email + path);
             },
             filename : (req , file , callback) => {
-                callback(null , decodeURIComponent(file.originalname) + '_' + req.user.email);
+                callback(null , decodeURIComponent(file.originalname));
             }
         })
     });
@@ -117,19 +118,8 @@ module.exports = function(app) {
 
             //progress stream을 거쳐 현재 퍼센트 제공
             var input_file = upload.array('files');
-            var progress = require('progress-stream')({
-                length:'0'
-            });
-            progress.user = req.user;
-
-            req.pipe(progress);
-            progress.headers = req.headers;
-            progress.on('progress' , (obj) => { 
-                if(obj.remaining == 0) {
-                    //res.end();
-                }
-            });
-
+            
+            
             //재귀함수로 파일 업로드
             var loopFunciton = (i) => {
                 if(files.length <= i) return true; 
@@ -137,17 +127,12 @@ module.exports = function(app) {
                 var res = true;
                 
                 if(used_storage + files[i].size <= max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , files[i].destination + '/' + decodeURIComponent(files[i].originalname)).then(
-                        (returnValue) => 
-                        {
-                            console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
-                            res = loopFunciton(i+1) && res;
-                        }
-                    );
+                    console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
+                    res = loopFunciton(i+1) && res;
                 }
                 else {
-                    if(D_file.removeFile(D_PATH["UPLOAD"] + '/' + files[i].filename) == false) {
-                        D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename , D_PATH['TRASH_BIN'] + '/' + files[i].filename);
+                    if(D_file.removeFile(files[i].destination+ '/' + files[i].filename) == false) {
+                        D_file.moveTo(files[i].destination + '/' + files[i].filename , D_PATH['TRASH_BIN'] + '/' + files[i].filename);
                         console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
                     }
                     console.log('[' + email + '] UPLOAD FAIL(FULL OVER STORAGE)');
