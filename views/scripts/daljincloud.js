@@ -230,6 +230,7 @@ $(document).ready(function () {
                         uploadSize = 0;
                         totalSize = 0;
                         isUploading = false;
+                        curFileLoaded = 0;
                         alert('업로드 완료');
                         showfileframe();
                     }
