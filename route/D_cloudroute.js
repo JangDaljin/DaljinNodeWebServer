@@ -105,90 +105,85 @@ module.exports = function(app) {
     router.post('/upload' , (req , res)=> {
         if(req.isAuthenticated()) {
 
-            
+            var path = req.body.path || '';
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
             var form = new(require('formidable')).IncomingForm();
+            // form.parse(req , (err , fields , files) => {
+            //     path = fields['path'];
+            // });
 
-            form.parse(req , (err , fields , files) => {
-                if(err) {
-                    console.log("ERROR");
+
+            var files = null;
+            var msg = "";
+
+            //progress stream을 거쳐 현재 퍼센트 제공
+            var input_file = upload.array('files');
+            var progress = require('progress-stream')({
+                length:'0'
+            });
+            progress.user = req.user;
+
+            req.pipe(progress);
+            progress.headers = req.headers;
+            progress.on('progress' , (obj) => { 
+                if(obj.remaining == 0) {
+                    //res.end();
                 }
+            });
 
+            //재귀함수로 파일 업로드
+            var loopFunciton = (i) => {
+                if(files.length <= i) return true; 
 
-                var path = fields['path'];
-                var msg = "";
-                console.log("path : " + path);
+                var res = true;
                 
-
-                //progress stream을 거쳐 현재 퍼센트 제공
-                var input_file = upload.array('files');
-                console.dir(input_file);
-                var progress = require('progress-stream')({
-                    length:'0'
-                });
-                progress.user = req.user;
-
-                req.pipe(progress);
-                progress.headers = req.headers;
-                progress.on('progress' , (obj) => { 
-                    if(obj.remaining == 0) {
-                        //res.end();
+                if(used_storage + files[i].size <= max_storage) {
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + path + '/' + decodeURIComponent(files[i].originalname)).then(
+                        (returnValue) => 
+                        {
+                            console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
+                            res = loopFunciton(i+1) && res;
+                        }
+                    );
+                }
+                else {
+                    if(D_file.removeFile(D_PATH["UPLOAD"] + '/' + files[i].filename) == false) {
+                        D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename , D_PATH['TRASH_BIN'] + '/' + files[i].filename);
+                        console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
                     }
-                });
+                    console.log('[' + email + '] UPLOAD FAIL(FULL OVER STORAGE)');
+                    msg += "용량초과[" + decodeURIComponent(files[i].originalname) + "]\n";
+                    res = false;
+                    res = loopFunciton(i+1) && res;
+                }
+                return res;
+            }
 
-                //재귀함수로 파일 업로드
-                var loopFunciton = (i) => {
-                    if(files.length <= i) return true; 
-
-                    var res = true;
-                    
-                    if(used_storage + files[i].size <= max_storage) {
-                        D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + path + '/' + decodeURIComponent(files[i].originalname)).then(
-                            (returnValue) => 
-                            {
-                                console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
-                                res = loopFunciton(i+1) && res;
-                            }
-                        );
+            //업로드 시작
+            input_file(progress , res , (err) => {
+                var output = {};
+                output["error"] = true;
+                output["msg"] = "";
+                files = progress.files;
+                if(err) {
+                    console.log('[' + email + '] UPLOAD ERROR');
+                }
+                else {    
+                    if(loopFunciton(0)) {
+                        output["error"] = false;
+                        msg = "업로드가 정상적으로 완료되었습니다.";
                     }
                     else {
-                        if(D_file.removeFile(D_PATH["UPLOAD"] + '/' + files[i].filename) == false) {
-                            D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename , D_PATH['TRASH_BIN'] + '/' + files[i].filename);
-                            console.log(files[i].filename + " CAN'T REMOVE THEN MOVED TRASH BIN");
-                        }
-                        console.log('[' + email + '] UPLOAD FAIL(FULL OVER STORAGE)');
-                        msg += "용량초과[" + decodeURIComponent(files[i].originalname) + "]\n";
-                        res = false;
-                        res = loopFunciton(i+1) && res;
+                        output["error"] = true;
+                        msg = msg.substring(0 , msg.length-1);
                     }
-                    return res;
+                    output["msg"] = msg;
+                    res.send(JSON.stringify(output));
                 }
-
-                //업로드 시작
-                input_file(progress , res , (err) => {
-                    var output = {};
-                    output["error"] = true;
-                    output["msg"] = "";
-                    files = progress.files;
-                    if(err) {
-                        console.log('[' + email + '] UPLOAD ERROR');
-                    }
-                    else {    
-                        if(loopFunciton(0)) {
-                            output["error"] = false;
-                            msg = "업로드가 정상적으로 완료되었습니다.";
-                        }
-                        else {
-                            output["error"] = true;
-                            msg = msg.substring(0 , msg.length-1);
-                        }
-                        output["msg"] = msg;
-                        res.send(JSON.stringify(output));
-                    }
-                });
             });
+            
         }
         else {
             res.end();
