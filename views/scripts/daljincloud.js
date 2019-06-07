@@ -185,7 +185,6 @@ $(document).ready(function () {
 
     
     var qUpload = function (files) {
-        console.dir(files);
         for(var i = 0 ; i < files.length; i++) {
             files[i].uploadpath = path;
             uploadQueue.enqueue(files[i]);
@@ -265,56 +264,6 @@ $(document).ready(function () {
             }
         });
     }
-
-
-    // var upload = function(files) {
-    //     $('#uploadprogressbar').show();
-
-
-    //     var formData = new FormData()
-    //     formData.append("n_upload_path" , path);
-    //     for(var i = 0; i < files.length; i++) {
-    //         formData.append('n_upload_files' , files[i]);
-    //     }
-        
-    //     $.ajax({
-    //             url : "/cloud/upload",
-    //             type : "POST",
-    //             enctype: 'multipart/form-data',
-    //             data : formData,
-    //             cache : false,
-    //             headers : {"cache-control" : "no-cache"},
-    //             processData : false,
-    //             contentType : false,
-    //             success : function(inputdata_str) {
-    //                     var inputdata = JSON.parse(inputdata_str);
-    //                     alert(inputdata.msg);
-
-    //                     showfileframe();
-    //                     $('#uploadprogressbar').hide();
-    //                     $('#uploadprogressbar')[0].style.setProperty('--width' , '0%');
-    //                     $('#uploadprogressbar').attr('data-label' , '0%');
-    //             },
-                
-    //             error : function () {
-    //                     alert('에러발생');
-    //             },
-    //             xhr: function(){
-    //                     var xhr = $.ajaxSettings.xhr() ;
-    //                     // 프로그래스 이벤트
-    //                     xhr.upload.onprogress = function(evt){ 
-    //                             $('#uploadprogressbar')[0].style.setProperty('--width' , parseInt(evt.loaded/evt.total*100) +'%');
-    //                             $('#uploadprogressbar').attr('data-label' , parseInt(evt.loaded/evt.total*100) +'%');
-    //                     } ;
-    //                     // 종료 이벤트
-    //                     xhr.upload.onload = function(){ 
-                                
-    //                     } ;
-    //                     // return the customized object
-    //                     return xhr ;
-    //             }
-    //     });
-    // }
 });
 
 

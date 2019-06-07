@@ -109,6 +109,7 @@ module.exports = function(app) {
             var form = new(require('formidable')).IncomingForm();
             form.parse(req , (err , fields , files) => {
                 path = fields['path'];
+                console.log("uploadpath : " + path);
             });
             var email = req.user.email;
             var max_storage = req.user.max_storage;
