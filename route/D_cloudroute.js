@@ -132,9 +132,6 @@ module.exports = function(app) {
 
             //재귀함수로 파일 업로드
             var loopFunciton = (i) => {
-
-                console.dir(files);
-                console.log('files[i].uploadpath : ' + files[i].uploadpath); 
                 if(files.length <= i) return true; 
 
                 var res = true;
