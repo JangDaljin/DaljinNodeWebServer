@@ -199,7 +199,7 @@ $(document).ready(function () {
         queueUploadLoop();
     }
 
-    
+    var uploadPercentage = 0;
     var queueUploadLoop = function() {
         if(uploadQueue.isEmpty()) {
             //종료
@@ -210,6 +210,7 @@ $(document).ready(function () {
         var formData = new FormData();
         var item = uploadQueue.dequeue();
         formData.append("path" , item.uploadpath);
+        console.log("UploadPath : " + item.uploadpath);
         formData.append("files" , item);
 
         $.ajax({
@@ -231,6 +232,7 @@ $(document).ready(function () {
                         totalSize = 0;
                         isUploading = false;
                         curFileLoaded = 0;
+                        uploadPercentage = 0;
                         alert('업로드 완료');
                         showfileframe();
                     }
@@ -246,10 +248,14 @@ $(document).ready(function () {
                     var xhr = $.ajaxSettings.xhr() ;
                     // 프로그래스 이벤트
                     xhr.upload.onprogress = function(evt){ 
-                            $('#uploadprogressbar')[0].style.setProperty('--width' , parseInt((uploadSize+evt.loaded)/totalSize*100) +'%');
-                            $('#uploadprogressbar').attr('data-label' , parseInt((uploadSize+evt.loaded)/totalSize*100) +'%');
-                            curFileLoaded = evt.loaded;
-                    } ;
+                        uploadPercentage = parseInt((uploadSize+evt.loaded)/totalSize*100);
+                        if(uploadPercentage > 100) {
+                            uploadPercentage = 100;
+                        }
+                        $('#uploadprogressbar')[0].style.setProperty('--width' , uploadPercentage +'%');
+                        $('#uploadprogressbar').attr('data-label' , uploadPercentage +'%');
+                        curFileLoaded = evt.loaded;
+                    };
                     // 종료 이벤트
                     xhr.upload.onload = function(){ 
                         uploadSize += curFileLoaded;
