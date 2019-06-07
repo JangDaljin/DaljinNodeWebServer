@@ -110,6 +110,7 @@ module.exports = function(app) {
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
             var form = new(require('formidable')).IncomingForm();
+            console.dir(form);
             // form.parse(req , (err , fields , files) => {
             //     path = fields['path'];
             // });
