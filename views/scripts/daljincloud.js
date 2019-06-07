@@ -186,6 +186,7 @@ $(document).ready(function () {
     
     var qUpload = function (files) {
         for(var i = 0 ; i < files.length; i++) {
+            files[i].uploadpath = path;
             uploadQueue.enqueue(files[i]);
             totalSize += files[i].size;
         }
@@ -194,12 +195,11 @@ $(document).ready(function () {
             return;
         }
         $('#uploadprogressbar').show();
-
-        queueUploadLoop(path);
+        queueUploadLoop();
     }
 
     
-    var queueUploadLoop = function(curPath) {
+    var queueUploadLoop = function() {
         if(uploadQueue.isEmpty()) {
             //종료
             return;
@@ -207,8 +207,9 @@ $(document).ready(function () {
 
         isUploading = true;
         var formData = new FormData();
-        formData.append("path" , curPath);
-        formData.append("files" , uploadQueue.dequeue());
+        var item = uploadQueue.dequeue();
+        formData.append("path" , item.uploadpath);
+        formData.append("files" , item);
 
         $.ajax({
             url : "/cloud/upload",
@@ -227,7 +228,6 @@ $(document).ready(function () {
                         $('#uploadprogressbar').hide();
                         uploadSize = 0;
                         totalSize = 0;
-                        uploadSize = 0;
                         isUploading = false;
                         alert('업로드 완료');
                         showfileframe();
