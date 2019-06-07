@@ -140,7 +140,7 @@ module.exports = function(app) {
                 var res = true;
                 
                 if(used_storage + files[i].size <= max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + files[i] + '/' + decodeURIComponent(files[i].originalname)).then(
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + path + '/' + decodeURIComponent(files[i].originalname)).then(
                         (returnValue) => 
                         {
                             console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
