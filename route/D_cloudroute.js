@@ -120,9 +120,11 @@ module.exports = function(app) {
                 var path = fields['path'];
                 var msg = "";
                 console.log("path : " + path);
-                console.dir(files);
+                
+
                 //progress stream을 거쳐 현재 퍼센트 제공
                 var input_file = upload.array('files');
+                console.dir(input_file);
                 var progress = require('progress-stream')({
                     length:'0'
                 });
