@@ -92,7 +92,10 @@ module.exports = function(app) {
     var upload = multer({
         storage : multer.diskStorage({
             destination : (req , file , callback) => {
-                callback(null , D_PATH["UPLOAD"]+(req.body.path || ''));
+                let email = req.user.email || '';
+                let path = req.body.path || '';
+
+                callback(null , D_PATH["DOWNLOAD"] + '/' + email + path);
             },
             filename : (req , file , callback) => {
                 callback(null , decodeURIComponent(file.originalname) + '_' + req.user.email);
@@ -108,10 +111,6 @@ module.exports = function(app) {
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email)
-
-            console.dir(req.body);
-            var path = req.body.path || '';
-            console.dir(path);
 
             var files = null;
             var msg = "";
@@ -138,7 +137,7 @@ module.exports = function(app) {
                 var res = true;
                 
                 if(used_storage + files[i].size <= max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + path + '/' + decodeURIComponent(files[i].originalname)).then(
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , files[i].destination + '/' + decodeURIComponent(files[i].originalname)).then(
                         (returnValue) => 
                         {
                             console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
