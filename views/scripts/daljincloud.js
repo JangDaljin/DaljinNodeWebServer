@@ -234,7 +234,7 @@ $(document).ready(function () {
                         showfileframe();
                     }
                     else {
-                        queueUploadLoop(curPath);
+                        queueUploadLoop();
                     }
             },
             
