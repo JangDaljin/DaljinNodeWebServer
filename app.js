@@ -44,8 +44,8 @@ app.use(expressSession(
 app.use(D_passport.initialize());
 app.use(D_passport.session());
 
-app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: false }));
 
 app.use(cors());
 

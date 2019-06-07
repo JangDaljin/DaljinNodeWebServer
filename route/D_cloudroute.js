@@ -107,11 +107,11 @@ module.exports = function(app) {
 
             var email = req.user.email;
             var max_storage = req.user.max_storage;
-            var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
-            var form = new(require('formidable')).IncomingForm();
+            var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email)
 
-            var path = upload.fields([{name:'path'}]);
+            var path = req.body.path || '';
             console.dir(path);
+            
             var files = null;
             var msg = "";
 
