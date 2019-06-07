@@ -105,16 +105,10 @@ module.exports = function(app) {
     router.post('/upload' , (req , res)=> {
         if(req.isAuthenticated()) {
 
-            var path = req.body.path || '';
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
             var form = new(require('formidable')).IncomingForm();
-            console.dir(form);
-            // form.parse(req , (err , fields , files) => {
-            //     path = fields['path'];
-            // });
-
 
             var files = null;
             var msg = "";
@@ -136,12 +130,15 @@ module.exports = function(app) {
 
             //재귀함수로 파일 업로드
             var loopFunciton = (i) => {
+
+                console.dir(files);
+                console.log('files[i].uploadpath : ' + files[i].uploadpath); 
                 if(files.length <= i) return true; 
 
                 var res = true;
                 
                 if(used_storage + files[i].size <= max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + path + '/' + decodeURIComponent(files[i].originalname)).then(
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + files[i].uploadpath + '/' + decodeURIComponent(files[i].originalname)).then(
                         (returnValue) => 
                         {
                             console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
