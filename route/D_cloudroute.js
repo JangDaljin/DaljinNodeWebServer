@@ -110,9 +110,9 @@ module.exports = function(app) {
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
             var form = new(require('formidable')).IncomingForm();
-            form.parse(req , (err , fields , files) => {
-                path = fields['path'];
 
+            form.parse(req , (err , fields , files) => {
+                var path = fields['path'];
                 var msg = "";
 
                 //progress stream을 거쳐 현재 퍼센트 제공
