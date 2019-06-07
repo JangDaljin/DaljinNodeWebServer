@@ -144,11 +144,11 @@ module.exports = function(app) {
             }
 
             //업로드 시작
-            input_file(progress , res , (err) => {
+            input_file(req , res , (err) => {
                 var output = {};
                 output["error"] = true;
                 output["msg"] = "";
-                files = progress.files;
+                files = req.files;
                 if(err) {
                     console.log('[' + email + '] UPLOAD ERROR');
                 }
