@@ -185,6 +185,7 @@ $(document).ready(function () {
 
     
     var qUpload = function (files) {
+        console.dir(files);
         for(var i = 0 ; i < files.length; i++) {
             files[i].uploadpath = path;
             uploadQueue.enqueue(files[i]);
