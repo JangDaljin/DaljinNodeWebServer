@@ -92,7 +92,7 @@ module.exports = function(app) {
     var upload = multer({
         storage : multer.diskStorage({
             destination : (req , file , callback) => {
-                callback(null , D_PATH["UPLOAD"]);
+                callback(null , D_PATH["UPLOAD"]+(req.body.path || ''));
             },
             filename : (req , file , callback) => {
                 callback(null , decodeURIComponent(file.originalname) + '_' + req.user.email);
