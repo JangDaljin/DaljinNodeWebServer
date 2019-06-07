@@ -1,4 +1,5 @@
 var uploadQueue = new Queue();
+var uploadpathQueue = new Queue();
 var totalSize = 0;
 var uploadSize = 0;
 var curFileLoaded = 0;
@@ -186,11 +187,10 @@ $(document).ready(function () {
     
     var qUpload = function (files) {
         for(var i = 0 ; i < files.length; i++) {
-            files[i].uploadpath = path;
             uploadQueue.enqueue(files[i]);
+            uploadpathQueue.enqueue(path);
             totalSize += files[i].size;
         }
-
         if(isUploading) {
             return;
         }
@@ -200,17 +200,16 @@ $(document).ready(function () {
 
     var uploadPercentage = 0;
     var queueUploadLoop = function() {
-        if(uploadQueue.isEmpty()) {
+        if(uploadQueue.isEmpty() && uploadpathQueue.isEmpty()) {
             //종료
             return;
         }
 
         isUploading = true;
         var formData = new FormData();
-        var item = uploadQueue.dequeue();
-        formData.append("path" , item.uploadpath);
-        console.log("UploadPath : " + item.uploadpath);
-        formData.append("files" , item);
+        var item = 
+        formData.append("path" , uploadpathQueue.dequeue());
+        formData.append("files" , uploadQueue.dequeue());
 
         $.ajax({
             url : "/cloud/upload",

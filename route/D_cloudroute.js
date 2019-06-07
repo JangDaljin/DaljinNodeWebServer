@@ -110,6 +110,8 @@ module.exports = function(app) {
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email);
             var form = new(require('formidable')).IncomingForm();
 
+            var path = upload.fields([{name:'path'}]);
+            console.dir(path);
             var files = null;
             var msg = "";
 
@@ -138,7 +140,7 @@ module.exports = function(app) {
                 var res = true;
                 
                 if(used_storage + files[i].size <= max_storage) {
-                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + files[i].uploadpath + '/' + decodeURIComponent(files[i].originalname)).then(
+                    D_file.moveTo(D_PATH["UPLOAD"] + '/' + files[i].filename  , D_PATH["DOWNLOAD"] + '/' + email + files[i] + '/' + decodeURIComponent(files[i].originalname)).then(
                         (returnValue) => 
                         {
                             console.log('[' + email + ']' + decodeURIComponent(files[i].originalname) + ' UPLOAD COMPLETE');
