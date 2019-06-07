@@ -112,9 +112,14 @@ module.exports = function(app) {
             var form = new(require('formidable')).IncomingForm();
 
             form.parse(req , (err , fields , files) => {
+                if(err) {
+                    console.log("ERROR");
+                }
+
+
                 var path = fields['path'];
                 var msg = "";
-
+                console.log("ERROR ?");
                 //progress stream을 거쳐 현재 퍼센트 제공
                 var input_file = upload.array('files');
                 var progress = require('progress-stream')({
@@ -130,6 +135,7 @@ module.exports = function(app) {
                     }
                 });
 
+                console.log("ERROR ??");
                 //재귀함수로 파일 업로드
                 var loopFunciton = (i) => {
                     if(files.length <= i) return true; 
