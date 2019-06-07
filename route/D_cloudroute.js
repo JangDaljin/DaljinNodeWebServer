@@ -94,8 +94,6 @@ module.exports = function(app) {
             destination : (req , file , callback) => {
                 let email = req.user.email || '';
                 let path = req.body.path || '';
-                console.log(path);
-
                 callback(null , D_PATH["DOWNLOAD"] + '/' + email + path);
             },
             filename : (req , file , callback) => {
@@ -108,7 +106,6 @@ module.exports = function(app) {
     //파일 업로드 요청
     router.post('/upload' , (req , res)=> {
         if(req.isAuthenticated()) {
-
             var email = req.user.email;
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email)
@@ -118,7 +115,6 @@ module.exports = function(app) {
 
             //progress stream을 거쳐 현재 퍼센트 제공
             var input_file = upload.array('files');
-            
             
             //재귀함수로 파일 업로드
             var loopFunciton = (i) => {
@@ -165,7 +161,6 @@ module.exports = function(app) {
                     res.send(JSON.stringify(output));
                 }
             });
-            
         }
         else {
             res.end();
