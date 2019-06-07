@@ -109,9 +109,10 @@ module.exports = function(app) {
             var max_storage = req.user.max_storage;
             var used_storage = D_file.getTotalSizeOnRoot(D_PATH["DOWNLOAD"] + '/' + email)
 
+            console.dir(req.body);
             var path = req.body.path || '';
             console.dir(path);
-            
+
             var files = null;
             var msg = "";
 
