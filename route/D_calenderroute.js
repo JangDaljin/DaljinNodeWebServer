@@ -13,43 +13,43 @@ module.exports = function(app) {
         var output = {};
         output['result'] = false;
 
-        if(!req.isAuthenticated()) {
-            res.send(output);
-            return;
-        }
+        if(req.isAuthenticated()) {
+            var year = req.body.year || "";
+            var month = req.body.month || "";
+            var date = req.body.date || "";
 
-        var year = req.body.year || "";
-        var month = req.body.month || "";
-        var date = req.body.date || "";
+            var saveData = {};
+            saveData['title']   = req.body.title;
+            saveData['content'] = req.body.content;
 
-        var saveData = {};
-        saveData['title']   = req.body.title;
-        saveData['content'] = req.body.content;
+            var path = D_PATH['MEMO'] + '/' + req.user.email;
 
-        var path = D_PATH['MEMO'] + '/' + req.user.email;
-
-        //연도 폴더
-        path += ('/' + year);
-        if(fs.exists(path  , (result) => {
-            if(!result) {
-                fs.mkdirSync(path);
-            }
-
-            //월 폴더
-            path += ('/' + month)
+            //연도 폴더
+            path += ('/' + year);
             if(fs.exists(path  , (result) => {
                 if(!result) {
                     fs.mkdirSync(path);
                 }
 
-                //날짜 파일에 저장
-                var wstream = fs.createWriteStream(path + '/' + date);
-                wstream.write(JSON.stringify(saveData));
-                wstream.end();
-                output['result'] = true;
-                res.send(JSON.stringify(output));
-            })); 
-        }));
+                //월 폴더
+                path += ('/' + month)
+                if(fs.exists(path  , (result) => {
+                    if(!result) {
+                        fs.mkdirSync(path);
+                    }
+
+                    //날짜 파일에 저장
+                    var wstream = fs.createWriteStream(path + '/' + date);
+                    wstream.write(JSON.stringify(saveData));
+                    wstream.end();
+                    output['result'] = true;
+                    res.send(JSON.stringify(output));
+                })); 
+            }));
+        }
+        else {
+            res.send(output);
+        }
 
     });
 
